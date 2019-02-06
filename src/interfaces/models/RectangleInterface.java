@@ -1,7 +1,5 @@
 package interfaces.models;
 
-import javafx.geometry.BoundingBox;
-
 public interface RectangleInterface {
     boolean contains(PointInterface point);
     boolean intersects(RectangleInterface rectangle);
