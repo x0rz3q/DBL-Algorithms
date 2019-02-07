@@ -1,10 +1,9 @@
 package interfaces.models;
 
-import models.Point;
-
-public interface LabelInterface extends RectangleInterface {
+public interface LabelInterface {
     String toString();
-    Point getPOI();
+    PointInterface getPOI();
     Float getAspectRatio();
     void setHeight(Float height) throws IllegalArgumentException;
+    RectangleInterface getRectangle();
 }
