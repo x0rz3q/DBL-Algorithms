@@ -2,9 +2,10 @@ package interfaces.models;
 
 import models.Point;
 
-public interface PointInterface extends RectangleInterface {
-    Integer getX();
-    Integer getY();
+public interface PointInterface {
+    Float getX();
+    Float getY();
     Integer distance(Point p);
+
     boolean equals(Point p);
 }
