@@ -18,18 +18,18 @@ public interface PointInterface {
     /**
      * Get the euclidean distance.
      *
-     * @param p {@link PointInterface}
+     * @param point {@link PointInterface}
      * @return Float
-     * @post {@code \result = sqrt((this.getX() - p.getX())^2 + (this.getY() - p.getY())^2)}
+     * @post {@code \result = sqrt((this.getX() - point.getX())^2 + (this.getY() - point.getY())^2)}
      */
-    Float distance(PointInterface p);
+    Float distance(PointInterface point);
 
     /**
      * Equality check.
      *
-     * @param p {@link PointInterface}
+     * @param point {@link PointInterface}
      * @return Boolean
-     * @post {@code \result = this.getX() == p.getX() && this.getY() == p.getY()}
+     * @post {@code \result = this.getX() == point.getX() && this.getY() == point.getY()}
      */
-    Boolean equals(PointInterface p);
+    Boolean equals(PointInterface point);
 }
