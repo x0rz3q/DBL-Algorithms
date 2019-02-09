@@ -16,6 +16,15 @@ public interface AbstractCollectionInterface<T> extends Iterable<T> {
     void insert(T node) throws NullPointerException;
 
     /**
+     * Insert nodes into collection
+     *
+     * @pre {@code nodes <> null}
+     * @post {@code (\forall i; nodes.has(i); this.intersects(nodes.get(i)))}
+     * @throws NullPointerException if {@code nodes == null}
+     */
+    void insert(Collection<T> nodes) throws NullPointerException;
+
+    /**
      * Remove node from collection.
      *
      * @param node {@link T}
