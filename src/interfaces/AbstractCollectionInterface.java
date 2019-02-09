@@ -8,18 +8,20 @@ public interface AbstractCollectionInterface<T> extends Iterable<T> {
     /**
      * Insert node into collection.
      *
-     * @param node T
+     * @param node {@link T}
      * @pre {@code node <> null}
      * @post {@code this.intersects(node)}
+     * @throws NullPointerException if {@code node == null}
      */
     void insert(T node) throws NullPointerException;
 
     /**
      * Remove node from collection.
      *
-     * @param node T
+     * @param node {@link T}
      * @pre {@code node <> null}
      * @post {@code !this.intersects(node)}
+     * @throws NullPointerException if {@code node == null}
      */
     void remove(T node) throws NullPointerException;
 
@@ -35,7 +37,7 @@ public interface AbstractCollectionInterface<T> extends Iterable<T> {
     /**
      * Check if an item intersects with given node.
      *
-     * @param node Node
+     * @param node {@link T}
      * @return Boolean
      */
     Boolean intersects(T node);
