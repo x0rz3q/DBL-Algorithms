@@ -34,9 +34,16 @@ public interface AbstractCollectionInterface<T> extends Iterable<T> {
 
     /**
      * Check if an item intersects with given node.
-     * @param node
-     * @return
+     *
+     * @param node Node
+     * @return Boolean
      */
     Boolean intersects(T node);
+
+    /**
+     * Get the size of the collection.
+     *
+     * @return int
+     */
     int size();
 }
