@@ -126,7 +126,7 @@ public class QuadTree extends AbstractCollection
      * @post {@code \result == (\forall i; i.intesect(subTree); i.instersects(range))}
      */
     private Collection query2D(QuadTree subTree, RectangleInterface range) {
-        List allLeaves = new ArrayList<>();
+        Collection<GeometryInterface> allLeaves = new ArrayList<>();
         if (subTree.leaf) {
             for (GeometryInterface leave : getLeaves())
                 if (leave.intersects(range))
@@ -157,6 +157,6 @@ public class QuadTree extends AbstractCollection
 
     @Override
     public Iterator iterator() {
-        return null;
+        return query2D(boundary).iterator(); // iterate whole subtree
     }
 }
