@@ -77,7 +77,34 @@ public class QuadTree extends AbstractCollection
 
     @Override
     public Collection query2D(RectangleInterface range) {
-        return null;
+        return query2D(this, range);
+    }
+
+    /**
+     * retrieves all GeometryInterfaces in the intersection of given subTree and range
+     *
+     * @param subTree subtree that is being searched
+     * @param range range that is searched for
+     * @post {@code \result == (\forall i; i.intesect(subTree); i.instersects(range))}
+     */
+    private Collection query2D(QuadTree subTree, RectangleInterface range) {
+        List allLeaves = new ArrayList<>();
+        if (subTree.leaf) {
+            for (GeometryInterface leave : getLeaves())
+                if (leave.intersects(range))
+                    allLeaves.add(leave);
+        } else {
+            if (subTree.NE.intersects(range))
+                allLeaves.addAll(query2D(subTree.NE, range));
+            if (subTree.NW.intersects(range))
+                allLeaves.addAll(query2D(subTree.NW, range));
+            if (subTree.SE.intersects(range))
+                allLeaves.addAll(query2D(subTree.SE, range));
+            if (subTree.SW.intersects(range))
+                allLeaves.addAll(query2D(subTree.SW, range));
+        }
+        return allLeaves;
+
     }
 
     @Override
