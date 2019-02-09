@@ -20,7 +20,7 @@ public interface PointInterface {
      *
      * @param point {@link PointInterface}
      * @return Float
-     * @post {@code \result = sqrt((this.getX() - point.getX())^2 + (this.getY() - point.getY())^2)}
+     * @post {@code \result == sqrt((this.getX() - point.getX())^2 + (this.getY() - point.getY())^2)}
      */
     Float distance(PointInterface point);
 
@@ -29,7 +29,7 @@ public interface PointInterface {
      *
      * @param point {@link PointInterface}
      * @return Boolean
-     * @post {@code \result = this.getX() == point.getX() && this.getY() == point.getY()}
+     * @post {@code \result == this.getX() == point.getX() && this.getY() == point.getY()}
      */
     Boolean equals(PointInterface point);
 }
