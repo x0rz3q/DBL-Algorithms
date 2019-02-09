@@ -17,15 +17,15 @@ public class QuadTree extends AbstractCollection
     private QuadTree SE;
     private QuadTree SW;
     /** if has not been subdivided **/
-    private boolean leaf; // leaf == leaves.size() <= maxLeaves
-    /** leaves of this quad tree **/
-    private Collection<GeometryInterface> leaves;
-    /** limit of leaves per tree **/
-    private int maxLeaves;
+    private boolean leaf; // leaf == data.size() <= dataLimit
+    /** data of this quad tree **/
+    private Collection<GeometryInterface> data;
+    /** limit of data per tree **/
+    private int dataLimit;
 
     QuadTree() {
         super();
-        this.leaves = new ArrayList<>();
+        this.data = new ArrayList<>();
         this.leaf = true;
     }
 
@@ -42,18 +42,18 @@ public class QuadTree extends AbstractCollection
     }
 
     /**
-     * Sets the amount of leaves allowed in a quad tree
+     * Sets the amount of data allowed in a leaf of quadtree
      * @param l
      * @pre {@code l > 0}
      */
-    private void setLeafLimit(final int l) {
-        this.maxLeaves = l;
+    private void setDataLimit(final int l) {
+        this.dataLimit = l;
     }
 
     /**
      * Subdivides the QuadTree in 4 sub-trees
      * @post NW <> null && NE <> null && SW <> null && SE <> null &&
-     * leaves.size() == 0 && count == 0 && leaf == false
+     * data.size() == 0 && count == 0 && leaf == false
      */
     private void subDivide() {
         // TODO: USE RECTANGLE CLASS WHEN ITS IMPLEMENTED
@@ -61,29 +61,30 @@ public class QuadTree extends AbstractCollection
         this.NE = subDivide(this.boundary); // ((Xmax - width/2, Ymax),(Xmax, Ymax - heigh/2))
         this.SW = subDivide(this.boundary); // ((Xmin, Ymin + height/2),(Xmin + width/2, Ymin))
         this.SE = subDivide(this.boundary); // (center, (Xmax, Ymin))
-        this.leaves.clear();
+        this.data.clear();
         this.count = 0;
         this.leaf = false;
     }
 
     /**
-     * Produce one of the 4 subidivisons with boundary b
+     * Produce one of the 4 subdivisons with boundary b
      * @param b the boundary of the subdivision
      * @return QuadTree, the new subdivision
      */
     private QuadTree subDivide(RectangleInterface b) {
-        QuadTree t = new QuadTree(getLeaves()); // add root leaves to subtree
+        QuadTree t = new QuadTree(getData()); // add root data to subtree
         t.setBoundary(b); // set the new boundary
-        t.setLeafLimit(this.maxLeaves); // keep same limit
+        t.setDataLimit(this.dataLimit); // keep same limit
         return t;
     }
 
     /**
-     * Getter for objects in the leaves
+     * Getter for data in a leaf
      * @return Collection over GeometryInterface
+     * @post \return.size() <= maxDataLimit
      */
-    private Collection<GeometryInterface> getLeaves() {
-        return this.leaves;
+    private Collection<GeometryInterface> getData() {
+        return this.data;
     }
 
     @Override
@@ -96,8 +97,8 @@ public class QuadTree extends AbstractCollection
         }
         this.count++; // subtree wil contain node, so increment
         if (this.leaf) { // if this is a leaf
-            this.leaves.add(node);
-            if (this.leaves.size() > this.maxLeaves) { // over the limit
+            this.data.add(node);
+            if (this.data.size() > this.dataLimit) { // over the limit
                 subDivide(); // make children
             }
         } else { // not a leaf, so insert in subrees
@@ -136,7 +137,7 @@ public class QuadTree extends AbstractCollection
     private Collection query2D(QuadTree subTree, RectangleInterface range) {
         Collection<GeometryInterface> allLeaves = new ArrayList<>();
         if (subTree.leaf) {
-            for (GeometryInterface leave : getLeaves())
+            for (GeometryInterface leave : getData())
                 if (leave.intersects(range))
                     allLeaves.add(leave);
         } else {
