@@ -1,10 +1,11 @@
 package interfaces;
 
+import interfaces.models.GeometryInterface;
 import interfaces.models.RectangleInterface;
 
 import java.util.Collection;
 
-public interface AbstractCollectionInterface<T> extends Iterable<T> {
+public interface AbstractCollectionInterface<T extends GeometryInterface> extends Iterable<T> {
     /**
      * Insert node into collection.
      *

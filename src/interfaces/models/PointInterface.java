@@ -1,6 +1,6 @@
 package interfaces.models;
 
-public interface PointInterface {
+public interface PointInterface extends GeometryInterface {
     /**
      * Get the X coordinate.
      *

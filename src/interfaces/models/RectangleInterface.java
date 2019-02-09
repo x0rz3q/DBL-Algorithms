@@ -1,38 +1,6 @@
 package interfaces.models;
 
-public interface RectangleInterface {
-    /**
-     * Check if x and y is inside rectangle.
-     *
-     * @param x Float
-     * @param y Float
-     * @return Boolean
-     * @post {@code \result == X >= this.getXMin() && X <= this.getXMax()
-     *          && Y >= this.getYMin() && Y <= this.getYMax()}
-     */
-    Boolean contains(Float x, Float y);
-
-    /**
-     * Check if point is contained.
-     *
-     * @param point {@link PointInterface}
-     * @return Boolean
-     * @post {@code \result == this.contains(point.getX(), point.getY()}
-     */
-    Boolean contains(PointInterface point);
-
-    /**
-     * Check if rectangle intersects.
-     *
-     * @param rectangle {@link RectangleInterface}
-     * @return Boolean
-     * @post {@code \result == this.contains(rectangle.getBottomLeft()) ||
-     *                         this.contains(rectangle.getBottomRight()) ||
-     *                         this.contains(rectangle.getTopLeft()) ||
-     *                         this.contains(rectangle.getTopRight()}
-     */
-    Boolean intersects(RectangleInterface rectangle);
-
+public interface RectangleInterface extends GeometryInterface {
     /**
      * Check if the objects are equal.
      *
