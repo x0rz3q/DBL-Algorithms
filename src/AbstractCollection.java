@@ -1,8 +1,9 @@
 import interfaces.AbstractCollectionInterface;
+import interfaces.models.GeometryInterface;
 
 import java.util.Collection;
 
-public abstract class AbstractCollection<T> implements AbstractCollectionInterface<T>{
+public abstract class AbstractCollection<T extends GeometryInterface> implements AbstractCollectionInterface<T>{
     protected int count;
     protected T root;
 
