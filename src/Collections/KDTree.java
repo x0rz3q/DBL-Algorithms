@@ -9,7 +9,7 @@ import java.util.Iterator;
 public class KDTree extends AbstractCollection{
     @Override
     public void insert(GeometryInterface node) throws NullPointerException {
-        
+
     }
 
     @Override
@@ -41,5 +41,4 @@ public class KDTree extends AbstractCollection{
     public Iterator iterator() {
         return null;
     }
-    // not supported yet
 }
