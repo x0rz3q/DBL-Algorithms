@@ -2,7 +2,7 @@ package interfaces;
 
 import interfaces.models.RectangleInterface;
 
-import java.util.List;
+import java.util.Collection;
 
 public interface AbstractCollectionInterface<T> extends Iterable<T> {
     /**
@@ -30,7 +30,7 @@ public interface AbstractCollectionInterface<T> extends Iterable<T> {
      * @return List
      * @post {@code (\forall i; \result.has(i); range.contains(\result.get(i)))}
      */
-    List<T> query2D(RectangleInterface range);
+    Collection<T> query2D(RectangleInterface range);
 
     /**
      * Check if an item intersects with given node.
