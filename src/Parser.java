@@ -4,19 +4,20 @@
 
 import interfaces.AbstractCollectionInterface;
 import interfaces.ParserInterface;
+import interfaces.models.LabelInterface;
 import interfaces.models.PointInterface;
 import models.InputRecord;
 import models.OutputRecord;
 import models.PlacementModelEnum;
 
 import java.io.*;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-public class Parser implements ParserInterface {
+class Parser implements ParserInterface {
 
-     private PointInterface[] points;
+     private ArrayList<PointInterface> points;
      private Class<? extends AbstractCollectionInterface> collectionClass;
      private Class<? extends PointInterface> pointClass;
 
@@ -67,17 +68,18 @@ public class Parser implements ParserInterface {
         try {
             while (!sc.hasNextInt()) sc.next();
             int n = sc.nextInt();
-            points = new PointInterface[n];
+            points = new ArrayList<>(n);
 
             for (int i = 0; i < n; i++) {
-                points[i] = pointClass.newInstance();
+                PointInterface point = pointClass.newInstance();
                 // @TODO setting of coordinates not yet supported
-                // points[i].setX = sc.nextInt();
-                // points[i].setY = sc.nextInt();
+                // point.setX = sc.nextInt();
+                // point.setY = sc.nextInt();
+                points.add(point);
             }
 
             rec.points = collectionClass.newInstance();
-            rec.points.insert(Arrays.asList(points));
+            rec.points.insert(points);
         } catch (NoSuchElementException e) {
             throw new IOException("parser.input: number of points does not correspond to found coordinates");
         } catch (InstantiationException|IllegalAccessException e) {
@@ -117,8 +119,19 @@ public class Parser implements ParserInterface {
             + "height:" + record.height + "\n"
         );
 
-        for (int i = 0; i < points.length; i++) {
-            // get each point and output it in order
+        String[] output = new String[record.points.size()];
+
+        for (LabelInterface label : record.points) {
+            PointInterface point = label.getPOI();
+            int i = points.indexOf(point);
+            if (i < 0) throw new NullPointerException("parser.output: point" + point + "unknown");
+            output[i] = point.getX() + " " + point.getY() + " " +
+                    // label position with respect to point +
+                    "\n";
+        }
+
+        for (int i = 0; i < record.points.size(); i++) {
+            writer.write(output[i]);
         }
 
         writer.flush();
