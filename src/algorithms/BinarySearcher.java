@@ -22,14 +22,11 @@ public abstract class BinarySearcher<T extends RectangleInterface> implements Ab
         int low = 0;
 
 
-        float ratio = 1.4f;
-
 
         // make sure that our upper bound is correct. This may not be required if we have a good estimation
         while (isSolvable(nodes, high)) {
             low = high;
-            // TODO: value can be optimized (see earlier TODO)
-            high *= 2;
+            high = (int) (high * 1.5);
         }
 
 
@@ -44,20 +41,25 @@ public abstract class BinarySearcher<T extends RectangleInterface> implements Ab
 
         float height = low;
 
+        int m_low = (int) (low * alpha * 2);
+        int m_high = (int) Math.ceil(high * alpha * 2);
 
-        // TODO: this needs to be fixed
-        System.out.println(low + " " + high);
-
-        float newHeight = (float) Math.floor(high*ratio) / ratio;
-        if (newHeight > height && isSolvable(nodes, newHeight)) {
-            height = newHeight;
+        while (m_low < m_high - 1) {
+            int mid = (m_high + m_low) / 2;
+            if (isSolvable(nodes,  mid / (alpha * 2))) {
+                m_low = mid;
+            } else {
+                m_high = mid;
+            }
         }
 
-        newHeight = (float) (Math.floor(high*ratio) - 0.5) / ratio;
-        if (newHeight > height && isSolvable(nodes, newHeight)) {
-            height = newHeight;
-        }
 
+        float newHeight = m_low / (alpha * 2);
+        if (newHeight > low && newHeight < high) {
+            if (isSolvable(nodes, newHeight)) {
+                height = Math.max(newHeight, height);
+            }
+        }
         getSolution(nodes, height);
     }
 

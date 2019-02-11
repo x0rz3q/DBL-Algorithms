@@ -82,7 +82,10 @@ public class TwoPositionBinarySearcher<T extends RectangleInterface> extends Bin
 
         // ------------ adding edges to graph ------------
         // TODO: I need the right data structure for that
+        // loop over every point and for both rectangles check overlaps
         for (T n : nodes) {
+
+
             nodes.query2D(n);
         }
     }
@@ -117,7 +120,9 @@ public class TwoPositionBinarySearcher<T extends RectangleInterface> extends Bin
 
     private void addEdgeAndInverse(int a, int b) {
         adj[a].add(b);
+        adj[b].add(a);
         adjInv[b].add(a);
+        adjInv[a].add(b);
     }
 
 
@@ -153,10 +158,10 @@ public class TwoPositionBinarySearcher<T extends RectangleInterface> extends Bin
 
         if (start < noNodes) {
             isSet[start] = true;
-            // TODO: set start to true value(needs data structures)
+            // TODO: set start to true (needs data structures)
         } else {
             isSet[start - noNodes] = true;
-            // TODO: set start % noNodes to false value(needs data structures)
+            // TODO: set (start % noNodes) to false (needs data structures)
         }
 
         for (int i : adj[start]) {
