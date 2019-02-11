@@ -21,6 +21,7 @@ public interface ParserInterface {
      * Serialize internal program structure towards output stream.
      *
      * @param record {@link OutputRecord}
+     * @param stream {@link OutputStream}
      * @return OutputStream
      * @throws NullPointerException if {@code record == null || stream == null}
      */
