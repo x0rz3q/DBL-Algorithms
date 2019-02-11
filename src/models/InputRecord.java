@@ -1,10 +1,10 @@
 package models;
 
 import interfaces.AbstractCollectionInterface;
-import interfaces.models.PointInterface;
+import interfaces.models.SquareInterface;
 
 public class InputRecord {
-    public AbstractCollectionInterface<PointInterface> points;
+    public AbstractCollectionInterface<SquareInterface> points;
     public Float aspectRatio;
     public PlacementModelEnum placementModel;
 }
