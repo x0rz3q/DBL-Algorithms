@@ -22,7 +22,7 @@ public interface ParserInterface {
      *
      * @param record {@link OutputRecord}
      * @return OutputStream
-     * @throws NullPointerException if {@code record == null}
+     * @throws NullPointerException if {@code record == null || stream == null}
      */
-    OutputStream output(OutputRecord record) throws NullPointerException;
+    void output(OutputRecord record, OutputStream stream) throws NullPointerException;
 }

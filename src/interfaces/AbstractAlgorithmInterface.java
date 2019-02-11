@@ -1,8 +1,8 @@
 package interfaces;
 
-import interfaces.models.RectangleInterface;
+import interfaces.models.SquareInterface;
 
-public interface AbstractAlgorithmInterface<T extends RectangleInterface> {
+public interface AbstractAlgorithmInterface<T extends SquareInterface> {
     /**
      * Place all labels with the height being maximized.
      *
