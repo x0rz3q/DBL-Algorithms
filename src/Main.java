@@ -11,6 +11,24 @@ import javax.sound.midi.ControllerEventListener;
 class Point {
     int x;
     int y;
+
+    Point (int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+}
+
+// Stores rectangle
+class Rectangle {
+    Point sw;
+    Point ne;
+    Point associated;
+
+    Rectangle (Point southWest, Point northEast, Point associatedPoint) {
+        this.sw = southWest;
+        this.ne = northEast;
+        this.associated = associatedPoint;
+    }
 }
 
 
@@ -115,27 +133,41 @@ class BinomialNumberGenerator extends NumberGenerator {
 // Abstract generation strategy
 abstract class GenerationStrategy {
     TestData data;
+    Random rand = new Random();
 
     // TODO provide contract
     abstract Point[] generate();
+    // TODO provide contract
+    abstract Rectangle[] generateStart;
+    // TODO provide contract
+
 }
 
 // Concrete generation strategy for 2pos
 class Strategy2pos extends GenerationStrategy {
     @Override
     Point[] generate() {
+        generateStart();
         // TODO implement
     }
 
-    Strategy2pos(TestData data) {
-        this.data = data;
+    @Override
+    Rectangle[] generateStart {
+        // TODO implement
     }
+
+    Strategy2pos(TestData data) { this.data = data; }
 }
 
 // Concrete generation strategy for 4pos
 class Strategy4pos extends GenerationStrategy {
     @Override
     Point[] generate() {
+        // TODO implement
+    }
+
+    @Override
+    Rectangle[] generateStart {
         // TODO implement
     }
 
@@ -148,6 +180,11 @@ class Strategy4pos extends GenerationStrategy {
 class Strategy1slider extends GenerationStrategy {
     @Override
     Point[] generate() {
+        // TODO implement
+    }
+
+    @Override
+    Rectangle[] generateStart {
         // TODO implement
     }
 
@@ -167,7 +204,11 @@ class TestData {
     // aspect ratio label
     double ratio;
 
-    // correct result (maximum height)
+    /* correct result (maximum height)
+    *   2pos: result == integer || result * alpha * 2 == integer
+    *   4pos: result * 2 == integer || result * alpha * 2 == integer
+    *   1slider: result == real
+    */
     double result;
 
     // Number Generators in the x- and y-dimensions
