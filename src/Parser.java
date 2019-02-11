@@ -1,5 +1,5 @@
 /*
- * author = Jeroen Schols
+ * @author = Jeroen Schols
  */
 
 import interfaces.AbstractCollectionInterface;
@@ -17,11 +17,18 @@ import java.util.Scanner;
 
 class Parser implements ParserInterface {
 
-     private ArrayList<PointInterface> points;
+     // The class that is used for implementing the AbstractCollectionInterface
      private Class<? extends AbstractCollectionInterface> collectionClass;
+
+     // The class that is used for implementing the PointInterface
      private Class<? extends PointInterface> pointClass;
 
-
+    /**
+     * Create a parser that parses input-and-output files using collectionClass<pointClass> as datastructure
+     *
+     * @param collectionClass The class used for implementing {@link AbstractCollectionInterface}
+     * @param pointClass The class used for implementing {@link PointInterface}
+     */
      Parser (Class<? extends AbstractCollectionInterface> collectionClass, Class<? extends PointInterface> pointClass) {
          if (collectionClass == null) {
              throw new NullPointerException("parser.input: class implementing AbstractCollectionInterface not found");
@@ -68,18 +75,19 @@ class Parser implements ParserInterface {
         try {
             while (!sc.hasNextInt()) sc.next();
             int n = sc.nextInt();
-            points = new ArrayList<>(n);
+            ArrayList<PointInterface> points = new ArrayList<>(n);
 
             for (int i = 0; i < n; i++) {
                 PointInterface point = pointClass.newInstance();
-                // @TODO setting of coordinates not yet supported
-                // point.setX = sc.nextInt();
-                // point.setY = sc.nextInt();
+                point.setX(sc.nextInt());
+                point.setY(sc.nextInt());
+                point.setID(i);
                 points.add(point);
             }
 
             rec.points = collectionClass.newInstance();
             rec.points.insert(points);
+
         } catch (NoSuchElementException e) {
             throw new IOException("parser.input: number of points does not correspond to found coordinates");
         } catch (InstantiationException|IllegalAccessException e) {
@@ -90,13 +98,9 @@ class Parser implements ParserInterface {
         return rec;
     }
 
-    @Override
-    public OutputStream output(OutputRecord record) throws NullPointerException {
-        return null;
-    }
 
-    // suggestion of how to work with output
-    public void output2(OutputRecord record, OutputStream stream) throws NullPointerException {
+    @Override
+    public void output(OutputRecord record, OutputStream stream) throws NullPointerException {
         if (record == null) throw new NullPointerException("parser.output: record not found");
 
         PrintWriter writer = new PrintWriter(stream);
@@ -122,12 +126,7 @@ class Parser implements ParserInterface {
         String[] output = new String[record.points.size()];
 
         for (LabelInterface label : record.points) {
-            PointInterface point = label.getPOI();
-            int i = points.indexOf(point);
-            if (i < 0) throw new NullPointerException("parser.output: point" + point + "unknown");
-            output[i] = point.getX() + " " + point.getY() + " " +
-                    // label position with respect to point +
-                    "\n";
+            output[label.getPOI().getID()] = label.toString();
         }
 
         for (int i = 0; i < record.points.size(); i++) {
