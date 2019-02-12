@@ -18,4 +18,5 @@ public interface SquareInterface {
     Float getYMax();
     Float getXMin();
     Float getYMin();
+    Boolean intersect(SquareInterface square);
 }
