@@ -40,30 +40,25 @@ public interface SquareInterface {
     /**
      * Get the anchor of the square.
      *
-     * @return SquareInterface
+     * @return AnchorInterface
      */
-    SquareInterface getAnchor();
+    AnchorInterface getAnchor();
 
     /**
      * Set the anchor of the square.
      *
-     * @param anchor {@link SquareInterface}
+     * @param anchor {@link AnchorInterface}
      */
-    void setAnchor(SquareInterface anchor);
+    void setAnchor(AnchorInterface anchor);
 
     /**
      * Get the edge length of the square.
      *
-     * @return Float
+     * @return Double
      */
-    Float getEdgeLength();
+    Double getEdgeLength();
 
-    /**
-     * Set edge length of the square.
-     *
-     * @param edgeLength {@link Float}
-     */
-    void setEdgeLength(Float edgeLength);
+    void setEdgeLength(Double edgeLength) throws IllegalArgumentException;
 
     /**
      * Check for equality
@@ -81,30 +76,30 @@ public interface SquareInterface {
     /**
      * Get maximal X coordinate from square.
      *
-     * @return Float
+     * @return Double
      */
-    Float getXMax();
+    Double getXMax();
 
     /**
      * Get maximal Y coordinate from square.
      *
-     * @return Float
+     * @return Double
      */
-    Float getYMax();
+    Double getYMax();
 
     /**
      * Get minimal X coordinate from square.
      *
-     * @return Float
+     * @return Double
      */
-    Float getXMin();
+    Double getXMin();
 
     /**
      * Get minimal Y coordinate from square.
      *
-     * @return Float
+     * @return Double
      */
-    Float getYMin();
+    Double getYMin();
 
     /**
      * Check if Square intersects with another square.
