@@ -1,8 +1,10 @@
+package Collections;
+
 import interfaces.AbstractCollectionInterface;
 
 import java.util.Collection;
 
-public abstract class AbstractCollection<T> implements AbstractCollectionInterface<T>{
+public abstract class AbstractCollection<T> implements AbstractCollectionInterface{
     protected int count;
     protected T root;
 
