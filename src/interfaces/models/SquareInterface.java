@@ -8,10 +8,8 @@ public interface SquareInterface {
     SquareInterface getCenter();
     SquareInterface getAnchor();
     void setAnchor(SquareInterface anchor);
-    Float getWidth();
-    Float getHeight();
-    void setWidth(Float width);
-    void setHeight(Float height);
+    Float getEdgeLength();
+    void setEdgeLength(Float edgeLength);
     Float getAspectRatio();
     Boolean equals(SquareInterface square);
     Float getXMax();
