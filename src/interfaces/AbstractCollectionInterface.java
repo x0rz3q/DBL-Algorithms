@@ -4,16 +4,16 @@ import interfaces.models.SquareInterface;
 
 import java.util.Collection;
 
-public interface AbstractCollectionInterface<T extends SquareInterface> extends Iterable<T> {
+public interface AbstractCollectionInterface {
     /**
      * Insert node into collection.
      *
-     * @param node {@link T}
+     * @param node {@link SquareInterface}
      * @pre {@code node <> null}
      * @post {@code this.intersects(node)}
      * @throws NullPointerException if {@code node == null}
      */
-    void insert(T node) throws NullPointerException;
+    void insert(SquareInterface node) throws NullPointerException;
 
     /**
      * Insert nodes into collection
@@ -27,12 +27,12 @@ public interface AbstractCollectionInterface<T extends SquareInterface> extends 
     /**
      * Remove node from collection.
      *
-     * @param node {@link T}
+     * @param node {@link SquareInterface}
      * @pre {@code node <> null}
      * @post {@code !this.intersects(node)}
      * @throws NullPointerException if {@code node == null}
      */
-    void remove(T node) throws NullPointerException;
+    void remove(SquareInterface node) throws NullPointerException;
 
     /**
      * Get all items that intersect with a given range.
@@ -41,15 +41,15 @@ public interface AbstractCollectionInterface<T extends SquareInterface> extends 
      * @return List
      * @post {@code (\forall i; \result.has(i); range.contains(\result.get(i)))}
      */
-    Collection<T> query2D(SquareInterface range);
+    Collection<SquareInterface> query2D(SquareInterface range);
 
     /**
      * Check if an item intersects with given node.
      *
-     * @param node {@link T}
+     * @param node {@link SquareInterface}
      * @return Boolean
      */
-    Boolean intersects(T node);
+    Boolean intersects(SquareInterface node);
 
     /**
      * Get the size of the collection.

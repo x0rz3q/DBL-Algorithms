@@ -107,5 +107,5 @@ public interface SquareInterface {
      * @param square {@link SquareInterface}
      * @return Boolean
      */
-    Boolean intersect(SquareInterface square);
+    Boolean intersects(SquareInterface square);
 }
