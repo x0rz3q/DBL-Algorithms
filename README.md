@@ -21,7 +21,7 @@ The algorithm is expected to modify either one of these such that the informatio
 the objects is a correct placement. 
 
 ## Square Interface
-The square will have two implementations, Point and Rectangle. This is so that we have a
+The square will have two implementations, Point and Square. This is so that we have a
 better structure in the code. The two types will have exactly the same methods, the implementation
 is just a bit simplified for a point.
 
