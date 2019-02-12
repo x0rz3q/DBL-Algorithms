@@ -4,13 +4,14 @@ The way the parser should work with the structure
 ### Input reader
 
 * read input file
+* scale points
 * make a list of labels
 * make a tree of labels, with an object reference to the same object as in the list
 * return a DataRecord
 
 ### Output reader
 * write basic information from datarecord towards output stream
-* loop over list of labels and call .toString()
+* loop over list of labels, scale them and call .toString()
 
 ## Algorithm
 For each algorithm you get a datarecord this contains all the information we have at 
