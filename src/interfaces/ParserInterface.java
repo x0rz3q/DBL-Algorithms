@@ -1,7 +1,6 @@
 package interfaces;
 
-import models.InputRecord;
-import models.OutputRecord;
+import models.DataRecord;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -11,19 +10,19 @@ public interface ParserInterface {
      * Parse input to program structure.
      *
      * @param source {@link Readable}
-     * @return InputRecord
+     * @return DataRecord
      * @throws NullPointerException if {@code source == null}
      * @throws IOException if read error occurs
      */
-    InputRecord input(Readable source) throws NullPointerException, IOException;
+    DataRecord input(Readable source) throws NullPointerException, IOException;
 
     /**
      * Serialize internal program structure towards output stream.
      *
-     * @param record {@link OutputRecord}
+     * @param record {@link DataRecord}
      * @param stream {@link OutputStream}
      * @return OutputStream
      * @throws NullPointerException if {@code record == null || stream == null}
      */
-    void output(OutputRecord record, OutputStream stream) throws NullPointerException;
+    void output(DataRecord record, OutputStream stream) throws NullPointerException;
 }
