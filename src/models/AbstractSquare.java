@@ -68,4 +68,11 @@ public abstract class AbstractSquare implements SquareInterface {
     public Double getYMin() {
         return this.getAnchor().getY();
     }
+
+    @Override
+    public Boolean intersects(SquareInterface square) {
+        return this.getXMin() <= square.getXMax() && square.getXMin() <= this.getXMax() &&
+                this.getYMin() <= square.getYMax() && square.getYMin() <= this.getYMax();
+
+    }
 }
