@@ -1,6 +1,9 @@
 package algorithms;
 
+import interfaces.models.SquareInterface;
 import models.DataRecord;
+import models.DirectionEnum;
+import models.PositionLabel;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -26,6 +29,7 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
 
     // keeps track of the rect height of last created graph
     private float heightLastGraph;
+    private float heightLastComp;
 
 
     // keeps track of which rectangles have been set in getSolution()
@@ -48,12 +52,16 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
         }
 
         int noPoints = record.points.size();
+        if (heightLastComp != height) {
+            createComponents(noPoints);
+        }
+
 
         isSet = new boolean[noPoints];
 
         for (int i = 0; i < noPoints; i++) {
             if (!isSet[i]) {
-                assignTrue(i, noPoints);
+                assignTrue(record, i, noPoints);
             }
         }
     }
@@ -83,12 +91,28 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
 
 
         // ------------ adding edges to graph ------------
-        // TODO: I need the right data structure for that
         // loop over every point and for both rectangles check overlaps
+
+
+        for (SquareInterface point : record.points) {
+
+        }
 
     }
 
     private boolean Kosaraju(int noInputs) {
+        createComponents(noInputs);
+
+        for (int i = 0; i < noInputs; i++) {
+            if (scc[i] == scc[i + noInputs]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void createComponents(int noInputs) {
+        heightLastComp = heightLastGraph;
         // Step 1: dfs on original graph
         for (int i = 0; i < noInputs * 2; i++) {
             if (!visited[i]) {
@@ -106,13 +130,6 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
 
             }
         }
-
-        for (int i = 0; i < noInputs; i++) {
-            if (scc[i] == scc[i + noInputs]) {
-                return false;
-            }
-        }
-        return true;
     }
 
 
@@ -151,19 +168,20 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
         scc[start] = counter;
     }
 
-    private void assignTrue(int start, int noNodes) {
-
-
-        if (start < noNodes) {
-            isSet[start] = true;
-            // TODO: set start to true (needs data structures)
+    private void assignTrue(DataRecord record, int node, int noNodes) {
+        if (node < noNodes) {
+            isSet[node] = true;
+            ((PositionLabel) record.points.get(node)).setDirection(DirectionEnum.NE);
         } else {
-            isSet[start - noNodes] = true;
-            // TODO: set (start % noNodes) to false (needs data structures)
+            isSet[node - noNodes] = true;
+            ((PositionLabel) record.points.get(node % noNodes)).setDirection(DirectionEnum.NW);
         }
 
-        for (int i : adj[start]) {
-            assignTrue(i, noNodes);
+        for (int i : adj[node]) {
+            if (!isSet[i % noNodes]) {
+                assignTrue(record, i, noNodes);
+
+            }
         }
     }
 }
