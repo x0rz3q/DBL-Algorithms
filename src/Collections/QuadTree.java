@@ -2,6 +2,7 @@ package Collections;
 
 import interfaces.models.AnchorInterface;
 import interfaces.models.SquareInterface;
+import models.BoundingBox;
 import models.Square;
 import models.Anchor;
 
@@ -143,18 +144,23 @@ public class QuadTree extends AbstractCollection
     }
 
     @Override
-    public Collection query2D(SquareInterface range) {
+    public Collection<SquareInterface> query2D(SquareInterface range) {
+        return query2D(this, range);
+    }
+
+    @Override
+    public Collection<SquareInterface> query2D(BoundingBox range) {
         return query2D(this, range);
     }
 
     /**
-     * retrieves all GeometryInterfaces in the intersection of given subTree and range
+     * Retrieves all  SquareInterface in the intersection of given subTree and range
      *
      * @param subTree subtree that is being searched
      * @param range range that is searched for
      * @post {@code \result == (\forall i; i.intesect(subTree); i.instersects(range))}
      */
-    private Collection query2D(QuadTree subTree, SquareInterface range) {
+    private Collection<SquareInterface> query2D(QuadTree subTree, SquareInterface range) {
         Collection<SquareInterface> allLeaves = new ArrayList<>();
         if (subTree.leaf) {
             for (SquareInterface leave : subTree.getData())
@@ -174,9 +180,40 @@ public class QuadTree extends AbstractCollection
 
     }
 
+    /**
+     * Retrieves all  BoundingBox in the intersection of given subTree and range
+     *
+     * @param subTree subtree that is being searched
+     * @param range range that is searched for
+     * @post {@code \result == (\forall i; i.intersect(subTree); i.intersects(range))}
+     */
+    private Collection<SquareInterface> query2D(QuadTree subTree, BoundingBox range) {
+        Collection<SquareInterface> allLeaves = new ArrayList<>();
+        if (subTree.leaf) {
+            for (SquareInterface leave : subTree.getData())
+                if (range.intersects(leave))
+                    allLeaves.add(leave);
+        } else {
+            if (subTree.NE.intersects(range))
+                allLeaves.addAll(query2D(subTree.NE, range));
+            if (subTree.NW.intersects(range))
+                allLeaves.addAll(query2D(subTree.NW, range));
+            if (subTree.SE.intersects(range))
+                allLeaves.addAll(query2D(subTree.SE, range));
+            if (subTree.SW.intersects(range))
+                allLeaves.addAll(query2D(subTree.SW, range));
+        }
+        return allLeaves;
+    }
+
     @Override
     public Boolean intersects(SquareInterface node) {
         return boundary.intersects(node);
+    }
+
+    @Override
+    public Boolean intersects(BoundingBox node) {
+        return node.intersects(boundary);
     }
 
     @Override
