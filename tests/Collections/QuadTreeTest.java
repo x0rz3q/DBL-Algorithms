@@ -36,8 +36,37 @@ class QuadTreeTest extends AbstractCollectionTest {
     }
      */
 
+    // Test if query2D is empty if range does not include any points.
     @Test
     void query2D() {
+        SquareInterface point1 = new Point(5000, 5000);
+        SquareInterface point2 = new Point(3000, 3000);
+        SquareInterface point3 = new Point(9000, 1);
+        SquareInterface point4 = new Point(7000, 8000);
+        this.instance.insert(point1);
+        this.instance.insert(point2);
+        this.instance.insert(point3);
+        this.instance.insert(point4);
+        SquareInterface queryRange = new Square(new Anchor(2500, 2500), 1);
+        Collection<SquareInterface> points = this.instance.query2D(queryRange);
+        assertTrue(points.isEmpty());
+    }
+
+    // Test if query2D returns 2 points contained in the range
+    @Test
+    void query2D2() {
+        SquareInterface point1 = new Point(5000, 5000);
+        SquareInterface point2 = new Point(3000, 3000);
+        SquareInterface point3 = new Point(9000, 1);
+        SquareInterface point4 = new Point(7000, 8000);
+        this.instance.insert(point1);
+        this.instance.insert(point2);
+        this.instance.insert(point3);
+        this.instance.insert(point4);
+        SquareInterface queryRange = new Square(new Anchor(2500, 2500), 3000);
+        Collection<SquareInterface> points = this.instance.query2D(queryRange);
+        assertTrue(points.contains(point1));
+        assertTrue(points.contains(point2));
     }
 
     @Test
