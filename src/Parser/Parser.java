@@ -52,46 +52,43 @@ class Parser implements ParserInterface {
             int n = sc.nextInt();
             rec.points = new ArrayList<>(n);
 
-            if (collectionClass == QuadTree.class) {
-                rec.collection = initQuadTree();
-            } else if (collectionClass == KDTree.class) {
-                rec.collection = initKDTree();
-            }
-
             for (int i = 0; i < n; i++) {
                 int x = sc.nextInt();
                 int y = sc.nextInt();
 
                 LabelInterface label = null;
-
                 switch (rec.placementModel) {
                     case TWO_POS:
                     case FOUR_POS:
                         label = new PositionLabel(x, y*rec.aspectRatio, 0, DirectionEnum.NE);
                         break;
                     case ONE_SLIDER:
-                        label = new SliderLabel(x, y * rec.aspectRatio, 0, 0);
+                        label = new SliderLabel(x, y*rec.aspectRatio, 0, 0);
                         break;
                 }
-
                 rec.points.add(label);
-                rec.collection.insert(label);
             }
-
         } catch (NoSuchElementException e) {
             throw new IOException("parser.input: number of points does not correspond to found coordinates");
+        }
+
+        if (collectionClass == QuadTree.class) {
+            rec.collection = initQuadTree(rec.points);
+        } else if (collectionClass == KDTree.class) {
+            rec.collection = initKDTree(rec.points);
+        } else {
+            throw new InputMismatchException("parser.input collection class initializer undefined");
         }
 
         sc.close();
         return rec;
     }
 
-    private QuadTree initQuadTree() {
-        // @TODO initialize a QuadTree
-        return null;
+    private QuadTree initQuadTree(Collection<LabelInterface> points) {
+        return new QuadTree(points);
     }
 
-    private KDTree initKDTree() {
+    private KDTree initKDTree(Collection<LabelInterface> points) {
         // @TODO initialize a KDTree
         return null;
     }
@@ -112,6 +109,8 @@ class Parser implements ParserInterface {
             case ONE_SLIDER:
                 writer.print("placement model: 1slider\n");
                 break;
+            default:
+                throw new NoSuchElementException("parser.output placement model unknown");
         }
 
         writer.write(
@@ -121,14 +120,10 @@ class Parser implements ParserInterface {
         );
 
         for (LabelInterface label : record.points) {
-            if (label instanceof SliderLabel) {
-                //TODO: output
-            } else if(label instanceof PositionLabel) {
-                PositionLabel casted = (PositionLabel) label;
-                //TODO: Output
-            } else {
-//                throw new Exception("What is this?");
+            if (label.getPOI().getXMin() != label.getPOI().getXMax() || label.getPOI().getYMin() != label.getPOI().getYMax()) {
+                throw new IllegalStateException("parser.output POI of label not of width/height 0");
             }
+            writer.write( Math.round(label.getPOI().getXMin()) + " " + Math.round(label.getPOI().getYMin() / record.aspectRatio) + " " + label.getPlacement() + "\n");
         }
 
         writer.flush();
