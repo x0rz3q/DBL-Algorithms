@@ -9,10 +9,10 @@ import javax.sound.midi.ControllerEventListener;
 
 // Stores point
 class Point {
-    int x;
-    int y;
+    double x;
+    double y;
 
-    Point (int x, int y) {
+    Point (double x, double y) {
         this.x = x;
         this.y = y;
     }
@@ -28,6 +28,90 @@ class Rectangle {
         this.sw = southWest;
         this.ne = northEast;
         this.associated = associatedPoint;
+    }
+
+    /**
+     * Method for checking whether rectangle collides with other rectangle
+     * @pre target and object rectangle same size
+     * @param target
+     * @return true iff target and object rectangle (partially) coincide
+     */
+    boolean checkCollision(Rectangle target) {
+        if (Math.max(this.sw.x, target.sw.x) < Math.min(this.ne.x, target.ne.x)) {
+            return true;
+        }
+        if (Math.max(this.sw.y, target.sw.y) < Math.min(this.ne.y, target.ne.y)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Method for finding all integer coordinate-points inside a rectangle
+     * @pre sw & ne defined & sw.x < ne.x & sw.y < ne.y
+     * @return array of all points with integer coordinates inside rectangle object
+     */
+    Point[] getInternal() {
+        ArrayList<Point> internalPoints = new ArrayList<>();
+        int xLowerBound;
+        int xUpperBound;
+        int yLowerBound;
+        int yUpperBound;
+        if (this.sw.x == Math.ceil(this.sw.x)) { xLowerBound = (int) this.sw.x + 1; } else { xLowerBound = (int) Math.ceil(this.sw.x); }
+        if (this.ne.x == Math.floor(this.ne.x)) { xUpperBound = (int) this.ne.x - 1; } else { xUpperBound = (int) Math.floor(this.ne.x); }
+        if (this.sw.y == Math.ceil(this.sw.y)) { yLowerBound = (int) this.sw.y + 1; } else { yLowerBound = (int) Math.ceil(this.sw.y); }
+        if (this.ne.y == Math.floor(this.ne.y)) { yUpperBound = (int) this.ne.y - 1; } else { yUpperBound = (int) Math.floor(this.ne.y); }
+
+        for (int x = xLowerBound; x <= xUpperBound; x++) {
+            for (int y = yLowerBound; y <= yUpperBound; y++) {
+                internalPoints.add(new Point(x, y));
+            }
+        }
+
+        Point[] internalPointArray = new Point[internalPoints.size()];
+        internalPointArray = internalPoints.toArray(internalPointArray);
+        return internalPointArray;
+    }
+
+    /**
+     * Returns the integer boundary points on the specified sides
+     * @param north
+     * @param east
+     * @param south
+     * @param west
+     * @return array of points containing the integer points on the specified boundaries
+     */
+    Point[] getBoundary(boolean north, boolean east, boolean south, boolean west) {
+        ArrayList<Point> boundaryPoints = new ArrayList<>();
+        int xLowerBound = (int) Math.ceil(this.sw.x);
+        int xUpperBound = (int) Math.floor(this.ne.x);
+        int yLowerBound = (int) Math.ceil(this.sw.y);
+        int yUpperBound = (int) Math.floor(this.ne.y);
+
+        if (north && (this.ne.y) == Math.floor(this.ne.y)) {
+            for (int x = xLowerBound; x <= xUpperBound; x++) {
+                boundaryPoints.add(new Point(x, this.ne.y));
+            }
+        }
+        if (east && (this.ne.x) == Math.floor(this.ne.x)) {
+            for (int y = yLowerBound; y <= yUpperBound; y++) {
+                boundaryPoints.add(new Point(this.ne.x, y));
+            }
+        }
+        if (south && (this.sw.y) == Math.floor(this.sw.y)) {
+            for (int x = xLowerBound; x <= xUpperBound; x++) {
+                boundaryPoints.add(new Point(x, this.sw.y));
+            }
+        }
+        if (west && (this.sw.x) == Math.floor(this.sw.x)) {
+            for (int y = yLowerBound; y <= yUpperBound; y++) {
+                boundaryPoints.add(new Point(this.sw.x, y));
+            }
+        }
+
+        Point[] boundaryPointArray = new Point[boundaryPoints.size()];
+        boundaryPointArray = boundaryPoints.toArray(boundaryPointArray);
+        return boundaryPointArray;
     }
 }
 
@@ -46,6 +130,7 @@ class Printer {
 
     // prints the coordinates of the generated points to the specified file
     void printPoints(Point[] points) {
+        Collections.shuffle(Arrays.asList(points));
         for (Point p : points) {
             printWriter.println(p.x + " " + p.y);
         }
@@ -138,7 +223,7 @@ abstract class GenerationStrategy {
     // TODO provide contract
     abstract Point[] generate();
     // TODO provide contract
-    abstract Rectangle[] generateStart;
+    abstract Rectangle[] generateStart();
     // TODO provide contract
 
 }
@@ -147,13 +232,187 @@ abstract class GenerationStrategy {
 class Strategy2pos extends GenerationStrategy {
     @Override
     Point[] generate() {
-        generateStart();
-        // TODO implement
+        ArrayList<Rectangle> rectangles = new ArrayList<>();
+
+        // Add starting rectangles
+        Rectangle[] startingRectangles = generateStart();
+        for (Rectangle r : startingRectangles) {
+            rectangles.add(r);
+        }
+        int counter = 0;
+        double width = data.result * data.ratio;
+        while (rectangles.size() < data.n && counter < data.n * 10000) {
+            counter++;
+
+            Point candidate = new Point(data.xGenerator.sample(), data.yGenerator.sample());
+            boolean useLeft = rand.nextBoolean();
+            if (useLeft) {
+                // Check left
+                Rectangle candidateRectangle = new Rectangle(new Point(candidate.x - width, candidate.y), new Point(candidate.x, candidate.y + data.result), candidate);
+                boolean collision = false;
+                for (Rectangle r : rectangles) {
+                    if (candidateRectangle.checkCollision(r)) {
+                        collision = true;
+                        break;
+                    }
+                }
+                if (!collision) {
+                    rectangles.add(candidateRectangle);
+                    continue;
+                }
+
+                // Then right
+                candidateRectangle = new Rectangle(candidate, new Point(candidate.x + width, candidate.y + data.result), candidate);
+                collision = false;
+                for (Rectangle r : rectangles) {
+                    if (candidateRectangle.checkCollision(r)) {
+                        collision = true;
+                        break;
+                    }
+                }
+                if (!collision) {
+                    rectangles.add(candidateRectangle);
+                    continue;
+                }
+            } else {
+                // Check right
+                Rectangle candidateRectangle = new Rectangle(candidate, new Point(candidate.x + width, candidate.y + data.result), candidate);
+                boolean collision = false;
+                for (Rectangle r : rectangles) {
+                    if (candidateRectangle.checkCollision(r)) {
+                        collision = true;
+                        break;
+                    }
+                }
+                if (!collision) {
+                    rectangles.add(candidateRectangle);
+                    continue;
+                }
+
+                // Then left
+                candidateRectangle = new Rectangle(new Point(candidate.x - width, candidate.y), new Point(candidate.x, candidate.y + data.result), candidate);
+                collision = false;
+                for (Rectangle r : rectangles) {
+                    if (candidateRectangle.checkCollision(r)) {
+                        collision = true;
+                        break;
+                    }
+                }
+                if (!collision) {
+                    rectangles.add(candidateRectangle);
+                    continue;
+                }
+            }
+        }
+
+        Point[] associatedPoints = new Point[rectangles.size()];
+        for (int i = 0; i < rectangles.size(); i++) {
+            associatedPoints[i] = rectangles.get(i).associated;
+        }
+
     }
 
     @Override
-    Rectangle[] generateStart {
-        // TODO implement
+    Rectangle[] generateStart() {
+        // ArrayList storing rectangles to be returned
+        ArrayList<Rectangle> rectangles = new ArrayList<>();
+
+        // width of rectangle
+        double width = data.result * data.ratio;
+
+        // initial point
+        Point startPoint = new Point(data.xGenerator.sample(), data.yGenerator.sample());
+        // Possible labels for initial point
+        Rectangle leftRectangle = new Rectangle(new Point(startPoint.x - width, startPoint.y), new Point(startPoint.x, startPoint.y + data.result), startPoint);
+        Rectangle rightRectangle = new Rectangle(new Point(startPoint.x, startPoint.y), new Point(startPoint.x + width, startPoint.y + data.result), startPoint);
+
+        boolean useLeft = rand.nextBoolean();
+        if (useLeft) {
+            rectangles.add(leftRectangle);
+
+            // Constructing rectangle making right option invalid
+            Point[] internalRight = rightRectangle.getInternal();
+            int randIndex = rand.nextInt(internalRight.length);
+            Point invalidator = internalRight[randIndex];
+            rectangles.add(new Rectangle(invalidator, new Point(invalidator.x + width, invalidator.y + data.result), invalidator));
+
+            // Constructing rectangle limiting size of starting rectangle
+            Point[] boundaryLeft = leftRectangle.getBoundary(true,false, false, true);
+            if (boundaryLeft.length == 0) {
+                // must lock in with two rectangles
+                Point lockPoint = new Point(startPoint.x - 2 * width, startPoint.y);
+                rectangles.add(new Rectangle(lockPoint, new Point(startPoint.x - width, startPoint.y + data.result), lockPoint));
+
+                // Construct final blocker
+                Point[] finalBlockerOptions = (new Rectangle(new Point(lockPoint.x - width, lockPoint.y), new Point(lockPoint.x, lockPoint.y + data.result), lockPoint)).getInternal();
+                randIndex = rand.nextInt(finalBlockerOptions.length);
+                Point finalBlocker = finalBlockerOptions[randIndex];
+                rectangles.add(new Rectangle(new Point(finalBlocker.x - width, finalBlocker.y), new Point(finalBlocker.x, finalBlocker.y + data.result), finalBlocker));
+            } else {
+                randIndex = rand.nextInt(boundaryLeft.length);
+                Point blocker = boundaryLeft[randIndex];
+                while (blocker.x == startPoint.x) {
+                    randIndex = rand.nextInt(boundaryLeft.length);
+                    blocker = boundaryLeft[randIndex];
+                }
+
+                if (blocker.y < leftRectangle.ne.y) {
+                    rectangles.add(new Rectangle(new Point(blocker.x - width, blocker.y), new Point(blocker.x, blocker.y + data.result), blocker));
+                } else {
+                    useLeft = rand.nextBoolean();
+                    if (useLeft) {
+                        rectangles.add(new Rectangle(new Point(blocker.x - width, blocker.y), new Point(blocker.x, blocker.y + data.result), blocker));
+                    } else {
+                        rectangles.add(new Rectangle(new Point(blocker.x, blocker.y), new Point(blocker.x + width, blocker.y + data.result), blocker));
+                    }
+                }
+            }
+        } else {
+            rectangles.add(rightRectangle);
+
+            // Constructing rectangle making left option invalid
+            Point[] internalLeft = leftRectangle.getInternal();
+            int randIndex = rand.nextInt(internalLeft.length);
+            Point invalidator = internalLeft[randIndex];
+            rectangles.add(new Rectangle(new Point(invalidator.x -width, invalidator.y), new Point(invalidator.x, invalidator.y + data.result), invalidator));
+
+            // Constructing rectangle limiting size of starting rectangle
+            Point[] boundaryRight = rightRectangle.getBoundary(true,true, false, false);
+            if (boundaryRight.length == 0) {
+                // must lock in with two rectangles
+                Point lockPoint = new Point(startPoint.x + 2 * width, startPoint.y);
+                rectangles.add(new Rectangle(new Point(startPoint.x + width, startPoint.y), new Point(startPoint.x + 2 * width, startPoint.y + data.result), lockPoint));
+
+                // Construct final blocker
+                Point[] finalBlockerOptions = (new Rectangle(lockPoint, new Point(lockPoint.x + width, lockPoint.y + data.result), lockPoint)).getInternal();
+                randIndex = rand.nextInt(finalBlockerOptions.length);
+                Point finalBlocker = finalBlockerOptions[randIndex];
+                rectangles.add(new Rectangle(finalBlocker, new Point(finalBlocker.x + width, finalBlocker.y + data.result), finalBlocker));
+            } else {
+                randIndex = rand.nextInt(boundaryRight.length);
+                Point blocker = boundaryRight[randIndex];
+                while (blocker.x == startPoint.x) {
+                    randIndex = rand.nextInt(boundaryRight.length);
+                    blocker = boundaryRight[randIndex];
+                }
+
+                if (blocker.y < leftRectangle.ne.y) {
+                    rectangles.add(new Rectangle(blocker, new Point(blocker.x + width, blocker.y + data.result), blocker));
+                } else {
+                    useLeft = rand.nextBoolean();
+                    if (useLeft) {
+                        rectangles.add(new Rectangle(new Point(blocker.x - width, blocker.y), new Point(blocker.x, blocker.y + data.result), blocker));
+                    } else {
+                        rectangles.add(new Rectangle(new Point(blocker.x, blocker.y), new Point(blocker.x + width, blocker.y + data.result), blocker));
+                    }
+                }
+            }
+        }
+
+        Rectangle[] rectangleArray = new Rectangle[rectangles.size()];
+        rectangleArray = rectangles.toArray(rectangleArray);
+        return rectangleArray;
+
     }
 
     Strategy2pos(TestData data) { this.data = data; }
@@ -167,7 +426,7 @@ class Strategy4pos extends GenerationStrategy {
     }
 
     @Override
-    Rectangle[] generateStart {
+    Rectangle[] generateStart() {
         // TODO implement
     }
 
@@ -184,7 +443,7 @@ class Strategy1slider extends GenerationStrategy {
     }
 
     @Override
-    Rectangle[] generateStart {
+    Rectangle[] generateStart() {
         // TODO implement
     }
 
