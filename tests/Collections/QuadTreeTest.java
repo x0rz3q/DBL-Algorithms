@@ -8,8 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class QuadTreeTest extends AbstractCollectionTest {
 
@@ -18,6 +17,7 @@ class QuadTreeTest extends AbstractCollectionTest {
         Anchor anchor = new Anchor(0, 0);
         SquareInterface boundary = new Square(anchor, 10000);
         this.instance = new QuadTree(boundary);
+        this.instance.setDataLimit(1);
     }
 
     @Test
@@ -69,8 +69,27 @@ class QuadTreeTest extends AbstractCollectionTest {
         assertTrue(points.contains(point2));
     }
 
+    // Test if point in boundary returns true on intersect method
     @Test
     void intersects() {
+        SquareInterface point = new Point(5000, 5000);
+        assertTrue(this.instance.intersects(point));
+    }
+
+    // Test if point outside boundary returns false on intersect method
+    // TODO: Fix that points can be instantiated with negative coordinates
+    @Test
+    void intersects2() {
+        SquareInterface point = new Point(-2000, 5000);
+        assertFalse(this.instance.intersects(point));
+    }
+
+    // Test if point outside boundary returns false on intersect method
+    // TODO: Fix that points can be instantiated with coordinates > 10000
+    @Test
+    void intersects3() {
+        SquareInterface point = new Point(11000, 5000);
+        assertFalse(this.instance.intersects(point));
     }
 
     @Test
