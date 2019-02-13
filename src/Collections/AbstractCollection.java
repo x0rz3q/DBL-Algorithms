@@ -7,7 +7,6 @@ import java.util.Collection;
 
 public abstract class AbstractCollection implements AbstractCollectionInterface {
     protected int count;
-    protected SquareInterface root;
 
     public AbstractCollection() {
         this.count = 0;
