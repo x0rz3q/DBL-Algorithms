@@ -1,10 +1,18 @@
 package Collections;
 
+import interfaces.models.SquareInterface;
+import models.Anchor;
+import models.Square;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+class QuadTreeTest extends AbstractCollectionTest {
 
-class QuadTreeTest {
+    @Override
+    protected void setInstance() {
+        Anchor anchor = new Anchor(0, 0);
+        SquareInterface boundary = new Square(anchor, 10000);
+        this.instance = new QuadTree(boundary);
+    }
 
     @Test
     void insert() {
