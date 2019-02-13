@@ -3,8 +3,8 @@ package models;
 public class PositionLabel extends AbstractLabel {
     protected DirectionEnum direction;
 
-    public PositionLabel(double x, double y, double size, DirectionEnum direction) {
-        super(x, y, size);
+    public PositionLabel(double x, double y, double size, DirectionEnum direction, int ID) {
+        super(x, y, size, ID);
         this.setEdgeLength(size, direction);
     }
 
@@ -12,8 +12,6 @@ public class PositionLabel extends AbstractLabel {
         if (edgeLength < 0) {
             throw new IllegalArgumentException("PositionLabel.setEdgeLength.pre violated: edgeLength < 0");
         }
-        super.setEdgeLength(edgeLength);
-
         switch (direction) {
             case NE:
                 this.setAnchor(new Anchor(this.getPOI().getX(), this.getPOI().getY()));
@@ -31,7 +29,7 @@ public class PositionLabel extends AbstractLabel {
                 throw new IllegalArgumentException(direction.toString() + " not implemented!");
         }
 
-        this.setEdgeLength(edgeLength);
+        this.edgeLength = edgeLength;
         this.direction = direction;
     }
 

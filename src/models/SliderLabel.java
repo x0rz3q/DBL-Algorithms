@@ -3,8 +3,8 @@ package models;
 public class SliderLabel extends AbstractLabel {
     protected double shift;
 
-    public SliderLabel(double x, double y, double size, double shift) {
-        super(x, y, size);
+    public SliderLabel(double x, double y, double size, double shift, int ID) {
+        super(x, y, size, ID);
         this.setEdgeLength(size, shift);
     }
 

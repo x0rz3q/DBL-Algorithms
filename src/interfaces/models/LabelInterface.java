@@ -22,4 +22,11 @@ public interface LabelInterface extends SquareInterface {
      * @return SquareInterface
      */
     SquareInterface getPOI();
+
+    /**
+     * Get unique ID.
+     *
+     * @return Integer
+     */
+    Integer getID();
 }

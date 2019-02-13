@@ -58,10 +58,10 @@ class Parser implements ParserInterface {
                 switch (rec.placementModel) {
                     case TWO_POS:
                     case FOUR_POS:
-                        label = new PositionLabel(x, y*rec.aspectRatio, 0, DirectionEnum.NE);
+                        label = new PositionLabel(x, y*rec.aspectRatio, 0, DirectionEnum.NE, i);
                         break;
                     case ONE_SLIDER:
-                        label = new SliderLabel(x, y*rec.aspectRatio, 0, 0);
+                        label = new SliderLabel(x, y*rec.aspectRatio, 0, 0, i);
                         break;
                 }
                 rec.points.add(label);
