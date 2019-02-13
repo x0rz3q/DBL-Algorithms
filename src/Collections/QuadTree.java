@@ -24,21 +24,21 @@ public class QuadTree extends AbstractCollection
     /** limit of data per tree **/
     private int dataLimit;
 
-    QuadTree(SquareInterface boundary) {
+    public QuadTree(SquareInterface boundary) {
         super();
         this.data = new ArrayList<>();
         this.leaf = true;
         setBoundary(boundary);
     }
 
-    QuadTree(SquareInterface boundary, Collection<SquareInterface> nodes) {
+    public QuadTree(SquareInterface boundary, Collection<? extends SquareInterface> nodes) {
         this(boundary);
         for (SquareInterface s : nodes) {
             insert(s);
         }
     }
 
-    QuadTree(Collection<SquareInterface> nodes) {
+    public QuadTree(Collection<? extends SquareInterface> nodes) {
         super();
         this.data = new ArrayList<>();
         this.leaf = true;
