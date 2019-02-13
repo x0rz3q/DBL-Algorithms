@@ -1,7 +1,9 @@
     package Collections;
 
+import interfaces.models.AnchorInterface;
 import interfaces.models.SquareInterface;
 import models.Square;
+import models.Anchor;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,11 +57,12 @@ public class QuadTree extends AbstractCollection
     }
 
     /**
-     * Sets the amount of data allowed in a leaf of quadtree
+     * Sets the amount of data allowed in a leaf of quadtree.
      * @param l
      * @pre {@code l > 0}
      */
-    private void setDataLimit(final int l) {
+    @Override
+    public void setDataLimit(final int l) {
         this.dataLimit = l;
     }
 
@@ -70,10 +73,18 @@ public class QuadTree extends AbstractCollection
      */
     private void subDivide() {
         SquareInterface NW, NE, SW, SE;
-        this.NW = subDivide(this.boundary); // ((Xmin,Ymax), center)
-        this.NE = subDivide(this.boundary); // ((Xmax - width/2, Ymax),(Xmax, Ymax - heigh/2))
-        this.SW = subDivide(this.boundary); // ((Xmin, Ymin + height/2),(Xmin + width/2, Ymin))
-        this.SE = subDivide(this.boundary); // (center, (Xmax, Ymin))
+        double newWidth = this.boundary.getEdgeLength() / 2;
+        AnchorInterface bottomLeft = this.boundary.getAnchor();
+
+        NW = new Square(new Anchor(bottomLeft.getX(), bottomLeft.getY() + newWidth), newWidth);
+        this.NW = subDivide(NW);
+        NE = new Square(new Anchor(bottomLeft.getX() + newWidth, bottomLeft.getY() + newWidth), newWidth);
+        this.NE = subDivide(NE);
+        SW = new Square(bottomLeft, newWidth);
+        this.SW = subDivide(SW);
+        SE = new Square(new Anchor(bottomLeft.getX() + newWidth, bottomLeft.getY()), newWidth);
+        this.SE = subDivide(SE);
+
         this.data.clear();
         this.count = 0;
         this.leaf = false;
@@ -85,8 +96,7 @@ public class QuadTree extends AbstractCollection
      * @return QuadTree, the new subdivision
      */
     private QuadTree subDivide(SquareInterface b) {
-        QuadTree t = new QuadTree(getData()); // add root data to subtree
-        t.setBoundary(b); // set the new boundary
+        QuadTree t = new QuadTree(b, getData()); // add root data to subtree
         t.setDataLimit(this.dataLimit); // keep same limit
         return t;
     }
