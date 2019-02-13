@@ -1,12 +1,11 @@
 package algorithms;
 
-import interfaces.AbstractCollectionInterface;
-import interfaces.models.RectangleInterface;
+import models.DataRecord;
 
 import java.util.ArrayList;
 import java.util.Stack;
 
-public class TwoPositionBinarySearcher<T extends RectangleInterface> extends BinarySearcher<T> {
+public class TwoPositionBinarySearcher extends BinarySearcher {
 
 
     // variable for dfs to keep track of visited nodes
@@ -34,47 +33,50 @@ public class TwoPositionBinarySearcher<T extends RectangleInterface> extends Bin
 
 
     @Override
-    boolean isSolvable(AbstractCollectionInterface<T> nodes, float height) {
+    boolean isSolvable(DataRecord record, float height) {
         if (heightLastGraph != height) {
-            createGraph(nodes, height);
+            createGraph(record, height);
         }
-        return Kosaraju(nodes.size());
+        return Kosaraju(record.points.size());
 
     }
 
     @Override
-    void getSolution(AbstractCollectionInterface<T> nodes, float height) {
+    void getSolution(DataRecord record, float height) {
         if (heightLastGraph != height) {
-            createGraph(nodes, height);
+            createGraph(record, height);
         }
 
-        isSet = new boolean[nodes.size()];
+        int noPoints = record.points.size();
 
-        for (int i = 0; i < nodes.size(); i++) {
+        isSet = new boolean[noPoints];
+
+        for (int i = 0; i < noPoints; i++) {
             if (!isSet[i]) {
-                assignTrue(i, nodes.size());
+                assignTrue(i, noPoints);
             }
         }
     }
 
 
-    private void createGraph(AbstractCollectionInterface<T> nodes, float height) {
+    private void createGraph(DataRecord record, float height) {
 
         heightLastGraph = height;
 
+        int noPoints = record.points.size();
+
         // ------------ initialize variables ------------
-        visited = new boolean[nodes.size() * 2];
+        visited = new boolean[noPoints * 2];
         s = new Stack<>();
-        scc = new int[nodes.size() * 2];
+        scc = new int[noPoints * 2];
         counter = 0;
 
-        adj = new ArrayList[nodes.size() * 2];
-        adjInv = new ArrayList[nodes.size() * 2];
+        adj = new ArrayList[noPoints * 2];
+        adjInv = new ArrayList[noPoints * 2];
 
 
-        int noInputs = nodes.size();
 
-        for (int i = 0; i < noInputs * 2; i++) {
+        for (int i = 0; i < noPoints * 2; i++) {
             adj[i] = new ArrayList<>();
             adjInv[i] = new ArrayList<>();
         }
@@ -83,11 +85,7 @@ public class TwoPositionBinarySearcher<T extends RectangleInterface> extends Bin
         // ------------ adding edges to graph ------------
         // TODO: I need the right data structure for that
         // loop over every point and for both rectangles check overlaps
-        for (T n : nodes) {
 
-
-            nodes.query2D(n);
-        }
     }
 
     private boolean Kosaraju(int noInputs) {
