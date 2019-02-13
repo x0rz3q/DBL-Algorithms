@@ -41,6 +41,18 @@ class QuadTreeTest extends AbstractCollectionTest {
         assertTrue(points.contains(point2));
     }
 
+    @Test
+    void insert3() {
+        SquareInterface point1 = new Point(4000, 4000);
+        SquareInterface point2 = new Point(6000, 6000);
+        this.instance.insert(point1);
+        this.instance.insert(point2);
+        SquareInterface range = new Square(new Anchor(4000, 4000), 2000);
+        Collection<SquareInterface> points = this.instance.query2D(range);
+        assertTrue(points.contains(point1));
+        assertTrue(points.contains(point2));
+    }
+
     /**
      * Not implemented yet
     @Test
