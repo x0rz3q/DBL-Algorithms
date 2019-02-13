@@ -1,7 +1,6 @@
 package interfaces;
 
-import interfaces.models.SquareInterface;
-import models.DataRecord;
+import Parser.DataRecord;
 
 public interface AbstractAlgorithmInterface {
     /**
