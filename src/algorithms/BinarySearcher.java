@@ -1,7 +1,7 @@
 package algorithms;
 
 import interfaces.AbstractAlgorithmInterface;
-import models.DataRecord;
+import Parser.DataRecord;
 
 public abstract class BinarySearcher implements AbstractAlgorithmInterface {
     /**

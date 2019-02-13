@@ -1,11 +1,14 @@
 package algorithms;
 
+import interfaces.models.LabelInterface;
 import interfaces.models.SquareInterface;
-import models.DataRecord;
+import Parser.DataRecord;
 import models.DirectionEnum;
 import models.PositionLabel;
+import models.Square;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Stack;
 
 public class TwoPositionBinarySearcher extends BinarySearcher {
@@ -94,10 +97,32 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
         // loop over every point and for both rectangles check overlaps
 
 
-        for (SquareInterface point : record.points) {
+        for (LabelInterface point : record.points) {
 
+            // label NE intersects with NE lables
+            Collection<SquareInterface> collection = record.collection.query2D(new Square(point.getAnchor(), 1));
+            for (SquareInterface square : collection) {
+                addEdgeAndInverse(point.getID(), square.getID());
+            }
+
+            // label NE intersects with NW lables
+            collection = record.collection.query2D(new Square(point.getAnchor(), 1));
+            for (SquareInterface square : collection) {
+                addEdgeAndInverse(point.getID(), square.getID() + noPoints);
+            }
+
+            // label NW intersects with NE lables
+            collection = record.collection.query2D(new Square(point.getAnchor(), 1));
+            for (SquareInterface square : collection) {
+                addEdgeAndInverse(point.getID() + noPoints, square.getID());
+            }
+
+            // label NW intersects with NW lables
+            collection = record.collection.query2D(new Square(point.getAnchor(), 1));
+            for (SquareInterface square : collection) {
+                addEdgeAndInverse(point.getID() + noPoints, square.getID() + noPoints);
+            }
         }
-
     }
 
     private boolean Kosaraju(int noInputs) {
@@ -178,7 +203,7 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
         }
 
         for (int i : adj[node]) {
-            if (!isSet[i % noNodes]) {
+            if (!isSet[i % noNodes] && scc[node % noNodes] == scc[i % noNodes]) {
                 assignTrue(record, i, noNodes);
 
             }
