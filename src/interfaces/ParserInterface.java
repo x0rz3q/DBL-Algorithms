@@ -3,6 +3,7 @@ package interfaces;
 import Parser.DataRecord;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 public interface ParserInterface {
@@ -14,7 +15,7 @@ public interface ParserInterface {
      * @throws NullPointerException if {@code source == null}
      * @throws IOException if read error occurs
      */
-    DataRecord input(Readable source, Class<? extends AbstractCollectionInterface> collectionClass) throws NullPointerException, IOException;
+    DataRecord input(InputStream source, Class<? extends AbstractCollectionInterface> collectionClass) throws NullPointerException, IOException;
 
     /**
      * Serialize internal program structure towards output stream.
