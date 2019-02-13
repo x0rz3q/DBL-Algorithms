@@ -1,6 +1,6 @@
 package interfaces;
 
-import models.DataRecord;
+import Parser.DataRecord;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -14,7 +14,7 @@ public interface ParserInterface {
      * @throws NullPointerException if {@code source == null}
      * @throws IOException if read error occurs
      */
-    DataRecord input(Readable source) throws NullPointerException, IOException;
+    DataRecord input(Readable source, Class<? extends AbstractCollectionInterface> collectionClass) throws NullPointerException, IOException;
 
     /**
      * Serialize internal program structure towards output stream.
