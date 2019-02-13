@@ -13,9 +13,10 @@ public abstract class BinarySearcher implements AbstractAlgorithmInterface {
     @Override
     public void solve(DataRecord record) {
 
-        // TODO: change back
         float alpha = record.aspectRatio;
 
+        // --------- calculating the initial bounds -------------
+        // estimate of upper bound which may be too low
         int high = (int)(10000 * Math.sqrt(alpha / record.points.size()));
         int low = 0;
 
@@ -25,8 +26,8 @@ public abstract class BinarySearcher implements AbstractAlgorithmInterface {
             low = high;
             high = (int) (high * 1.5);
         }
-
-
+        // ----------- execute binary search ---------
+        // first binary search to reduce to integral values (width)
         while (low < high - 1) {
             int mid = (high + low) / 2;
             if (isSolvable(record, mid)) {
@@ -39,6 +40,7 @@ public abstract class BinarySearcher implements AbstractAlgorithmInterface {
         float height = low;
         int i_low, i_high;
 
+        // check half step of width and calculate indices for height search
         if (isSolvable(record, low + 0.5f)) {
             // System.out.println("so far: " + (low + 0.5) + " " + high);
             i_low =  (int) Math.ceil((low + 0.5) / alpha);
@@ -50,6 +52,7 @@ public abstract class BinarySearcher implements AbstractAlgorithmInterface {
             i_high =  (int) Math.ceil((low + 0.5) / alpha);
         }
 
+        // binary search on height
         while (i_low < i_high - 1) {
             int mid = (i_high + i_low) / 2;
             if (isSolvable(record, mid * alpha)) {
@@ -58,11 +61,16 @@ public abstract class BinarySearcher implements AbstractAlgorithmInterface {
                 i_high = mid;
             }
         }
+
+        // check if new value is valid
         if(i_low * alpha < high && i_low * alpha > low) {
             if (isSolvable(record, i_low * alpha)) {
                 height = Math.max(low, i_low * alpha);
             }
         }
+
+
+        // -------- execute algorithm ---------
         getSolution(record, height);
     }
 
