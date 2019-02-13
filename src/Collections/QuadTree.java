@@ -88,7 +88,6 @@ public class QuadTree extends AbstractCollection
         this.SE = subDivide(SE);
 
         this.data.clear();
-        this.count = 0;
         this.leaf = false;
     }
 
