@@ -5,10 +5,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class AbstractCollectionTest {
+abstract class AbstractCollectionTest {
+    protected AbstractCollection instance;
+    protected abstract void setInstance();
 
     @BeforeEach
-    void setup() { }
+    void setup() { setInstance(); }
 
 
 
