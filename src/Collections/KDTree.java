@@ -1,6 +1,7 @@
 package Collections;
 
 import interfaces.models.SquareInterface;
+import models.BoundingBox;
 
 import java.util.Collection;
 
@@ -21,7 +22,17 @@ public class KDTree extends AbstractCollection{
     }
 
     @Override
+    public Collection<SquareInterface> query2D(BoundingBox range) {
+        return null;
+    }
+
+    @Override
     public Boolean intersects(SquareInterface node) {
+        return null;
+    }
+
+    @Override
+    public Boolean intersects(BoundingBox node) {
         return null;
     }
 

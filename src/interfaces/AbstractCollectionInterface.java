@@ -1,6 +1,7 @@
 package interfaces;
 
 import interfaces.models.SquareInterface;
+import models.BoundingBox;
 
 import java.util.Collection;
 
@@ -30,10 +31,17 @@ public interface AbstractCollectionInterface {
      *
      * @param range {@link SquareInterface}
      * @return List
-     * @post {@code (\forall i; \result.has(i); range.contains(\result.get(i)))}
+     * @post {@code (\forall i; \result.has(i); range.intersects(\result.get(i)))}
      */
     Collection<SquareInterface> query2D(SquareInterface range);
 
+    /**
+     * Get all items that intersect with the given range
+     * @param range {@link BoundingBox}
+     * @return collection of objects in contained in the range
+     * @post {@code (\forall i; \result.has(i); range.intersects(\result.get(i)))}
+     */
+    Collection<SquareInterface> query2D(BoundingBox range);
     /**
      * Check if an item intersects with given node.
      *
@@ -42,6 +50,12 @@ public interface AbstractCollectionInterface {
      */
     Boolean intersects(SquareInterface node);
 
+    /**
+     * Check if an item intersects with given node
+     * @param node {@link BoundingBox}
+     * @return Boolean
+     */
+    Boolean intersects(BoundingBox node);
     /**
      * Get the size of the collection.
      *
