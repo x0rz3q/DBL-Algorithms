@@ -5,41 +5,19 @@ package Parser;
 
 import interfaces.AbstractCollectionInterface;
 import interfaces.ParserInterface;
-import interfaces.models.LabelInterface;
-import interfaces.models.SquareInterface;
 import models.PlacementModelEnum;
+import models.Point;
+import Collections.QuadTree;
+import Collections.KDTree;
 
 import java.io.*;
 import java.util.*;
 
 class Parser implements ParserInterface {
 
-     // The class that is used for implementing the AbstractCollectionInterface
-     private Class<? extends AbstractCollectionInterface> collectionClass;
 
-     // The class that is used for implementing the PointInterface
-     private Class<? extends SquareInterface> pointClass;
-
-    /**
-     * Create a parser that parses input-and-output files using collectionClass<pointClass> as datastructure
-     *
-     * @param collectionClass The class used for implementing {@link AbstractCollectionInterface}
-     * @param pointClass The class used for implementing {@link LabelInterface}
-     */
-     Parser (Class<? extends AbstractCollectionInterface> collectionClass, Class<? extends SquareInterface> pointClass) {
-         if (collectionClass == null) {
-             throw new NullPointerException("parser.input: class implementing AbstractCollectionInterface not found");
-         }
-         if (pointClass == null) {
-             throw new NullPointerException("parser.input: class implementing SquareInterface not found");
-         }
-
-         this.collectionClass = collectionClass;
-         this.pointClass = pointClass;
-     }
-
-
-    public DataRecord input(Readable source) throws NullPointerException, IOException {
+    @Override
+    public DataRecord input(Readable source, Class<? extends AbstractCollectionInterface> collectionClass) throws NullPointerException, IOException {
         if (source == null) throw new NullPointerException("parser.input: source not found");
 
         DataRecord rec = new DataRecord();
@@ -69,46 +47,45 @@ class Parser implements ParserInterface {
             throw new IOException("parser.input: no aspect ratio found");
         }
 
-
-
         try {
             while (!sc.hasNextInt()) sc.next();
             int n = sc.nextInt();
-            List<SquareInterface> points = new ArrayList<>(n);
-            List<Parser.DataRecord.CoordinatedPoint> pointsOrig = new ArrayList<>(n);
+            rec.points = new ArrayList<>(n);
+            rec.pointsOrig = new ArrayList<>(n);
 
             for (int i = 0; i < n; i++) {
-
                 int x = sc.nextInt();
                 int y = sc.nextInt();
 
-                SquareInterface point = pointClass.newInstance();
-//  @TODO       point.setLoc((float) x, y * rec.aspectRatio);
-                point.setAnchor();
-                point.setSize(0d, 0d);
-                points.add(point);
-
-                DataRecord.CoordinatedPoint cPoint = new Parser.DataRecord.CoordinatedPoint(point, x, y);
-                pointsOrig.add(cPoint);
+                Point point = new Point(x, y * rec.aspectRatio);
+                rec.points.add(point);
+                rec.pointsOrig.add(new DataRecord.CoordinatedPoint(point, x, y));
             }
 
-            rec.points = points;
 
-            rec.labels = collectionClass.newInstance();
-            rec.labels.insert(points);
-
-            rec.pointsOrig = pointsOrig;
+            if (collectionClass == QuadTree.class) {
+                rec.collection = initQuadTree();
+            } else if (collectionClass == KDTree.class) {
+                rec.collection = initKDTree();
+            }
 
         } catch (NoSuchElementException e) {
             throw new IOException("parser.input: number of points does not correspond to found coordinates");
-        } catch (InstantiationException|IllegalAccessException e) {
-            e.printStackTrace();
         }
 
         sc.close();
         return rec;
     }
 
+    private QuadTree initQuadTree() {
+        // @TODO initialize a QuadTree
+        return null;
+    }
+
+    private KDTree initKDTree() {
+        // @TODO initialize a KDTree
+        return null;
+    }
 
     @Override
     public void output(DataRecord record, OutputStream stream) throws NullPointerException {
@@ -135,7 +112,7 @@ class Parser implements ParserInterface {
         );
 
         for (Parser.DataRecord.CoordinatedPoint cPoint : record.pointsOrig) {
-            writer.write(cPoint.x + " " + cPoint.y + " "
+            writer.write(cPoint.x + " " + cPoint.y + " " cPoint.point.
 //  @TODO           + cPoint.square. "get relative position"
                     + "\n");
         }

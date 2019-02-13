@@ -4,6 +4,7 @@
 
 import Parser.DataRecord;
 import interfaces.models.SquareInterface;
+import models.Point;
 
 class Interpreter {
 
@@ -17,7 +18,7 @@ class Interpreter {
     static boolean isValid (DataRecord record) {
         if (record.points == null || record.placementModel == null) return false;
 
-        for (SquareInterface label : record.points) {
+        for (Point point : record.points) {
             if (record.labels.query2D(label).size() > 1) return false;
         }
 

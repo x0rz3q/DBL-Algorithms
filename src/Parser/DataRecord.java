@@ -3,31 +3,30 @@ package Parser;
 import interfaces.AbstractCollectionInterface;
 import interfaces.models.SquareInterface;
 import models.PlacementModelEnum;
+import models.Point;
 
 import java.util.List;
 
 public class DataRecord {
 
     protected List<CoordinatedPoint> pointsOrig;
-    public List<SquareInterface> points;
-    public AbstractCollectionInterface labels;
+    public List<Point> points;
+    public AbstractCollectionInterface collection;
     public Float aspectRatio;
     public PlacementModelEnum placementModel;
     public Float height = 0.0f;
 
     protected DataRecord () {}
 
-    /**
-     * A private
-     */
+
     static class CoordinatedPoint{
 
-        final SquareInterface square;
+        final Point point;
         final int x;
         final int y;
 
-        CoordinatedPoint (SquareInterface square, int x, int y) {
-            this.square = square;
+        CoordinatedPoint (Point point, int x, int y) {
+            this.point = point;
             this.x = x;
             this.y = y;
         }
