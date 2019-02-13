@@ -6,7 +6,6 @@ import interfaces.models.SquareInterface;
 public abstract class AbstractSquare implements SquareInterface {
     protected AnchorInterface anchor;
     protected Double edgeLength;
-    protected Integer ID;
 
     /**
      * Constructor
@@ -14,11 +13,10 @@ public abstract class AbstractSquare implements SquareInterface {
      * @param anchor {@link AnchorInterface}
      * @param edgeLength double
      * @pre {@code edgeLength >= 0 && anchor <> null}
-     * @pre {@code ID >= 0}
-     * @throws IllegalArgumentException if {@code edgeLength < 0 || ID < 0}
+     * @throws IllegalArgumentException if {@code edgeLength < 0}
      * @throws NullPointerException if {@code anchor == null}
      */
-    public AbstractSquare(AnchorInterface anchor, double edgeLength, int ID) throws IllegalArgumentException, NullPointerException {
+    public AbstractSquare(AnchorInterface anchor, double edgeLength) throws IllegalArgumentException, NullPointerException {
         if (anchor == null) {
             throw new NullPointerException("AbstractSquare.constructor.pre violated: anchor == null");
         }
@@ -29,7 +27,6 @@ public abstract class AbstractSquare implements SquareInterface {
 
         this.anchor = anchor;
         this.edgeLength = edgeLength;
-        this.ID = ID;
     }
 
     @Override
@@ -77,9 +74,5 @@ public abstract class AbstractSquare implements SquareInterface {
         return this.getXMin() <= square.getXMax() && square.getXMin() <= this.getXMax() &&
                 this.getYMin() <= square.getYMax() && square.getYMin() <= this.getYMax();
 
-    }
-
-    public Integer getID() {
-        return ID;
     }
 }

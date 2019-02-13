@@ -108,10 +108,4 @@ public interface SquareInterface {
      * @return Boolean
      */
     Boolean intersects(SquareInterface square);
-
-    /**
-     *
-     * @return
-     */
-    Integer getID();
 }
