@@ -1,6 +1,6 @@
 package interfaces.models;
 
-public interface LabelInterface extends RectangleInterface {
+public interface LabelInterface extends SquareInterface {
     /**
      * Serialize as a string.
      *
@@ -11,36 +11,9 @@ public interface LabelInterface extends RectangleInterface {
     /**
      * Get the Point of Interest.
      *
-     * @return PointInterface
+     * @return SquareInterface
      */
-    PointInterface getPOI();
-
-    /**
-     * Get the aspect ratio.
-     *
-     * @return Float
-     */
-    Float getAspectRatio();
-
-    /**
-     * Set the size based on height.
-     *
-     * @param height Float
-     * @pre {@code height >= 0}
-     * @post {@code this.getHeight() == height && this.getWidth() / this.getHeight() == this.getAspectRatio()}
-     * @throws IllegalArgumentException if {@code height < 0}
-     */
-    void setHeight(Float height) throws IllegalArgumentException;
-
-    /**
-     * Set the size based on width.
-     *
-     * @param width Float
-     * @pre {@code width >= 0}
-     * @post {@code this.getWidth() == width && this.getWidth() / this.getHeight() == this.getAspectRatio()}
-     * @throws IllegalArgumentException if {@code width < 0}
-     */
-    void setWidth(Float width) throws IllegalArgumentException;
+    SquareInterface getPOI();
 
     /**
      * Set the size.

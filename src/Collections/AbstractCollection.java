@@ -1,16 +1,19 @@
+package Collections;
+
 import interfaces.AbstractCollectionInterface;
+import interfaces.models.SquareInterface;
 
 import java.util.Collection;
 
-public abstract class AbstractCollection<T> implements AbstractCollectionInterface<T>{
+public abstract class AbstractCollection implements AbstractCollectionInterface {
     protected int count;
-    protected T root;
+    protected SquareInterface root;
 
     public AbstractCollection() {
         this.count = 0;
     }
 
-    public AbstractCollection(Collection<T> nodes) {
+    public AbstractCollection(Collection<SquareInterface> nodes) {
         this();
         this.insert(nodes);
     }
