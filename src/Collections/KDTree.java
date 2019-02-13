@@ -12,11 +12,6 @@ public class KDTree extends AbstractCollection{
     }
 
     @Override
-    public void insert(Collection nodes) throws NullPointerException {
-
-    }
-
-    @Override
     public void remove(SquareInterface node) throws NullPointerException {
 
     }
