@@ -35,6 +35,10 @@ public class PositionLabel extends AbstractLabel {
         this.direction = direction;
     }
 
+    private void setDirection(DirectionEnum direction) {
+        this.setEdgeLength(this.getEdgeLength(), direction);
+    }
+
     DirectionEnum getDirection() {
         return this.direction;
     }
