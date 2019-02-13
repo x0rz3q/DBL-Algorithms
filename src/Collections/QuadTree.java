@@ -1,16 +1,14 @@
     package Collections;
 
-import interfaces.models.GeometryInterface;
-import interfaces.models.RectangleInterface;
+import interfaces.models.SquareInterface;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 public class QuadTree extends AbstractCollection
 {
     /** boundary for this specific quad tree. e.g. root has boundary {0, 10k} for x and y **/
-    private RectangleInterface boundary;
+    private SquareInterface boundary;
     /** children quadtrees **/
     private QuadTree NW;
     private QuadTree NE;
@@ -19,7 +17,7 @@ public class QuadTree extends AbstractCollection
     /** if has not been subdivided **/
     private boolean leaf; // leaf == data.size() <= dataLimit
     /** data of this quad tree **/
-    private Collection<GeometryInterface> data;
+    private Collection<SquareInterface> data;
     /** limit of data per tree **/
     private int dataLimit;
 
@@ -37,7 +35,7 @@ public class QuadTree extends AbstractCollection
      * Sets the boundary of this quad tree.
      * @param r a square
      */
-    private void setBoundary(RectangleInterface r) {
+    private void setBoundary(SquareInterface r) {
         this.boundary = r;
     }
 
@@ -52,8 +50,8 @@ public class QuadTree extends AbstractCollection
 
     /**
      * Subdivides the QuadTree in 4 sub-trees
-     * @post NW <> null && NE <> null && SW <> null && SE <> null &&
-     * data.size() == 0 && count == 0 && leaf == false
+     * @post {@code NW <> null && NE <> null && SW <> null && SE <> null &&
+     * data.size() == 0 && count == 0 && leaf == false}
      */
     private void subDivide() {
         // TODO: USE RECTANGLE CLASS WHEN ITS IMPLEMENTED
@@ -71,7 +69,7 @@ public class QuadTree extends AbstractCollection
      * @param b the boundary of the subdivision
      * @return QuadTree, the new subdivision
      */
-    private QuadTree subDivide(RectangleInterface b) {
+    private QuadTree subDivide(SquareInterface b) {
         QuadTree t = new QuadTree(getData()); // add root data to subtree
         t.setBoundary(b); // set the new boundary
         t.setDataLimit(this.dataLimit); // keep same limit
@@ -83,12 +81,12 @@ public class QuadTree extends AbstractCollection
      * @return Collection over GeometryInterface
      * @post \return.size() <= maxDataLimit
      */
-    private Collection<GeometryInterface> getData() {
+    private Collection<SquareInterface> getData() {
         return this.data;
     }
 
     @Override
-    public void insert(GeometryInterface node) throws NullPointerException {
+    public void insert(SquareInterface node) throws NullPointerException {
         if (node == null) {
             throw new NullPointerException("QuadTree.insert() null node provided");
         }
@@ -118,12 +116,12 @@ public class QuadTree extends AbstractCollection
     }
 
     @Override
-    public void remove(GeometryInterface node) throws NullPointerException {
+    public void remove(SquareInterface node) throws NullPointerException {
         // not supported yet or at all, needs discussion
     }
 
     @Override
-    public Collection query2D(RectangleInterface range) {
+    public Collection query2D(SquareInterface range) {
         return query2D(this, range);
     }
 
@@ -134,10 +132,10 @@ public class QuadTree extends AbstractCollection
      * @param range range that is searched for
      * @post {@code \result == (\forall i; i.intesect(subTree); i.instersects(range))}
      */
-    private Collection query2D(QuadTree subTree, RectangleInterface range) {
-        Collection<GeometryInterface> allLeaves = new ArrayList<>();
+    private Collection query2D(QuadTree subTree, SquareInterface range) {
+        Collection<SquareInterface> allLeaves = new ArrayList<>();
         if (subTree.leaf) {
-            for (GeometryInterface leave : getData())
+            for (SquareInterface leave : getData())
                 if (leave.intersects(range))
                     allLeaves.add(leave);
         } else {
@@ -155,17 +153,12 @@ public class QuadTree extends AbstractCollection
     }
 
     @Override
-    public Boolean intersects(GeometryInterface node) {
+    public Boolean intersects(SquareInterface node) {
         return boundary.intersects(node);
     }
 
     @Override
     public int size() {
         return super.getSize();
-    }
-
-    @Override
-    public Iterator iterator() {
-        return query2D(boundary).iterator(); // iterate whole subtree
     }
 }

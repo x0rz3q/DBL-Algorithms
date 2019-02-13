@@ -1,14 +1,13 @@
 package Collections;
 
-import interfaces.models.GeometryInterface;
-import interfaces.models.RectangleInterface;
+import interfaces.models.SquareInterface;
 
 import java.util.Collection;
 import java.util.Iterator;
 
 public class KDTree extends AbstractCollection{
     @Override
-    public void insert(GeometryInterface node) throws NullPointerException {
+    public void insert(SquareInterface node) throws NullPointerException {
 
     }
 
@@ -18,27 +17,22 @@ public class KDTree extends AbstractCollection{
     }
 
     @Override
-    public void remove(GeometryInterface node) throws NullPointerException {
+    public void remove(SquareInterface node) throws NullPointerException {
 
     }
 
     @Override
-    public Collection query2D(RectangleInterface range) {
+    public Collection query2D(SquareInterface range) {
         return null;
     }
 
     @Override
-    public Boolean intersects(GeometryInterface node) {
+    public Boolean intersects(SquareInterface node) {
         return null;
     }
 
     @Override
     public int size() {
         return 0;
-    }
-
-    @Override
-    public Iterator iterator() {
-        return null;
     }
 }
