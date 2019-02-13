@@ -13,13 +13,11 @@ public abstract class BinarySearcher implements AbstractAlgorithmInterface {
     @Override
     public void solve(DataRecord record) {
 
-        // TODO: needs to be grabbed from input
-        float alpha = 1.4f;
+        // TODO: change back
+        float alpha = record.aspectRatio;
 
-        // TODO: this value can be optimized base on the number of points
-        int high = (int)(10000 * Math.sqrt(alpha));
+        int high = (int)(10000 * Math.sqrt(alpha / record.points.size()));
         int low = 0;
-
 
 
         // make sure that our upper bound is correct. This may not be required if we have a good estimation
@@ -39,24 +37,30 @@ public abstract class BinarySearcher implements AbstractAlgorithmInterface {
         }
 
         float height = low;
+        int i_low, i_high;
 
-        int m_low = (int) (low * alpha * 2);
-        int m_high = (int) Math.ceil(high * alpha * 2);
-
-        while (m_low < m_high - 1) {
-            int mid = (m_high + m_low) / 2;
-            if (isSolvable(record,  mid / (alpha * 2))) {
-                m_low = mid;
-            } else {
-                m_high = mid;
-            }
+        if (isSolvable(record, low + 0.5f)) {
+            // System.out.println("so far: " + (low + 0.5) + " " + high);
+            i_low =  (int) Math.ceil((low + 0.5) / alpha);
+            i_high =  (int) Math.ceil((high) / alpha);
+            height = low + 0.5f;
+        } else {
+            // System.out.println("so far: " + (low) + " " + (low + 0.5));
+            i_low =  (int) Math.ceil((low) / alpha);
+            i_high =  (int) Math.ceil((low + 0.5) / alpha);
         }
 
-
-        float newHeight = m_low / (alpha * 2);
-        if (newHeight > low && newHeight < high) {
-            if (isSolvable(record, newHeight)) {
-                height = Math.max(newHeight, height);
+        while (i_low < i_high - 1) {
+            int mid = (i_high + i_low) / 2;
+            if (isSolvable(record, mid * alpha)) {
+                i_low = mid;
+            } else {
+                i_high = mid;
+            }
+        }
+        if(i_low * alpha < high && i_low * alpha > low) {
+            if (isSolvable(record, i_low * alpha)) {
+                height = Math.max(low, i_low * alpha);
             }
         }
         getSolution(record, height);
