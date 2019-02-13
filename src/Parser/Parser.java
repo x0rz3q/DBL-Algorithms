@@ -14,10 +14,8 @@ import java.io.*;
 import java.util.*;
 
 class Parser implements ParserInterface {
-
-
     @Override
-    public DataRecord input(Readable source, Class<? extends AbstractCollectionInterface> collectionClass) throws NullPointerException, IOException {
+    public DataRecord input(InputStream source, Class<? extends AbstractCollectionInterface> collectionClass) throws NullPointerException, IOException {
         if (source == null) throw new NullPointerException("parser.input: source not found");
 
         DataRecord rec = new DataRecord();
@@ -60,10 +58,10 @@ class Parser implements ParserInterface {
                 switch (rec.placementModel) {
                     case TWO_POS:
                     case FOUR_POS:
-                        label = new PositionLabel(x, y*rec.aspectRatio, 0, DirectionEnum.NE);
+                        label = new PositionLabel(x, y*rec.aspectRatio, 0, DirectionEnum.NE, i);
                         break;
                     case ONE_SLIDER:
-                        label = new SliderLabel(x, y*rec.aspectRatio, 0, 0);
+                        label = new SliderLabel(x, y*rec.aspectRatio, 0, 0, i);
                         break;
                 }
                 rec.points.add(label);
@@ -120,7 +118,7 @@ class Parser implements ParserInterface {
         );
 
         for (LabelInterface label : record.points) {
-            if (label.getPOI().getXMin() != label.getPOI().getXMax() || label.getPOI().getYMin() != label.getPOI().getYMax()) {
+            if (label.getPOI().getEdgeLength() != 0) {
                 throw new IllegalStateException("parser.output POI of label not of width/height 0");
             }
             writer.write( Math.round(label.getPOI().getXMin()) + " " + Math.round(label.getPOI().getYMin() / record.aspectRatio) + " " + label.getPlacement() + "\n");
