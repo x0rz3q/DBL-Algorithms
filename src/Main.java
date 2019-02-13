@@ -310,6 +310,7 @@ class Strategy2pos extends GenerationStrategy {
             associatedPoints[i] = rectangles.get(i).associated;
         }
 
+        return associatedPoints;
     }
 
     @Override
@@ -487,7 +488,7 @@ class TestData {
     void setLocation(String newLocation) {this.location = newLocation;}
 }
 
-// controller for generation processs of test
+// controller for generation process of test
 class Controller {
     // object containing all data for single test
     private TestData data;
@@ -528,22 +529,86 @@ class Controller {
         }
     }
 
-    Controller(TestData data) throws IOException {
-        this.data = data;
+    void setData(TestData newData) {
+        data = newData;
+    }
+
+    Controller() throws IOException {
         this.printer = new Printer(data.location);
     }
 
 
 }
 
+class TestReader {
+    File readFile;
+    Scanner sc;
+
+    TestReader(String fileLocation) throws FileNotFoundException {
+        readFile = new File(fileLocation);
+        sc = new Scanner(readFile);
+    }
+
+    ArrayList<TestData> getTests() throws  IllegalArgumentException {
+        ArrayList<TestData> tests = new ArrayList<>();
+        while(sc.hasNextLine()) {
+            TestData currentTest = new TestData();
+            currentTest.setModel(sc.next());
+            currentTest.setN(sc.nextInt());
+            currentTest.setRatio(sc.nextDouble());
+            currentTest.setResult(sc.nextDouble());
+
+            String xGeneratorType = sc.next();
+            if (xGeneratorType == "Uniform") {
+                currentTest.setxGenerator(new UniformNumberGenerator(sc.nextInt(), sc.nextInt()));
+            } else if (xGeneratorType == "Poisson") {
+                currentTest.setxGenerator(new PoissonNumberGenerator(sc.nextDouble()));
+            } else if (xGeneratorType == "Geometric") {
+                currentTest.setxGenerator(new GeometricNumberGenerator(sc.nextDouble()));
+            } else if (xGeneratorType == "Binomial") {
+                currentTest.setxGenerator(new BinomialNumberGenerator(sc.nextDouble(), sc.nextInt()));
+            } else {
+                throw new IllegalArgumentException("Invalid numbergenerator");
+            }
+
+            String yGeneratorType = sc.next();
+            if (yGeneratorType == "Uniform") {
+                currentTest.setyGenerator(new UniformNumberGenerator(sc.nextInt(), sc.nextInt()));
+            } else if (yGeneratorType == "Poisson") {
+                currentTest.setyGenerator(new PoissonNumberGenerator(sc.nextDouble()));
+            } else if (yGeneratorType == "Geometric") {
+                currentTest.setyGenerator(new GeometricNumberGenerator(sc.nextDouble()));
+            } else if (yGeneratorType == "Binomial") {
+                currentTest.setyGenerator(new BinomialNumberGenerator(sc.nextDouble(), sc.nextInt()));
+            } else {
+                throw new IllegalArgumentException("Invalid numbergenerator");
+            }
+
+            currentTest.setLocation(sc.next());
+            tests.add(currentTest);
+        }
+
+        return tests;
+    }
+}
+
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        TestData data;
-        // TODO set variables (optionally automatically via file)
 
-        Controller controller = new Controller(data);
-        controller.generate();
+
+        // ADAPT LOCATION HERE ------------------------------------------------------------------------
+        String testCaseLocation = "";
+        // ADAPT LOCATION BEFORE HERE -----------------------------------------------------------------
+
+        TestReader reader = new TestReader(testCaseLocation);
+        Controller controller = new Controller();
+
+        ArrayList<TestData> tests = reader.getTests();
+        for (TestData test : tests) {
+            controller.setData(test);
+            controller.generate();
+        }
 
     }
 }
