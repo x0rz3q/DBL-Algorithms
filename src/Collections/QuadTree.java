@@ -157,7 +157,7 @@ public class QuadTree extends AbstractCollection
     private Collection query2D(QuadTree subTree, SquareInterface range) {
         Collection<SquareInterface> allLeaves = new ArrayList<>();
         if (subTree.leaf) {
-            for (SquareInterface leave : getData())
+            for (SquareInterface leave : subTree.getData())
                 if (leave.intersects(range))
                     allLeaves.add(leave);
         } else {
