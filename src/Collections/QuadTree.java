@@ -33,6 +33,7 @@ public class QuadTree extends AbstractCollection
 
     public QuadTree(SquareInterface boundary, Collection<? extends SquareInterface> nodes) {
         this(boundary);
+        setDataLimit(1);
         for (SquareInterface s : nodes) {
             insert(s);
         }
@@ -40,6 +41,7 @@ public class QuadTree extends AbstractCollection
 
     public QuadTree(Collection<? extends SquareInterface> nodes) {
         super();
+        setDataLimit(1);
         this.data = new ArrayList<>();
         this.leaf = true;
         for (SquareInterface s : nodes) {
@@ -97,7 +99,6 @@ public class QuadTree extends AbstractCollection
      */
     private QuadTree subDivide(SquareInterface b) {
         QuadTree t = new QuadTree(b, getData()); // add root data to subtree
-        t.setDataLimit(this.dataLimit); // keep same limit
         return t;
     }
 
@@ -112,6 +113,7 @@ public class QuadTree extends AbstractCollection
 
     @Override
     public void insert(SquareInterface node) throws NullPointerException {
+
         if (node == null) {
             throw new NullPointerException("QuadTree.insert() null node provided");
         }
@@ -119,11 +121,14 @@ public class QuadTree extends AbstractCollection
             return; // do nothing
         }
         this.count++; // subtree wil contain node, so increment
+
         if (this.leaf) { // if this is a leaf
             this.data.add(node);
+
             if (this.data.size() > this.dataLimit) { // over the limit
                 subDivide(); // make children
             }
+
         } else { // not a leaf, so insert in subrees
             NW.insert(node);
             NE.insert(node);
