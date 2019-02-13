@@ -1,6 +1,7 @@
     package Collections;
 
 import interfaces.models.SquareInterface;
+import models.Square;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,15 +22,29 @@ public class QuadTree extends AbstractCollection
     /** limit of data per tree **/
     private int dataLimit;
 
-    QuadTree() {
+    QuadTree(SquareInterface boundary) {
         super();
         this.data = new ArrayList<>();
         this.leaf = true;
+        setBoundary(boundary);
     }
 
-    QuadTree(Collection nodes) {
-        super(nodes);
+    QuadTree(SquareInterface boundary, Collection<SquareInterface> nodes) {
+        this(boundary);
+        for (SquareInterface s : nodes) {
+            insert(s);
+        }
     }
+
+    QuadTree(Collection<SquareInterface> nodes) {
+        super();
+        this.data = new ArrayList<>();
+        this.leaf = true;
+        for (SquareInterface s : nodes) {
+            insert(s);
+        }
+    }
+
 
     /**
      * Sets the boundary of this quad tree.
@@ -54,7 +69,7 @@ public class QuadTree extends AbstractCollection
      * data.size() == 0 && count == 0 && leaf == false}
      */
     private void subDivide() {
-        // TODO: USE RECTANGLE CLASS WHEN ITS IMPLEMENTED
+        SquareInterface NW, NE, SW, SE;
         this.NW = subDivide(this.boundary); // ((Xmin,Ymax), center)
         this.NE = subDivide(this.boundary); // ((Xmax - width/2, Ymax),(Xmax, Ymax - heigh/2))
         this.SW = subDivide(this.boundary); // ((Xmin, Ymin + height/2),(Xmin + width/2, Ymin))
@@ -106,13 +121,6 @@ public class QuadTree extends AbstractCollection
             SW.insert(node);
         }
 
-    }
-
-    @Override
-    public void insert(Collection nodes) throws NullPointerException {
-        if (nodes == null) {
-            throw new NullPointerException("QuadTree.insert() null Collection provided");
-        }
     }
 
     @Override

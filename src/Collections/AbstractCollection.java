@@ -12,11 +12,6 @@ public abstract class AbstractCollection implements AbstractCollectionInterface 
         this.count = 0;
     }
 
-    public AbstractCollection(Collection<SquareInterface> nodes) {
-        this();
-        this.insert(nodes);
-    }
-
     public int getSize() {
         return this.count;
     }
