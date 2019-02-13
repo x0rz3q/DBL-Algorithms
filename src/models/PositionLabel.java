@@ -42,4 +42,9 @@ public class PositionLabel extends AbstractLabel {
     DirectionEnum getDirection() {
         return this.direction;
     }
+
+    @Override
+    public String getPlacement() {
+        return this.direction.toString();
+    }
 }

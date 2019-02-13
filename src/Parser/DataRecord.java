@@ -9,7 +9,7 @@ import java.util.List;
 public class DataRecord {
     public List<LabelInterface> points;
     public AbstractCollectionInterface collection;
-    protected Float aspectRatio;
+    public Float aspectRatio;
     public PlacementModelEnum placementModel;
     public Double height = 0.0d;
 }

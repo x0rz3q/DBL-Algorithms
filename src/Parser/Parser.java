@@ -14,10 +14,8 @@ import java.io.*;
 import java.util.*;
 
 class Parser implements ParserInterface {
-
-
     @Override
-    public DataRecord input(Readable source, Class<? extends AbstractCollectionInterface> collectionClass) throws NullPointerException, IOException {
+    public DataRecord input(InputStream source, Class<? extends AbstractCollectionInterface> collectionClass) throws NullPointerException, IOException {
         if (source == null) throw new NullPointerException("parser.input: source not found");
 
         DataRecord rec = new DataRecord();
@@ -120,7 +118,7 @@ class Parser implements ParserInterface {
         );
 
         for (LabelInterface label : record.points) {
-            if (label.getPOI().getXMin() != label.getPOI().getXMax() || label.getPOI().getYMin() != label.getPOI().getYMax()) {
+            if (label.getPOI().getEdgeLength() != 0) {
                 throw new IllegalStateException("parser.output POI of label not of width/height 0");
             }
             writer.write( Math.round(label.getPOI().getXMin()) + " " + Math.round(label.getPOI().getYMin() / record.aspectRatio) + " " + label.getPlacement() + "\n");

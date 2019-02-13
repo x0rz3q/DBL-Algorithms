@@ -1,4 +1,4 @@
-    package Collections;
+package Collections;
 
 import interfaces.models.SquareInterface;
 
@@ -21,13 +21,13 @@ public class QuadTree extends AbstractCollection
     /** limit of data per tree **/
     private int dataLimit;
 
-    QuadTree() {
+    public QuadTree() {
         super();
         this.data = new ArrayList<>();
         this.leaf = true;
     }
 
-    QuadTree(Collection nodes) {
+    public QuadTree(Collection nodes) {
         super(nodes);
     }
 

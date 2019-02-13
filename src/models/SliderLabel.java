@@ -25,4 +25,8 @@ public class SliderLabel extends AbstractLabel {
     public double getShift() {
         return this.shift;
     }
+
+    public String getPlacement() {
+        return Double.toString(this.getShift());
+    }
 }
