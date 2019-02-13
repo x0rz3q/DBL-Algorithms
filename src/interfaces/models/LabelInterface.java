@@ -9,6 +9,14 @@ public interface LabelInterface extends SquareInterface {
     String toString();
 
     /**
+     * Type the relative positioning to the POI
+     * {NW, SW, NE, SE} or {0 <-> 1}
+     *
+     * @return String
+     */
+    String getPlacement();
+
+    /**
      * Get the Point of Interest.
      *
      * @return SquareInterface
@@ -16,14 +24,9 @@ public interface LabelInterface extends SquareInterface {
     SquareInterface getPOI();
 
     /**
-     * Set the size.
+     * Get unique ID.
      *
-     * @param height Float
-     * @param width Float
-     * @pre {@code width >= 0 && height >= 0 && width / height == this.getAspectRatio()}
-     * @post {@code this.getWidth() == width && this.getHeight() == height &&
-     *          this.getWidth() / this.getHeight() == this.getAspectRatio()}
-     * @throws IllegalArgumentException if {@code height < 0 || width < 0 || width / height <> this.getAspectRatio()}
+     * @return Integer
      */
-    void setSize(Float height, Float width) throws IllegalArgumentException;
+    Integer getID();
 }

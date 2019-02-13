@@ -1,4 +1,4 @@
-    package Collections;
+package Collections;
 
 import interfaces.models.AnchorInterface;
 import interfaces.models.SquareInterface;
@@ -30,7 +30,7 @@ public class QuadTree extends AbstractCollection
         this.leaf = true;
         setBoundary(boundary);
     }
-
+    
     public QuadTree(SquareInterface boundary, Collection<? extends SquareInterface> nodes) {
         this(boundary);
         setDataLimit(1);

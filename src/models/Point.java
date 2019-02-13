@@ -50,4 +50,12 @@ public class Point extends AbstractSquare {
             throw new IllegalArgumentException("Point.setEdgeLength.pre violated: edgeLength <> 0");
         }
     }
+
+    public Double getX() {
+        return this.getAnchor().getX();
+    }
+
+    public Double getY() {
+        return this.getAnchor().getY();
+    }
 }

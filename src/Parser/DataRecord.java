@@ -1,15 +1,15 @@
-package models;
+package Parser;
 
 import interfaces.AbstractCollectionInterface;
 import interfaces.models.LabelInterface;
-import interfaces.models.SquareInterface;
+import models.PlacementModelEnum;
 
 import java.util.List;
 
 public class DataRecord {
-    public List<SquareInterface> points;
-    public AbstractCollectionInterface labels;
+    public List<LabelInterface> points;
+    public AbstractCollectionInterface collection;
     public Float aspectRatio;
     public PlacementModelEnum placementModel;
-    public Float height = 0.0f;
+    public Double height = 0.0d;
 }

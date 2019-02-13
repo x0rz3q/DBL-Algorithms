@@ -25,7 +25,8 @@ abstract class AbstractSquareTest {
 
     @Test
     void getAnchor() {
-        assertEquals(this.instance.getAnchor(), anchor);
+        assertEquals(this.instance.getAnchor().getX(), anchor.getX());
+        assertEquals(this.instance.getAnchor().getY(), anchor.getY());
     }
 
     @Test
