@@ -5,7 +5,7 @@ public class PositionLabel extends AbstractLabel {
 
     public PositionLabel(double x, double y, double size, DirectionEnum direction) {
         super(x, y, size);
-        this.direction = direction;
+        this.setEdgeLength(size, direction);
     }
 
     public void setEdgeLength(double edgeLength, DirectionEnum direction) throws IllegalArgumentException {
@@ -32,5 +32,6 @@ public class PositionLabel extends AbstractLabel {
         }
 
         this.setEdgeLength(edgeLength);
+        this.direction = direction;
     }
 }
