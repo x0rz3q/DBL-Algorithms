@@ -5,8 +5,8 @@ package Parser;
 
 import interfaces.AbstractCollectionInterface;
 import interfaces.ParserInterface;
-import models.PlacementModelEnum;
-import models.Point;
+import interfaces.models.LabelInterface;
+import models.*;
 import Collections.QuadTree;
 import Collections.KDTree;
 
@@ -51,22 +51,31 @@ class Parser implements ParserInterface {
             while (!sc.hasNextInt()) sc.next();
             int n = sc.nextInt();
             rec.points = new ArrayList<>(n);
-            rec.pointsOrig = new ArrayList<>(n);
-
-            for (int i = 0; i < n; i++) {
-                int x = sc.nextInt();
-                int y = sc.nextInt();
-
-                Point point = new Point(x, y * rec.aspectRatio);
-                rec.points.add(point);
-                rec.pointsOrig.add(new DataRecord.CoordinatedPoint(point, x, y));
-            }
-
 
             if (collectionClass == QuadTree.class) {
                 rec.collection = initQuadTree();
             } else if (collectionClass == KDTree.class) {
                 rec.collection = initKDTree();
+            }
+
+            for (int i = 0; i < n; i++) {
+                int x = sc.nextInt();
+                int y = sc.nextInt();
+
+                LabelInterface label = null;
+
+                switch (rec.placementModel) {
+                    case TWO_POS:
+                    case FOUR_POS:
+                        label = new PositionLabel(x, y*rec.aspectRatio, 0, DirectionEnum.NE);
+                        break;
+                    case ONE_SLIDER:
+                        label = new SliderLabel(x, y * rec.aspectRatio, 0, 0);
+                        break;
+                }
+
+                rec.points.add(label);
+                rec.collection.insert(label);
             }
 
         } catch (NoSuchElementException e) {
@@ -111,10 +120,15 @@ class Parser implements ParserInterface {
             + "height:" + record.height + "\n"
         );
 
-        for (Parser.DataRecord.CoordinatedPoint cPoint : record.pointsOrig) {
-            writer.write(cPoint.x + " " + cPoint.y + " " cPoint.point.
-//  @TODO           + cPoint.square. "get relative position"
-                    + "\n");
+        for (LabelInterface label : record.points) {
+            if (label instanceof SliderLabel) {
+                //TODO: output
+            } else if(label instanceof PositionLabel) {
+                PositionLabel casted = (PositionLabel) label;
+                //TODO: Output
+            } else {
+//                throw new Exception("What is this?");
+            }
         }
 
         writer.flush();
