@@ -40,6 +40,7 @@ public class QuadTree extends AbstractCollection
         }
     }
 
+    //TODO: Fix this method
     public QuadTree(Collection<? extends SquareInterface> nodes) {
         super();
         setDataLimit(1);
