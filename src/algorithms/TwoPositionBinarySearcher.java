@@ -3,6 +3,7 @@ package algorithms;
 import interfaces.models.LabelInterface;
 import interfaces.models.SquareInterface;
 import Parser.DataRecord;
+import models.BoundingBox;
 import models.DirectionEnum;
 import models.PositionLabel;
 import models.Square;
@@ -31,8 +32,8 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
 
 
     // keeps track of the rect height of last created graph
-    private float heightLastGraph;
-    private float heightLastComp;
+    private float heightLastGraph = -1;
+    private float heightLastComp = -1;
 
 
     // keeps track of which rectangles have been set in getSolution()
@@ -41,9 +42,16 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
 
     @Override
     boolean isSolvable(DataRecord record, float height) {
+        //System.out.println("running is solvable: " + height);
         if (heightLastGraph != height) {
             createGraph(record, height);
         }
+
+//        for (int i = 0; i < adj.length; i++) {
+//            for (int j : adj[i]) {
+//                System.out.println(i + " " + j);
+//            }
+//        }
         return Kosaraju(record.points.size());
 
     }
@@ -86,7 +94,6 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
         adjInv = new ArrayList[noPoints * 2];
 
 
-
         for (int i = 0; i < noPoints * 2; i++) {
             adj[i] = new ArrayList<>();
             adjInv[i] = new ArrayList<>();
@@ -96,38 +103,55 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
         // ------------ adding edges to graph ------------
         // loop over every point and for both rectangles check overlaps
 
-
         for (LabelInterface point : record.points) {
+            double x = point.getXMin();
+            double y = point.getYMin();
 
-            // label NE intersects with NE lables
-            Collection<SquareInterface> collection = record.collection.query2D(new Square(point.getAnchor(), 1));
-            for (SquareInterface square : collection) {
-                addEdgeAndInverse(point.getID(), ((LabelInterface)((LabelInterface)square).getPOI()).getID());
+            // label NE of point intersects with NE lables
+            Collection<SquareInterface> collection = record.collection.query2D(new BoundingBox(x - height, y - height, x + height, y + height));
+
+            if (collection != null) {
+                for (SquareInterface square : collection) {
+                    addEdgeAndInverse(point.getID(), ((LabelInterface) square).getID() + noPoints, noPoints);
+                }
             }
 
-            // label NE intersects with NW lables
-            collection = record.collection.query2D(new Square(point.getAnchor(), 1));
-            for (SquareInterface square : collection) {
-                addEdgeAndInverse(point.getID(), square.getID() + noPoints);
+            // label NE of point intersects with NW lables
+            collection = record.collection.query2D(new BoundingBox(x, y - height, x + 2 * height, y + height));
+            if (collection != null) {
+                for (SquareInterface square : collection) {
+                    addEdgeAndInverse(point.getID(), ((LabelInterface) square).getID(), noPoints);
+                }
             }
 
-            // label NW intersects with NE lables
-            collection = record.collection.query2D(new Square(point.getAnchor(), 1));
-            for (SquareInterface square : collection) {
-                addEdgeAndInverse(point.getID() + noPoints, square.getID());
+            // label NW of point intersects with NE lables
+            collection = record.collection.query2D(new BoundingBox(x - 2 * height, y - height, x, y + height));
+            if (collection != null) {
+                for (SquareInterface square : collection) {
+                    addEdgeAndInverse(point.getID() + noPoints, ((LabelInterface) square).getID() + noPoints, noPoints);
+                }
             }
 
-            // label NW intersects with NW lables
-            collection = record.collection.query2D(new Square(point.getAnchor(), 1));
-            for (SquareInterface square : collection) {
-                addEdgeAndInverse(point.getID() + noPoints, square.getID() + noPoints);
+            // label NW of point intersects with NW lables
+            collection = record.collection.query2D(new BoundingBox(x - height, y, x, y + height));
+            if (collection != null) {
+                for (SquareInterface square : collection) {
+                    addEdgeAndInverse(point.getID() + noPoints, ((LabelInterface) square).getID(), noPoints);
+                }
             }
         }
+
     }
 
     private boolean Kosaraju(int noInputs) {
         createComponents(noInputs);
 
+
+//        System.out.println("final check");
+//        for (int i = 0; i < 2 * noInputs; i++) {
+//            System.out.println(i + " " + scc[i]);
+//
+//        }
         for (int i = 0; i < noInputs; i++) {
             if (scc[i] == scc[i + noInputs]) {
                 return false;
@@ -158,11 +182,12 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
     }
 
 
-    private void addEdgeAndInverse(int a, int b) {
+    private void addEdgeAndInverse(int a, int b, int noNodes) {
+        if (a == b || a % noNodes == b % noNodes) {
+            return;
+        }
         adj[a].add(b);
-        adj[b].add(a);
         adjInv[b].add(a);
-        adjInv[a].add(b);
     }
 
 

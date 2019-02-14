@@ -12,9 +12,11 @@ public abstract class BinarySearcher implements AbstractAlgorithmInterface {
      */
     @Override
     public void solve(DataRecord record) {
+        //float height = 1f;
+        //System.out.println(isSolvable(record, height));
+        //getSolution(record, height);
 
         float alpha = record.aspectRatio;
-
         // --------- calculating the initial bounds -------------
         // estimate of upper bound which may be too low
         int high = (int)(10000 * Math.sqrt(alpha / record.points.size()));
@@ -25,6 +27,7 @@ public abstract class BinarySearcher implements AbstractAlgorithmInterface {
         while (isSolvable(record, high)) {
             low = high;
             high = (int) (high * 1.5);
+            // TODO: this could run into an infinite loop if everything is solvable
         }
         // ----------- execute binary search ---------
         // first binary search to reduce to integral values (width)
@@ -71,6 +74,7 @@ public abstract class BinarySearcher implements AbstractAlgorithmInterface {
 
 
         // -------- execute algorithm ---------
+        System.out.println(height);
         getSolution(record, height);
     }
 

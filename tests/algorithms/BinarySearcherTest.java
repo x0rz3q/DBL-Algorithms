@@ -1,8 +1,11 @@
 package algorithms;
 
+import Parser.DataRecord;
+import interfaces.models.LabelInterface;
 import interfaces.models.SquareInterface;
 import models.Anchor;
-import models.DataRecord;
+import models.DirectionEnum;
+import models.PositionLabel;
 import models.Square;
 
 import org.junit.jupiter.api.Test;
@@ -31,8 +34,8 @@ class BinarySearchTest {
         };
         DataRecord record = new DataRecord();
         record.aspectRatio = aspectRatio;
-        record.points = new ArrayList<SquareInterface>();
-        record.points.add(new Square(new Anchor(0, 0), 0));
+        record.points = new ArrayList<LabelInterface>();
+        record.points.add(new PositionLabel(0, 0, 1, DirectionEnum.NE, 0));
         searcher.solve(record);
 
     }
