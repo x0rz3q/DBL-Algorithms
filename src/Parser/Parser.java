@@ -53,6 +53,9 @@ class Parser implements ParserInterface {
             for (int i = 0; i < n; i++) {
                 int x = sc.nextInt();
                 int y = sc.nextInt();
+                if (x < 0 || x > 10000 || y < 0 || y > 10000) {
+                    throw new InputMismatchException("parser.input coordinates not in range {0,1,...,10000}");
+                }
 
                 LabelInterface label = null;
                 switch (rec.placementModel) {
