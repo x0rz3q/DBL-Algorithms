@@ -13,7 +13,7 @@ import Collections.KDTree;
 import java.io.*;
 import java.util.*;
 
-class Parser implements ParserInterface {
+public class Parser implements ParserInterface {
     @Override
     public DataRecord input(InputStream source, Class<? extends AbstractCollectionInterface> collectionClass) throws NullPointerException, IOException {
         if (source == null) throw new NullPointerException("parser.input: source not found");
@@ -21,19 +21,13 @@ class Parser implements ParserInterface {
         DataRecord rec = new DataRecord();
         Scanner sc = new Scanner(source);
 
+        if (!sc.hasNext()) {
+            throw new IllegalArgumentException("Parser.input.pre violated: source length is zero");
+        }
+
         try {
             while (!sc.hasNext("2pos|4pos|1slider")) sc.next();
-            switch (sc.next("2pos|4pos|1slider")) {
-                case "2pos":
-                    rec.placementModel = PlacementModelEnum.TWO_POS;
-                    break;
-                case "4pos":
-                    rec.placementModel = PlacementModelEnum.FOUR_POS;
-                    break;
-                case "1slider":
-                    rec.placementModel = PlacementModelEnum.ONE_SLIDER;
-                    break;
-            }
+            rec.placementModel = PlacementModelEnum.fromString(sc.next("2pos|4pos|1slider"));
         } catch (NoSuchElementException e) {
             throw new IOException("parser.input: no placement model found");
         }
@@ -44,6 +38,11 @@ class Parser implements ParserInterface {
         } catch (NoSuchElementException e) {
             throw new IOException("parser.input: no aspect ratio found");
         }
+
+        double xMin = 10001;
+        double yMin = 10001;
+        double xMax = -1;
+        double yMax = -1;
 
         try {
             while (!sc.hasNextInt()) sc.next();
@@ -57,6 +56,11 @@ class Parser implements ParserInterface {
                     throw new InputMismatchException("parser.input coordinates not in range {0,1,...,10000}");
                 }
 
+                xMin = Math.min(xMin, x);
+                yMin = Math.min(yMin, y);
+                xMax = Math.max(xMax, x);
+                yMax = Math.max(yMax, y);
+
                 LabelInterface label = null;
                 switch (rec.placementModel) {
                     case TWO_POS:
@@ -67,6 +71,7 @@ class Parser implements ParserInterface {
                         label = new SliderLabel(x, y*rec.aspectRatio, 0, 0, i);
                         break;
                 }
+
                 rec.points.add(label);
             }
         } catch (NoSuchElementException e) {
@@ -74,7 +79,8 @@ class Parser implements ParserInterface {
         }
 
         if (collectionClass == QuadTree.class) {
-            rec.collection = initQuadTree(rec.points);
+            rec.collection = new QuadTree(new Square(new Anchor(xMin, yMin), Math.max(yMax - yMin, xMax - xMin)),
+                                            rec.points);
         } else if (collectionClass == KDTree.class) {
             rec.collection = initKDTree(rec.points);
         } else {
@@ -116,8 +122,8 @@ class Parser implements ParserInterface {
 
         writer.write(
             "aspect ratio: " + record.aspectRatio + "\n"
-            + "number of points" + record.points.size() + "\n"
-            + "height:" + record.height + "\n"
+            + "number of points: " + record.points.size() + "\n"
+            + "height: " + record.height + "\n"
         );
 
         for (LabelInterface label : record.points) {
@@ -130,4 +136,3 @@ class Parser implements ParserInterface {
         writer.flush();
     }
 }
-
