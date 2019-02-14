@@ -102,7 +102,7 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
             // label NE intersects with NE lables
             Collection<SquareInterface> collection = record.collection.query2D(new Square(point.getAnchor(), 1));
             for (SquareInterface square : collection) {
-                addEdgeAndInverse(point.getID(), square.getID());
+                addEdgeAndInverse(point.getID(), ((LabelInterface)((LabelInterface)square).getPOI()).getID());
             }
 
             // label NE intersects with NW lables
