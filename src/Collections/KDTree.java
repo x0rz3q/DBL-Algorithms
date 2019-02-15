@@ -8,10 +8,12 @@ import java.util.Collection;
 public class KDTree extends AbstractCollection{
     Collection<SquareInterface> nodes;
     boolean isLeaf; /** does it directly contain the nodes **/
-    int depth;
+    /** depth of the root/leaf of the KDTree **/
+    int depth; // depth == 0 for root.
     /** children of this tree **/
     KDTree left;
     KDTree right;
+    /** node for on which the split happens **/
     SquareInterface splitter;
 
     /**
