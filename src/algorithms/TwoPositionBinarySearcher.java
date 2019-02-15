@@ -6,10 +6,10 @@ import Parser.DataRecord;
 import models.BoundingBox;
 import models.DirectionEnum;
 import models.PositionLabel;
-import models.Square;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Stack;
 
 public class TwoPositionBinarySearcher extends BinarySearcher {
@@ -20,12 +20,13 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
     private Stack<Integer> s;
 
     // edges of implication graph and its inverse
-    private ArrayList<Integer>[] adj;
-    private ArrayList<Integer>[] adjInv;
+    private List<Integer>[] adj;
+    private List<Integer>[] adjInv;
 
 
     // stores for each node the component it is in
     private int[] scc;
+    private List<Integer> components;
 
     // keep track of current component
     private int counter;
@@ -47,31 +48,29 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
             createGraph(record, height);
         }
 
-//        for (int i = 0; i < adj.length; i++) {
-//            for (int j : adj[i]) {
-//                System.out.println(i + " " + j);
-//            }
-//        }
+
         return Kosaraju(record.points.size());
 
     }
 
     @Override
     void getSolution(DataRecord record, float height) {
-        if (heightLastGraph != height) {
-            createGraph(record, height);
-        }
+        createGraph(record, height);
 
         int noPoints = record.points.size();
-        if (heightLastComp != height) {
-            createComponents(noPoints);
-        }
+        createComponents(noPoints);
 
+//        for (int i = 0; i < adj.length; i++) {
+//            System.out.println(i);
+//            for (Integer j : adj[i]) {
+//                System.out.println(i + " " + j);
+//            }
+//        }
 
         isSet = new boolean[noPoints];
 
-        for (int i = 0; i < noPoints; i++) {
-            if (!isSet[i]) {
+        for (Integer i : components) {
+            if (!isSet[i % noPoints]) {
                 assignTrue(record, i, noPoints);
             }
         }
@@ -133,7 +132,7 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
             }
 
             // label NW of point intersects with NW lables
-            collection = record.collection.query2D(new BoundingBox(x - height, y, x, y + height));
+            collection = record.collection.query2D(new BoundingBox(x - height, y - height, x, y + height));
             if (collection != null) {
                 for (SquareInterface square : collection) {
                     addEdgeAndInverse(point.getID() + noPoints, ((LabelInterface) square).getID(), noPoints);
@@ -169,11 +168,13 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
             }
         }
 
+        components = new ArrayList<>();
         // Step 2: traverse inverse graph based on s
         while (!s.empty()) {
             int n = s.pop();
 
             if (visited[n]) {
+                components.add(0, n);
                 dfsSecond(n);
                 counter++;
 
@@ -219,6 +220,7 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
     }
 
     private void assignTrue(DataRecord record, int node, int noNodes) {
+//        System.out.println(node);
         if (node < noNodes) {
             isSet[node] = true;
             ((PositionLabel) record.points.get(node)).setDirection(DirectionEnum.NE);
@@ -227,11 +229,5 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
             ((PositionLabel) record.points.get(node % noNodes)).setDirection(DirectionEnum.NW);
         }
 
-        for (int i : adj[node]) {
-            if (!isSet[i % noNodes] && scc[node % noNodes] == scc[i % noNodes]) {
-                assignTrue(record, i, noNodes);
-
-            }
-        }
     }
 }

@@ -60,8 +60,8 @@ public class BoundingBox {
     }
 
     public Boolean intersects(double xMin, double yMin, double xMax, double yMax) {
-        return this.getXMin() <= xMax && xMin <= this.getXMax() &&
-                this.getYMin() <= yMax && yMin <= this.getYMax();
+        return this.getXMin() < xMax && xMin < this.getXMax() &&
+                this.getYMin() < yMax && yMin < this.getYMax();
     }
 
     public Boolean intersects(BoundingBox bbox) {
