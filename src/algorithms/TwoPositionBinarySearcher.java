@@ -64,6 +64,12 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
         // set height
         record.height = height;
 
+//        for (int i = 0; i < adj.length; i++) {
+//            for(int j : adj[i]) {
+//                System.out.println(i + " " + j);
+//            }
+//        }
+
         // assign labels to each point in reverse topological order
         isSet = new boolean[noPoints];
         for (Integer i : componentsInReverseTopOrder) {
@@ -124,7 +130,7 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
             }
 
             // label NW of point intersects with NW lables
-            collection = record.collection.query2D(new BoundingBox(x - height, y - height, x, y + height));
+            collection = record.collection.query2D(new BoundingBox(x - height, y - height, x + height, y + height));
             if (collection != null) {
                 for (SquareInterface square : collection) {
                     addEdgeAndInverse(point.getID() + noPoints, ((LabelInterface) square).getID(), noPoints);
@@ -209,6 +215,10 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
             isSet[node - noPoints] = true;
             ((PositionLabel) record.points.get(node % noPoints)).setDirection(DirectionEnum.NW);
         }
-
+        for (int i : adj[node]) {
+            if (!isSet[i % noPoints] && scc[i] == scc[node]) {
+                assignTrue(record, i, noPoints);
+            }
+        }
     }
 }
