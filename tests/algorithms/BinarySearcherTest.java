@@ -35,7 +35,10 @@ class BinarySearchTest {
         DataRecord record = new DataRecord();
         record.aspectRatio = aspectRatio;
         record.points = new ArrayList<LabelInterface>();
-        record.points.add(new PositionLabel(0, 0, 1, DirectionEnum.NE, 0));
+        for (int i = 0; i < 10000; i++) {
+            record.points.add(new PositionLabel(i, i, 1, DirectionEnum.NE, 0));
+
+        }
         searcher.solve(record);
 
     }
@@ -55,11 +58,11 @@ class BinarySearchTest {
         runTest(1.4f, 1000.5f);
         runTest(1.4f, 1.4f);
         runTest(1.4f, 1.4f * 5);
-        runTest(2f/27, 3);
-        runTest(2f/27, 3.5f);
-        runTest(2f/27, 1000);
-        runTest(2f/27, 1000.5f);
-        runTest(2f/27, 2f/27);
-        runTest(2f/27, 2f/27 * 5);
+        runTest(2f / 27, 3);
+        runTest(2f / 27, 3.5f);
+        runTest(2f / 27, 1000);
+        runTest(2f / 27, 1000.5f);
+        runTest(2f / 27, 2f / 27);
+        runTest(2f / 27, 2f / 27 * 5);
     }
 }

@@ -16,17 +16,9 @@ public abstract class BinarySearcher implements AbstractAlgorithmInterface {
 
         // --------- calculating the initial bounds -------------
         // estimate of upper bound which may be too low
-        int high = (int)(10000 * Math.sqrt(alpha / record.points.size()));
+        int high = (int) (20000 * alpha);
         int low = 0;
 
-
-        // make sure that our upper bound is correct. This may not be required if we have a good estimation
-        double doubleHigh = high;
-        while (isSolvable(record, high)) {
-            low = high;
-            doubleHigh = doubleHigh * 1.5f;
-            high = (int) doubleHigh;
-        }
 
         // ----------- execute binary search ---------
         // first binary search to reduce to integral values (width)
@@ -45,10 +37,10 @@ public abstract class BinarySearcher implements AbstractAlgorithmInterface {
         int i_low, i_high;
 
         // check half step of width and calculate indices for height search
-        if (isSolvable(record, low + 0.5f)) {
+        if (isSolvable(record, low + 0.5)) {
             i_low =  (int) Math.ceil((low + 0.5) / alpha);
             i_high =  (int) Math.ceil((high) / alpha);
-            height = low + 0.5f;
+            height = low + 0.5;
         } else {
             i_low =  (int) Math.ceil((low) / alpha);
             i_high =  (int) Math.ceil((low + 0.5) / alpha);
