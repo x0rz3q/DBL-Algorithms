@@ -42,6 +42,7 @@ public class QuadTree extends AbstractCollection
 
     public QuadTree(Collection<? extends SquareInterface> nodes) {
         super();
+        this.boundary = new Square(new Anchor(0, 0), 10000);
         setDataLimit(1);
         this.data = new ArrayList<>();
         this.leaf = true;
