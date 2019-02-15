@@ -27,7 +27,7 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
 
     // stores for each node the component it is in
     private int[] scc;
-    private List<Integer> components;
+    private List<Integer> componentsInReverseTopOrder;
 
     // keep track of current component
     private int counter;
@@ -43,8 +43,10 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
     @Override
     boolean isSolvable(DataRecord record, double height) {
         int noInputs = record.points.size();
+
         createGraph(record, height, noInputs);
 
+        // check if label and its inverse are in the same component
         for (int i = 0; i < noInputs; i++) {
             if (scc[i] == scc[i + noInputs]) {
                 return false;
@@ -59,9 +61,12 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
         int noPoints = record.points.size();
         createGraph(record, height, noPoints);
 
+        // set height
         record.height = height;
+
+        // assign labels to each point in reverse topological order
         isSet = new boolean[noPoints];
-        for (Integer i : components) {
+        for (Integer i : componentsInReverseTopOrder) {
             if (!isSet[i % noPoints]) {
                 assignTrue(record, i, noPoints);
             }
@@ -138,6 +143,7 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
         s = new Stack<>();
         scc = new int[noPoints * 2];
         counter = 0;
+        componentsInReverseTopOrder = new ArrayList<>();
 
         // Step 1: dfs on original graph
         for (int i = 0; i < noPoints * 2; i++) {
@@ -145,14 +151,12 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
                 dfsFirst(i);
             }
         }
-        components = new ArrayList<>();
 
         // Step 2: traverse inverse graph based on s
         while (!s.empty()) {
             int n = s.pop();
-
             if (!visitedInv[n]) {
-                components.add(0, n);
+                componentsInReverseTopOrder.add(0, n);
                 dfsSecond(n);
                 counter++;
 
