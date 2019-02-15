@@ -116,7 +116,7 @@ public class QuadTree extends AbstractCollection
         if (node == null) {
             throw new NullPointerException("QuadTree.insert() null node provided");
         }
-        if (!intersects(node)) { // if node is not in this quad tree
+        if (!this.boundary.intersectOrTouch(node)) { // if node is not in this quad tree
             return; // do nothing
         }
         this.count++; // subtree wil contain node, so increment
@@ -193,7 +193,7 @@ public class QuadTree extends AbstractCollection
 
     @Override
     public Boolean intersects(SquareInterface node) {
-        return boundary.intersectOrTouch(node);
+        return boundary.intersects(node);
     }
 
     @Override
