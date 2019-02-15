@@ -98,8 +98,7 @@ public class QuadTree extends AbstractCollection
      * @return QuadTree, the new subdivision
      */
     private QuadTree subDivide(SquareInterface b) {
-        QuadTree t = new QuadTree(b, getData()); // add root data to subtree
-        return t;
+        return new QuadTree(b, getData()); // add root data to subtree
     }
 
     /**
@@ -117,7 +116,7 @@ public class QuadTree extends AbstractCollection
         if (node == null) {
             throw new NullPointerException("QuadTree.insert() null node provided");
         }
-        if (!intersects(node)) { // if node is not in this quad tree
+        if (!this.boundary.intersectOrTouch(node)) { // if node is not in this quad tree
             return; // do nothing
         }
         this.count++; // subtree wil contain node, so increment
@@ -161,23 +160,9 @@ public class QuadTree extends AbstractCollection
      * @post {@code \result == (\forall i; i.intesect(subTree); i.instersects(range))}
      */
     private Collection<SquareInterface> query2D(QuadTree subTree, SquareInterface range) {
-        Collection<SquareInterface> allLeaves = new ArrayList<>();
-        if (subTree.leaf) {
-            for (SquareInterface leave : subTree.getData())
-                if (leave.intersects(range))
-                    allLeaves.add(leave);
-        } else {
-            if (subTree.NE.intersects(range))
-                allLeaves.addAll(query2D(subTree.NE, range));
-            if (subTree.NW.intersects(range))
-                allLeaves.addAll(query2D(subTree.NW, range));
-            if (subTree.SE.intersects(range))
-                allLeaves.addAll(query2D(subTree.SE, range));
-            if (subTree.SW.intersects(range))
-                allLeaves.addAll(query2D(subTree.SW, range));
-        }
-        return allLeaves;
+        BoundingBox bbox = new BoundingBox(range.getXMin(), range.getYMin(), range.getXMax(), range.getYMax());
 
+        return this.query2D(bbox);
     }
 
     /**

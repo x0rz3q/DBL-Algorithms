@@ -108,4 +108,20 @@ public interface SquareInterface {
      * @return Boolean
      */
     Boolean intersects(SquareInterface square);
+
+    /**
+     * Check if square touches square.
+     *
+     * @param square {@link SquareInterface}
+     * @return Boolean
+     */
+    Boolean touch(SquareInterface square);
+
+    /**
+     * Check if square touches or intersects with square.
+     *
+     * @param square {@link SquareInterface}
+     * @return Boolean
+     */
+    Boolean intersectOrTouch(SquareInterface square);
 }
