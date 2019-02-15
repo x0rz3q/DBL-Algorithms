@@ -77,9 +77,9 @@ class SquareTest extends AbstractSquareTest {
     }
 
     @Test
-    void intersectsEdge() {
+    void touch() {
         Square square = new Square(new Anchor(15, 15), 5);
-        assertTrue(this.instance.intersects(square));
+        assertTrue(this.instance.touch(square));
     }
 
     @Test

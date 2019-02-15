@@ -51,8 +51,8 @@ class PointTest extends AbstractSquareTest {
     }
 
     @Test
-    void intersect() {
-        assertTrue(this.instance.intersects(this.instance));
+    void touch() {
+        assertTrue(this.instance.touch(this.instance));
     }
 
     @Test

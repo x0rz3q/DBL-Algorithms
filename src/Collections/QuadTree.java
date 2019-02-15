@@ -193,7 +193,7 @@ public class QuadTree extends AbstractCollection
 
     @Override
     public Boolean intersects(SquareInterface node) {
-        return boundary.intersects(node);
+        return boundary.intersectOrTouch(node);
     }
 
     @Override
