@@ -1,10 +1,8 @@
 import java.io.*;
 import java.lang.*;
 import java.util.*;
-import org.apache.commons.math3.*;
-import org.apache.commons.math3.distribution.*;
 
-import javax.sound.midi.ControllerEventListener;
+import org.apache.commons.math3.distribution.*;
 
 
 // Stores point
@@ -143,14 +141,15 @@ class Printer {
     }
 
     /**
-     * Constructor for printer to file
-     * @param fileLocation
+     * Set file to be written to
+     * @param file
      * @throws IOException
      */
-    Printer(String fileLocation) throws IOException {
-        this.fileWriter = new FileWriter(fileLocation);
+    void setFile(File file) throws IOException {
+        this.fileWriter = new FileWriter(file);
         this.printWriter = new PrintWriter(fileWriter);
     }
+
 }
 
 
@@ -424,11 +423,13 @@ class Strategy4pos extends GenerationStrategy {
     @Override
     Point[] generate() {
         // TODO implement
+        return new Point[0];
     }
 
     @Override
     Rectangle[] generateStart() {
         // TODO implement
+        return new Rectangle[0];
     }
 
     Strategy4pos(TestData data) {
@@ -441,11 +442,13 @@ class Strategy1slider extends GenerationStrategy {
     @Override
     Point[] generate() {
         // TODO implement
+        return new Point[0];
     }
 
     @Override
     Rectangle[] generateStart() {
         // TODO implement
+        return new Rectangle[0];
     }
 
     Strategy1slider(TestData data) {
@@ -475,17 +478,21 @@ class TestData {
     NumberGenerator xGenerator;
     NumberGenerator yGenerator;
 
-    // location for generated file
-    String location;
-
     // Setters
     void setModel(String newModel) {this.model = newModel;}
     void setN(int newN) {this.n = newN;}
     void setRatio(double newRatio) {this.ratio = newRatio;}
-    void setResult(double newResult) {this.result = newResult;}
+    void setResult(double newResult) throws IllegalArgumentException {
+        this.result = newResult;
+        if (this.model.equals("2pos") && (this.result != Math.ceil(this.result) && this.result * this.ratio * 2 != Math.ceil(this.result * this.ratio * 2))) {
+            throw new IllegalArgumentException("Combination model-ratio-result impossible");
+        }
+        if (this.model.equals("4pos") && (this.result * 2 != Math.ceil(this.result * 2) && this.result * this.ratio * 2 != Math.ceil(this.result * this.ratio * 2))) {
+            throw new IllegalArgumentException("Combination model-ratio-result impossible");
+        }
+    }
     void setxGenerator(NumberGenerator newxGenerator) {this.xGenerator = newxGenerator;}
     void setyGenerator(NumberGenerator newyGenerator) {this.yGenerator = newyGenerator;}
-    void setLocation(String newLocation) {this.location = newLocation;}
 }
 
 // controller for generation process of test
@@ -496,6 +503,8 @@ class Controller {
     private Printer printer;
 
     private GenerationStrategy strategy;
+
+    private File writeFile;
 
 
     /**
@@ -518,23 +527,26 @@ class Controller {
      * @throws IllegalArgumentException
      */
     void chooseStrategy() throws IllegalArgumentException {
-        if (data.model == "2pos") {
+        if (data.model.equals("2pos")) {
             strategy = new Strategy2pos(data);
-        } else if (data.model == "4pos") {
+        } else if (data.model.equals("4pos")) {
             strategy = new Strategy4pos(data);
-        } else if (data.model == "1slider") {
+        } else if (data.model.equals("1slider")) {
             strategy = new Strategy1slider(data);
         } else {
             throw new IllegalArgumentException("Non-existent model specified");
         }
     }
 
-    void setData(TestData newData) {
+    void setData(TestData newData) throws IOException {
         data = newData;
+        writeFile = new File(data.model + "_" + data.n + "_" + data.ratio + "_" + data.result + "_" + data.xGenerator.toString() + "_" + data.yGenerator.toString()+".txt");
+        writeFile.createNewFile();
+        this.printer.setFile(writeFile);
     }
 
     Controller() throws IOException {
-        this.printer = new Printer(data.location);
+        this.printer = new Printer();
     }
 
 
@@ -553,38 +565,38 @@ class TestReader {
         ArrayList<TestData> tests = new ArrayList<>();
         while(sc.hasNextLine()) {
             TestData currentTest = new TestData();
+
             currentTest.setModel(sc.next());
             currentTest.setN(sc.nextInt());
             currentTest.setRatio(sc.nextDouble());
             currentTest.setResult(sc.nextDouble());
 
             String xGeneratorType = sc.next();
-            if (xGeneratorType == "Uniform") {
+            if (xGeneratorType.equals("Uniform")) {
                 currentTest.setxGenerator(new UniformNumberGenerator(sc.nextInt(), sc.nextInt()));
-            } else if (xGeneratorType == "Poisson") {
+            } else if (xGeneratorType.equals("Poisson")) {
                 currentTest.setxGenerator(new PoissonNumberGenerator(sc.nextDouble()));
-            } else if (xGeneratorType == "Geometric") {
+            } else if (xGeneratorType.equals("Geometric")) {
                 currentTest.setxGenerator(new GeometricNumberGenerator(sc.nextDouble()));
-            } else if (xGeneratorType == "Binomial") {
+            } else if (xGeneratorType.equals("Binomial")) {
                 currentTest.setxGenerator(new BinomialNumberGenerator(sc.nextDouble(), sc.nextInt()));
             } else {
                 throw new IllegalArgumentException("Invalid numbergenerator");
             }
 
             String yGeneratorType = sc.next();
-            if (yGeneratorType == "Uniform") {
+            if (yGeneratorType.equals("Uniform")) {
                 currentTest.setyGenerator(new UniformNumberGenerator(sc.nextInt(), sc.nextInt()));
-            } else if (yGeneratorType == "Poisson") {
+            } else if (yGeneratorType.equals("Poisson")) {
                 currentTest.setyGenerator(new PoissonNumberGenerator(sc.nextDouble()));
-            } else if (yGeneratorType == "Geometric") {
+            } else if (yGeneratorType.equals("Geometric")) {
                 currentTest.setyGenerator(new GeometricNumberGenerator(sc.nextDouble()));
-            } else if (yGeneratorType == "Binomial") {
+            } else if (yGeneratorType.equals("Binomial")) {
                 currentTest.setyGenerator(new BinomialNumberGenerator(sc.nextDouble(), sc.nextInt()));
             } else {
                 throw new IllegalArgumentException("Invalid numbergenerator");
             }
 
-            currentTest.setLocation(sc.next());
             tests.add(currentTest);
         }
 
@@ -598,7 +610,7 @@ public class Main {
 
 
         // ADAPT LOCATION HERE ------------------------------------------------------------------------
-        String testCaseLocation = "";
+        String testCaseLocation = "TestCaseSpecification.txt";
         // ADAPT LOCATION BEFORE HERE -----------------------------------------------------------------
 
         TestReader reader = new TestReader(testCaseLocation);
