@@ -16,6 +16,10 @@ public class BoundingBox {
         this.topRight = new Point(xMax, yMax);
     }
 
+    public BoundingBox(SquareInterface square) {
+        this(square.getXMin(), square.getYMin(), square.getXMax(), square.getYMax());
+    }
+
     public Point getBottomLeft() {
         return bottomLeft;
     }
@@ -66,5 +70,35 @@ public class BoundingBox {
 
     public Boolean intersects(SquareInterface square) {
         return this.intersects(square.getXMin(), square.getYMin(), square.getXMax(), square.getYMax());
+    }
+
+    public Boolean touch(SquareInterface square) {
+        return this.touch(square.getXMin(), square.getYMin(), square.getXMax(), square.getYMax());
+    }
+
+    public Boolean touch(BoundingBox bbox) {
+        return this.touch(bbox.getXMin(), bbox.getYMin(), bbox.getXMax(), bbox.getYMax());
+    }
+
+    public Boolean touch(double xMin, double yMin, double xMax, double yMax) {
+        return (this.getYMin() <= yMax && this.getYMax() >= yMin &&
+                (this.getXMin().equals(xMax) || this.getXMax().equals(xMin)))
+                || (this.getXMin() <= xMax && this.getXMax() >= xMin &&
+                (this.getYMin().equals(yMax) || this.getYMax().equals(yMin)));
+    }
+
+    public Boolean intersectOrTouch(SquareInterface square) {
+        return this.touch(square.getXMin(), square.getYMin(), square.getXMax(), square.getYMax()) ||
+                this.intersects(square.getXMin(), square.getYMin(), square.getXMax(), square.getYMax());
+    }
+
+    public Boolean intersectOrTouch(BoundingBox bbox) {
+        return this.touch(bbox.getXMin(), bbox.getYMin(), bbox.getXMax(), bbox.getYMax()) ||
+            this.intersects(bbox.getXMin(), bbox.getYMin(), bbox.getXMax(), bbox.getYMax());
+    }
+
+    public Boolean intersectOrTouch(double xMin, double yMin, double xMax, double yMax) {
+        return this.intersects(xMin, yMin, xMax, yMax) ||
+                this.touch(xMin, yMin, xMax, yMax);
     }
 }

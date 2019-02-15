@@ -71,8 +71,16 @@ public abstract class AbstractSquare implements SquareInterface {
 
     @Override
     public Boolean intersects(SquareInterface square) {
-        return this.getXMin() <= square.getXMax() && square.getXMin() <= this.getXMax() &&
-                this.getYMin() <= square.getYMax() && square.getYMin() <= this.getYMax();
+        return (new BoundingBox(this)).intersects(square);
+    }
 
+    @Override
+    public Boolean touch(SquareInterface square) {
+        return (new BoundingBox(this)).touch(square);
+    }
+
+    @Override
+    public Boolean intersectOrTouch(SquareInterface square) {
+        return (new BoundingBox(this)).intersectOrTouch(square);
     }
 }
