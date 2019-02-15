@@ -22,13 +22,13 @@ class BinarySearchTest {
     private void runTest(float aspectRatio, float maxHeight) {
         BinarySearcher searcher = new BinarySearcher() {
             @Override
-            boolean isSolvable(DataRecord record, float height) {
+            boolean isSolvable(DataRecord record, double height) {
                 // System.out.println(height);
                 return height <= maxHeight;
             }
 
             @Override
-            void getSolution(DataRecord record, float height) {
+            void getSolution(DataRecord record, double height) {
                 assertTrue(Math.abs(height - maxHeight) < 0.1, "expected: " + maxHeight + " actual: " + height + " ratio: " + aspectRatio);
             }
         };

@@ -24,10 +24,12 @@ public abstract class BinarySearcher implements AbstractAlgorithmInterface {
 
 
         // make sure that our upper bound is correct. This may not be required if we have a good estimation
+        float floatHigh = high;
         while (isSolvable(record, high)) {
             low = high;
-            high = (int) (high * 1.5);
-            // TODO: this could run into an infinite loop if everything is solvable
+            floatHigh = floatHigh * 1.5f;
+            high = (int) floatHigh;
+            // TODO: this could run into an infinite loop if everything is solvable or if high is very low
         }
         // ----------- execute binary search ---------
         // first binary search to reduce to integral values (width)
@@ -74,7 +76,6 @@ public abstract class BinarySearcher implements AbstractAlgorithmInterface {
 
 
         // -------- execute algorithm ---------
-        System.out.println(height);
         getSolution(record, height);
     }
 
@@ -85,7 +86,7 @@ public abstract class BinarySearcher implements AbstractAlgorithmInterface {
      * @param record {@link DataRecord}
      * @param height required height for rectangles
      */
-    abstract boolean isSolvable(DataRecord record, float height);
+    abstract boolean isSolvable(DataRecord record, double height);
 
     /**
      * Place all labels with the given height (this method is not robust to reduce computation time)
@@ -95,6 +96,6 @@ public abstract class BinarySearcher implements AbstractAlgorithmInterface {
      * @param height required height for rectangles
      * @pre isSolvable(nodes, height)
      */
-    abstract void getSolution(DataRecord record, float height);
+    abstract void getSolution(DataRecord record, double height);
 
 }
