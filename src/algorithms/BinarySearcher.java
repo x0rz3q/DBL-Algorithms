@@ -12,7 +12,7 @@ public abstract class BinarySearcher implements AbstractAlgorithmInterface {
      */
     @Override
     public void solve(DataRecord record) {
-        float alpha = record.aspectRatio;
+        double alpha = record.aspectRatio;
 
         // --------- calculating the initial bounds -------------
         // estimate of upper bound which may be too low
@@ -21,11 +21,11 @@ public abstract class BinarySearcher implements AbstractAlgorithmInterface {
 
 
         // make sure that our upper bound is correct. This may not be required if we have a good estimation
-        float floatHigh = high;
+        double doubleHigh = high;
         while (isSolvable(record, high)) {
             low = high;
-            floatHigh = floatHigh * 1.5f;
-            high = (int) floatHigh;
+            doubleHigh = doubleHigh * 1.5f;
+            high = (int) doubleHigh;
         }
 
         // ----------- execute binary search ---------
@@ -39,7 +39,7 @@ public abstract class BinarySearcher implements AbstractAlgorithmInterface {
             }
         }
         // currently the best height we know
-        float height = low;
+        double height = low;
 
         // indices for new binary search
         int i_low, i_high;
