@@ -11,6 +11,7 @@ import Collections.QuadTree;
 import Collections.KDTree;
 
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.*;
 
 public class Parser implements ParserInterface {
@@ -120,10 +121,12 @@ public class Parser implements ParserInterface {
                 throw new NoSuchElementException("parser.output placement model unknown");
         }
 
+        DecimalFormat format = new DecimalFormat(".00");
+
         writer.write(
             "aspect ratio: " + record.aspectRatio + "\n"
             + "number of points: " + record.points.size() + "\n"
-            + "height: " + record.height + "\n"
+            + "height: " + format.format(record.height / record.aspectRatio) + "\n"
         );
 
         for (LabelInterface label : record.points) {
