@@ -79,10 +79,9 @@ public class Parser implements ParserInterface {
         }
 
         if (collectionClass == QuadTree.class) {
-            rec.collection = new QuadTree(new Square(new Anchor(xMin, yMin), Math.max(yMax - yMin, xMax - xMin)),
-                                            rec.points);
+            rec.collection = initQuadTree(rec.points, xMin, xMax, yMin, yMax);
         } else if (collectionClass == KDTree.class) {
-            rec.collection = initKDTree(rec.points);
+            rec.collection = initKDTree();
         } else {
             throw new InputMismatchException("parser.input collection class initializer undefined");
         }
@@ -91,13 +90,12 @@ public class Parser implements ParserInterface {
         return rec;
     }
 
-    private QuadTree initQuadTree(Collection<LabelInterface> points) {
-        return new QuadTree(points);
+    private QuadTree initQuadTree(Collection<LabelInterface> points, double xMin, double xMax, double yMin, double yMax) {
+        return new QuadTree(new Square(new Anchor(xMin, yMin), Math.max(yMax - yMin, xMax - xMin)), points);
     }
 
-    private KDTree initKDTree(Collection<LabelInterface> points) {
-        // @TODO initialize a KDTree
-        return null;
+    private KDTree initKDTree() {
+        throw new UnsupportedOperationException("parser.initKDTree not implemented yet");
     }
 
     @Override
