@@ -60,22 +60,26 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
      * @param sortedLabels a List containing all labels sorted by this.comparator
      * @param width double denoting the width assigned to each label
      * @pre sortedLabels is sorted by using this.comparator
+     * @modifies record
      * @return whether there exists a solution
      * @post if there is a solution record.collection contains it, else record.collection holds an invalid solution
      */
     private boolean solve(DataRecord record, List<LabelInterface> sortedLabels, double width) {
-        throw new UnsupportedOperationException("GreedySliderAlgorithm.solve() not implemented yet");
+        for (LabelInterface label : sortedLabels) {
+            if (!addLabel(record, label, width)) return false;
+        }
+        return true;
     }
 
     /**
      * makes a greedy choice for assigning given point a label of given width by placing it with a smalles possible slider value
      *
      * @param point {@link Point}
-     * @param width float denoting the width given to this label
+     * @param width double denoting the width given to this label
      * @modifies record.collection
      * @return whether it is possible to add a label of given width to the collection
      */
-    private boolean addLabel(Point point, float width) {
+    private boolean addLabel(DataRecord record, LabelInterface label, double width) {
         throw new UnsupportedOperationException("GreedySliderAlgorithm.setLabel() not implemented yet");
     }
 }
