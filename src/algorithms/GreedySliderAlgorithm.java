@@ -13,8 +13,6 @@ import java.util.*;
 
 public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
 
-    private DataRecord record;
-
     /*
      * Comparator that sorts Labels on their POI, where a Label l1 appears before l2 when for
      * their respective POI's p1 and p2 it holds that:
@@ -34,30 +32,26 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
 
     @Override
     public void solve(DataRecord record) {
-        this.record = record;
         record.labels.sort(comparator);
+
+        //@TODO write a better binary search algorithm, currently is simple structure as placeholder
+        double low = 0;
+        double high = Double.MAX_VALUE;
+        while (high - low > 0.5) {
+            double mid = low + high / 2;
+            if (isSolvable(record, mid)) {
+                low = mid;
+            } else {
+                high = mid;
+            }
+        }
     }
 
-    /**
-     * returns whether it is possible to label each point with a label of given width
-     *
-     * @param points {An array of points}
-     * @param width float denoting the width given to each label
-     * @modifies record.collection
-     * @return whether there is a valid possible labeling
-     */
-    private boolean isSolvable(Point[] points, float width) {
+    private boolean isSolvable(DataRecord record, double width) {
         throw new UnsupportedOperationException("GreedySliderAlgorithm.isSolvable() not implemented yet");
     }
 
-    /**
-     * labels each point with a label of given width
-     *
-     * @param points {An array of points}
-     * @param width float denoting the width given to each label
-     * @modifies record.collection
-     * @return whether there is a valid possible labeling
-     */
+
     private boolean solve(Point[] points, float width) {
         throw new UnsupportedOperationException("GreedySliderAlgorithm.solve() not implemented yet");
     }
