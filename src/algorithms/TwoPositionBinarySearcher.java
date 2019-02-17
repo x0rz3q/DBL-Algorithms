@@ -42,7 +42,7 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
 
     @Override
     boolean isSolvable(DataRecord record, double height) {
-        int noInputs = record.points.size();
+        int noInputs = record.labels.size();
 
         createGraph(record, height, noInputs);
 
@@ -58,7 +58,7 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
 
     @Override
     void getSolution(DataRecord record, double height) {
-        int noPoints = record.points.size();
+        int noPoints = record.labels.size();
         createGraph(record, height, noPoints);
 
         // set height
@@ -99,7 +99,7 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
         // ------------ adding edges to graph ------------
         // loop over every point and for both rectangles check overlaps
 
-        for (LabelInterface point : record.points) {
+        for (LabelInterface point : record.labels) {
             double x = point.getXMin();
             double y = point.getYMin();
 
@@ -210,10 +210,10 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
     private void assignTrue(DataRecord record, int node, int noPoints) {
         if (node < noPoints) {
             isSet[node] = true;
-            ((PositionLabel) record.points.get(node)).setDirection(DirectionEnum.NE);
+            ((PositionLabel) record.labels.get(node)).setDirection(DirectionEnum.NE);
         } else {
             isSet[node - noPoints] = true;
-            ((PositionLabel) record.points.get(node % noPoints)).setDirection(DirectionEnum.NW);
+            ((PositionLabel) record.labels.get(node % noPoints)).setDirection(DirectionEnum.NW);
         }
         for (int i : adj[node]) {
             if (!isSet[i % noPoints] && scc[i] == scc[node]) {

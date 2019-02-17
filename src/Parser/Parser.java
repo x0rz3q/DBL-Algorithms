@@ -48,7 +48,7 @@ public class Parser implements ParserInterface {
         try {
             while (!sc.hasNextInt()) sc.next();
             int n = sc.nextInt();
-            rec.points = new ArrayList<>(n);
+            rec.labels = new ArrayList<>(n);
 
             for (int i = 0; i < n; i++) {
                 int x = sc.nextInt();
@@ -73,14 +73,14 @@ public class Parser implements ParserInterface {
                         break;
                 }
 
-                rec.points.add(label);
+                rec.labels.add(label);
             }
         } catch (NoSuchElementException e) {
-            throw new IOException("parser.input: number of points does not correspond to found coordinates");
+            throw new IOException("parser.input: number of labels does not correspond to found coordinates");
         }
 
         if (collectionClass == QuadTree.class) {
-            rec.collection = initQuadTree(rec.points, xMin, xMax, yMin, yMax);
+            rec.collection = initQuadTree(rec.labels, xMin, xMax, yMin, yMax);
         } else if (collectionClass == KDTree.class) {
             rec.collection = initKDTree();
         } else {
@@ -123,11 +123,11 @@ public class Parser implements ParserInterface {
 
         writer.write(
             "aspect ratio: " + record.aspectRatio + "\n"
-            + "number of points: " + record.points.size() + "\n"
+            + "number of labels: " + record.labels.size() + "\n"
             + "height: " + format.format(record.height / record.aspectRatio) + "\n"
         );
 
-        for (LabelInterface label : record.points) {
+        for (LabelInterface label : record.labels) {
             if (label.getPOI().getEdgeLength() != 0) {
                 throw new IllegalStateException("parser.output POI of label not of width/height 0");
             }

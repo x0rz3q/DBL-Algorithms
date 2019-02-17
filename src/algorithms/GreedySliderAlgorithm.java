@@ -6,7 +6,7 @@ package algorithms;
 
 import Parser.DataRecord;
 import interfaces.AbstractAlgorithmInterface;
-import interfaces.models.SquareInterface;
+import interfaces.models.LabelInterface;
 import models.Point;
 
 import java.util.List;
@@ -18,23 +18,26 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
     @Override
     public void solve(DataRecord record) {
         this.record = record;
-        Point[] sortedPoints = sortPoints(record.points);
+        Point[] sortedPoints = sortPoints(record.labels);
     }
 
     /**
-     * sorts a set of points into an array such that a point p is before point q if {@code p.x < q.x || (p.x == q.x && p.y > q.y)}
+     * sorts a set of labels into an array such that a point p is before point q if {@code p.x < q.x || (p.x == q.x && p.y > q.y)}
      *
-     * @param points {A List of points}
-     * @return An array of all points sorted on increasing x-coordinates and on decreasing y-coordinates
+     * @param points {A List of labels}
+     * @return An array of all labels sorted on increasing x-coordinates and on decreasing y-coordinates
      */
-    private Point[] sortPoints(List<? extends SquareInterface> points) {
+    private Point[] sortPoints(List<? extends LabelInterface> labels) {
+        for (LabelInterface label : labels) {
+
+        }
         throw new UnsupportedOperationException("GreedySliderAlgorithm.sortPoints() not implemented yet");
     }
 
     /**
      * returns whether it is possible to label each point with a label of given width
      *
-     * @param points {A list of points}
+     * @param points {A list of labels}
      * @param width float denoting the width given to each label
      * @modifies record.collection
      * @return whether there is a valid possible labeling
@@ -46,7 +49,7 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
     /**
      * labels each point with a label of given width
      *
-     * @param points {A list of points}
+     * @param points {A list of labels}
      * @param width float denoting the width given to each label
      * @modifies record.collection
      * @return whether there is a valid possible labeling
