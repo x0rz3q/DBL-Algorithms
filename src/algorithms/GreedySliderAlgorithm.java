@@ -32,27 +32,38 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
 
     @Override
     public void solve(DataRecord record) {
-        record.labels.sort(comparator);
+        List<LabelInterface> sortedLabels = new ArrayList<>(record.labels);
+        sortedLabels.sort(comparator);
 
         //@TODO write a better binary search algorithm, currently is simple structure as placeholder
         double low = 0;
         double high = Double.MAX_VALUE;
-        while (high - low > 0.5) {
+        while (true) {
             double mid = low + high / 2;
-            if (isSolvable(record, mid)) {
+            if (solve(record, sortedLabels, mid)) {
                 low = mid;
             } else {
                 high = mid;
             }
+
+            if (high - low > 0.5) {
+                if (low != mid) solve(record, sortedLabels, low);
+                break;
+            }
         }
     }
 
-    private boolean isSolvable(DataRecord record, double width) {
-        throw new UnsupportedOperationException("GreedySliderAlgorithm.isSolvable() not implemented yet");
-    }
-
-
-    private boolean solve(Point[] points, float width) {
+    /**
+     * Finds a solution to the DataRecord
+     *
+     * @param record {@link DataRecord}
+     * @param sortedLabels a List containing all labels sorted by this.comparator
+     * @param width double denoting the width assigned to each label
+     * @pre sortedLabels is sorted by using this.comparator
+     * @return whether there exists a solution
+     * @post if there is a solution record.collection contains it, else record.collection holds an invalid solution
+     */
+    private boolean solve(DataRecord record, List<LabelInterface> sortedLabels, double width) {
         throw new UnsupportedOperationException("GreedySliderAlgorithm.solve() not implemented yet");
     }
 
