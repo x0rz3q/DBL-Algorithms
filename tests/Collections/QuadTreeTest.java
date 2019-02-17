@@ -131,4 +131,12 @@ class QuadTreeTest extends AbstractCollectionTest {
         this.instance.insert(point3);
         assertEquals(3, this.instance.getSize());
     }
+
+    @Test
+    void testSquare() {
+        SquareInterface s1 = new Square(new Anchor(10, 10), 1);
+        SquareInterface s2 = new Square(new Anchor(11, 11), 1);
+        this.instance.insert(s1);
+        this.instance.insert(s2);
+    }
 }
