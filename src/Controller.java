@@ -44,6 +44,11 @@ class Controller {
         }
     }
 
+    /**
+     * Sets newData as current dataset, including creating its file and passing it to the printer
+     * @param newData
+     * @throws IOException
+     */
     void setData(TestData newData) throws IOException {
         data = newData;
         writeFile = new File(data.model + "_" + data.n + "_" + data.ratio + "_" + data.result + "_" + data.xGenerator.toString() + "_" + data.yGenerator.toString()+".txt");
@@ -51,6 +56,10 @@ class Controller {
         this.printer.setFile(writeFile);
     }
 
+    /**
+     * Constructor for Controller object
+     * @throws IOException
+     */
     Controller() throws IOException {
         this.printer = new Printer();
     }
