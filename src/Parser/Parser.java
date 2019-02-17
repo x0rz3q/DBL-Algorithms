@@ -79,6 +79,7 @@ public class Parser implements ParserInterface {
             throw new IOException("parser.input: number of labels does not correspond to found coordinates");
         }
 
+        rec.labels = Collections.unmodifiableList(rec.labels);
         if (collectionClass == QuadTree.class) {
             rec.collection = initQuadTree(rec.labels, xMin, xMax, yMin, yMax);
         } else if (collectionClass == KDTree.class) {
