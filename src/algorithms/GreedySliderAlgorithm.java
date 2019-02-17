@@ -8,6 +8,7 @@ import Parser.DataRecord;
 import interfaces.AbstractAlgorithmInterface;
 import interfaces.models.LabelInterface;
 import models.Point;
+import models.SliderLabel;
 
 import java.util.*;
 
@@ -32,7 +33,12 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
 
     @Override
     public void solve(DataRecord record) {
-        List<LabelInterface> sortedLabels = new ArrayList<>(record.labels);
+
+        List<SliderLabel> sortedLabels = new ArrayList<>();
+        for (LabelInterface label : record.labels) {
+            if (label.getClass() != SliderLabel.class) throw new IllegalArgumentException("GreedySliderAlgorithm.solve() input record does not provide SliderLabels");
+            else sortedLabels.add((SliderLabel) label);
+        }
         sortedLabels.sort(comparator);
 
         //@TODO write a better binary search algorithm, currently is simple structure as placeholder
@@ -64,22 +70,22 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
      * @return whether there exists a solution
      * @post if there is a solution record.collection contains it, else record.collection holds an invalid solution
      */
-    private boolean solve(DataRecord record, List<LabelInterface> sortedLabels, double width) {
-        for (LabelInterface label : sortedLabels) {
-            if (!addLabel(record, label, width)) return false;
+    private boolean solve(DataRecord record, List<SliderLabel> sortedLabels, double width) {
+        for (SliderLabel label : sortedLabels) {
+            if (!setLabel(record, label, width)) return false;
         }
         return true;
     }
 
     /**
-     * makes a greedy choice for assigning given point a label of given width by placing it with a smalles possible slider value
+     * Makes a greedy choice for setting label to given width with a minimum slidervalue
      *
-     * @param point {@link Point}
-     * @param width double denoting the width given to this label
-     * @modifies record.collection
-     * @return whether it is possible to add a label of given width to the collection
+     * @param record
+     * @param label
+     * @param width
+     * @return
      */
-    private boolean addLabel(DataRecord record, LabelInterface label, double width) {
+    private boolean setLabel(DataRecord record, SliderLabel label, double width) {
         throw new UnsupportedOperationException("GreedySliderAlgorithm.setLabel() not implemented yet");
     }
 }
