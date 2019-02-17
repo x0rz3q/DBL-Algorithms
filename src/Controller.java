@@ -15,7 +15,16 @@ public class Controller {
 
     public void run() throws IOException, NullPointerException{
         DataRecord record = this.parser.input(System.in, QuadTree.class);
-        (new GreedySliderAlgorithm()).solve(record);
+        switch (record.placementModel) {
+            case ONE_SLIDER:
+                (new GreedySliderAlgorithm()).solve(record);
+                break;
+            case TWO_POS:
+                (new TwoPositionBinarySearcher()).solve(record);
+                break;
+            case FOUR_POS:
+                throw new UnsupportedOperationException("No 4-pos algorithm implemented yet");
+        }
         this.parser.output(record, System.out);
     }
 
