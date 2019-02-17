@@ -9,35 +9,39 @@ import interfaces.AbstractAlgorithmInterface;
 import interfaces.models.LabelInterface;
 import models.Point;
 
-import java.util.List;
+import java.util.*;
 
 public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
 
     private DataRecord record;
 
+    /*
+     * Comparator that sorts Labels on their POI, where a Label l1 appears before l2 when for
+     * their respective POI's p1 and p2 it holds that:
+     * {@code p1.x < p2.x || (p1.x == p2.x && p1.y > p2.y)}
+     */
+    private static Comparator<LabelInterface> comparator = (Comparator<LabelInterface>) (l1, l2) -> {
+        int x1 = l1.getPOI().getXMin().intValue();
+        int x2 = l2.getPOI().getXMin().intValue();
+        double y1 = l1.getPOI().getYMin();
+        double y2 = l2.getPOI().getYMin();
+        if (x1 < x2) return -1;
+        else if (x1 > x2) return 1;
+        else if (y1 < y2) return 1;
+        else if (y1 > y2) return -1;
+        else throw new IllegalArgumentException("GreedySliderAlgorithm.comparator.compare() compares 2 labels with an overlapping POI");
+    };
+
     @Override
     public void solve(DataRecord record) {
         this.record = record;
-        Point[] sortedPoints = sortPoints(record.labels);
-    }
-
-    /**
-     * sorts a set of labels into an array such that a point p is before point q if {@code p.x < q.x || (p.x == q.x && p.y > q.y)}
-     *
-     * @param points {A List of labels}
-     * @return An array of all labels sorted on increasing x-coordinates and on decreasing y-coordinates
-     */
-    private Point[] sortPoints(List<? extends LabelInterface> labels) {
-        for (LabelInterface label : labels) {
-
-        }
-        throw new UnsupportedOperationException("GreedySliderAlgorithm.sortPoints() not implemented yet");
+        record.labels.sort(comparator);
     }
 
     /**
      * returns whether it is possible to label each point with a label of given width
      *
-     * @param points {A list of labels}
+     * @param points {An array of points}
      * @param width float denoting the width given to each label
      * @modifies record.collection
      * @return whether there is a valid possible labeling
@@ -49,7 +53,7 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
     /**
      * labels each point with a label of given width
      *
-     * @param points {A list of labels}
+     * @param points {An array of points}
      * @param width float denoting the width given to each label
      * @modifies record.collection
      * @return whether there is a valid possible labeling
