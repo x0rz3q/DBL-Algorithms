@@ -1,4 +1,5 @@
 import Collections.QuadTree;
+import algorithms.GreedySliderAlgorithm;
 import algorithms.TwoPositionBinarySearcher;
 import interfaces.ParserInterface;
 import Parser.*;
@@ -14,7 +15,7 @@ public class Controller {
 
     public void run() throws IOException, NullPointerException{
         DataRecord record = this.parser.input(System.in, QuadTree.class);
-        (new TwoPositionBinarySearcher()).solve(record);
+        (new GreedySliderAlgorithm()).solve(record);
         this.parser.output(record, System.out);
     }
 

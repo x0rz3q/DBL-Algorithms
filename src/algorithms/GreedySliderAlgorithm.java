@@ -44,18 +44,20 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
         sortedLabels.sort(comparator);
 
         //@TODO write a better binary search algorithm, currently is simple structure as placeholder
+        double epsilon = 0.5;
         double low = 0;
-        double high = Double.MAX_VALUE;
+        double high = Double.MAX_VALUE / 10;
         while (true) {
-            double mid = low + high / 2;
+            double mid = (low + high) / 2;
             if (solve(record, sortedLabels, mid)) {
                 low = mid;
             } else {
                 high = mid;
             }
 
-            if (high - low > 0.5) {
+            if (high - low < epsilon) {
                 if (low != mid) solve(record, sortedLabels, low);
+                record.height = low;
                 break;
             }
         }
@@ -88,8 +90,6 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
      * @return whether it is possible to have label be placeable in collection with given width
      */
     private boolean setLabel(DataRecord record, SliderLabel label, double width) {
-        label.setEdgeLength(0d);
-
         BoundingBox queryArea = new BoundingBox(new Point(label.getPOI().getX()-width, label.getPOI().getY()-width), label.getPOI());
         Collection<SquareInterface> queryResult = record.collection.query2D(queryArea);
 
@@ -98,9 +98,12 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
             if (entry != label) xMax = Math.max(xMax, entry.getXMax());
         }
 
-        if (xMax > label.getXMax()) return false;
+        if (xMax > label.getPOI().getX()) return false;
 
-        label.setEdgeLength(width, (label.getPOI().getX() - xMax) / width + 1);
+        // @TODO work around rounding errors in a better way
+        double shift = (xMax - label.getPOI().getX()) / width + 1;
+        label.setEdgeLength(width, Math.min(Math.max(0, shift), 1));
+
         return true;
     }
 }
