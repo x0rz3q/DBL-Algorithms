@@ -7,6 +7,8 @@ package algorithms;
 import Parser.DataRecord;
 import interfaces.AbstractAlgorithmInterface;
 import interfaces.models.LabelInterface;
+import interfaces.models.SquareInterface;
+import models.BoundingBox;
 import models.Point;
 import models.SliderLabel;
 
@@ -19,11 +21,11 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
      * their respective POI's p1 and p2 it holds that:
      * {@code p1.x < p2.x || (p1.x == p2.x && p1.y > p2.y)}
      */
-    private static Comparator<LabelInterface> comparator = (Comparator<LabelInterface>) (l1, l2) -> {
-        int x1 = l1.getPOI().getXMin().intValue();
-        int x2 = l2.getPOI().getXMin().intValue();
-        double y1 = l1.getPOI().getYMin();
-        double y2 = l2.getPOI().getYMin();
+    private static Comparator<SliderLabel> comparator = (Comparator<SliderLabel>) (l1, l2) -> {
+        int x1 = l1.getPOI().getX().intValue();
+        int x2 = l2.getPOI().getX().intValue();
+        double y1 = l1.getPOI().getY();
+        double y2 = l2.getPOI().getY();
         if (x1 < x2) return -1;
         else if (x1 > x2) return 1;
         else if (y1 < y2) return 1;
@@ -80,12 +82,25 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
     /**
      * Makes a greedy choice for setting label to given width with a minimum slidervalue
      *
-     * @param record
-     * @param label
-     * @param width
-     * @return
+     * @param record {@link DataRecord}
+     * @param label {@link SliderLabel}
+     * @param width double denoting the width assigned to label
+     * @return whether it is possible to have label be placeable in collection with given width
      */
     private boolean setLabel(DataRecord record, SliderLabel label, double width) {
-        throw new UnsupportedOperationException("GreedySliderAlgorithm.setLabel() not implemented yet");
+        label.setEdgeLength(0d);
+
+        BoundingBox queryArea = new BoundingBox(new Point(label.getPOI().getX()-width, label.getPOI().getY()-width), label.getPOI());
+        Collection<SquareInterface> queryResult = record.collection.query2D(queryArea);
+
+        double xMax = label.getPOI().getX() - width;
+        for (SquareInterface entry : queryResult) {
+            if (entry != label) xMax = Math.max(xMax, entry.getXMax());
+        }
+
+        if (xMax > label.getXMax()) return false;
+
+        label.setEdgeLength(width, (label.getPOI().getX() - xMax) / width + 1);
+        return true;
     }
 }
