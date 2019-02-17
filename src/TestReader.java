@@ -12,6 +12,11 @@ class TestReader {
         sc = new Scanner(readFile);
     }
 
+    /**
+     * Method for parsing TestGenerator file into ArrayList of data for tests
+     * @return ArrayList<TestData> containing data for individual tests
+     * @throws IllegalArgumentException if invalid coordinate distribution is specified
+     */
     ArrayList<TestData> getTests() throws  IllegalArgumentException {
         ArrayList<TestData> tests = new ArrayList<>();
         while(sc.hasNextLine()) {

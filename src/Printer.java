@@ -10,14 +10,22 @@ class Printer {
     FileWriter fileWriter;
     PrintWriter printWriter;
 
-    // prints the problem statement: model, aspect ratio and number of points to the specified file
+    /**
+     * prints the problem statement: model, aspect ratio and number of points to the specified file
+     * @param model
+     * @param ratio
+     * @param n
+     */
     void printBasics(String model, double ratio, int n) {
         printWriter.println("placement model: " + model);
         printWriter.println("aspect ratio: " + ratio);
         printWriter.println("number of points: " + n);
     }
 
-    // prints the coordinates of the generated points to the specified file
+    /**
+     * prints the coordinates of the generated points to the specified file
+     * @param points
+     */
     void printPoints(Point[] points) {
         Collections.shuffle(Arrays.asList(points));
         for (Point p : points) {
@@ -25,7 +33,10 @@ class Printer {
         }
     }
 
-    // prints the correct result to the specified file
+    /**
+     * prints the correct result to the specified file
+     * @param result
+     */
     void printResult(double result) {
         printWriter.println("label height: " + result);
         printWriter.close();
