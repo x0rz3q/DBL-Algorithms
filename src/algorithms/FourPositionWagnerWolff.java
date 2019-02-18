@@ -1,8 +1,18 @@
 package algorithms;
 
 import Parser.DataRecord;
+import interfaces.models.LabelInterface;
+import models.Anchor;
+import models.PositionLabel;
+import models.Square;
+
+import java.util.ArrayList;
+
+import static models.DirectionEnum.*;
 
 public class FourPositionWagnerWolff extends AbstractFourPosition {
+
+    private ArrayList<PositionLabel> candidates = new ArrayList<>();
 
     @Override
     double[] findConflictSizes(DataRecord record) {
@@ -12,6 +22,28 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
     @Override
     void preprocessing(DataRecord record, Double sigma) {
 
+        for (LabelInterface p : record.points) {
+            double pX = p.getXMax();
+            double pY = p.getYMax();
+
+            // adding new labels (All id's are 0 for now)
+            // add NE square
+            if (record.collection.query2D(new Square(new Anchor(pX, pY), sigma)).size() == 0) {
+                candidates.add(new PositionLabel(pX, pY, sigma, NE, 0));
+            }
+            // add NW
+            if (record.collection.query2D(new Square(new Anchor(pX-sigma, pY), sigma)).size() == 0) {
+                candidates.add(new PositionLabel(pX, pY, sigma, NW, 0));
+            }
+            // add SE
+            if (record.collection.query2D(new Square(new Anchor(pX, pY-sigma), sigma)).size() == 0) {
+                candidates.add(new PositionLabel(pX, pY, sigma, SE, 0));
+            }
+            // add SW
+            if (record.collection.query2D(new Square(new Anchor(pX-sigma, pY-sigma), sigma)).size() == 0) {
+                candidates.add(new PositionLabel(pX, pY, sigma, SW, 0));
+            }
+        }
     }
 
     @Override
@@ -26,16 +58,15 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
 
     @Override
     public void solve(DataRecord record) {
-        super.solve(record);
-    }
+        double[] conflictSizes = findConflictSizes(record);
 
-    @Override
-    boolean isSolvable(DataRecord record, double height) {
-        return false;
-    }
+        // binary search over conflictSizes
+        // for conflict size do:
 
-    @Override
-    void getSolution(DataRecord record, double height) {
-
+            // initialize labels for conflictSize
+            // preprocessing(record, conflictSizes[i]);
+            // boolean solvable = eliminatImpossibleCandidates(record);
+            // if (!solvable) continue;
+            // doTwoSat(record)
     }
 }
