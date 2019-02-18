@@ -80,7 +80,7 @@ public class Parser implements ParserInterface {
         }
 
         if (collectionClass == QuadTree.class) {
-            rec.collection = new QuadTree(new Square(new Anchor(xMin, yMin), Math.max(yMax - yMin, xMax - xMin)),
+            rec.collection = new QuadTree(new Square(new Anchor(-10000, -10000), 25000),
                                             rec.points);
         } else if (collectionClass == KDTree.class) {
             rec.collection = initKDTree(rec.points);
@@ -93,7 +93,8 @@ public class Parser implements ParserInterface {
     }
 
     private QuadTree initQuadTree(Collection<LabelInterface> points) {
-        return new QuadTree(points);
+//        return new QuadTree(points);
+        return null;
     }
 
     private KDTree initKDTree(Collection<LabelInterface> points) {
