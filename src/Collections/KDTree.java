@@ -12,7 +12,6 @@ import java.util.Comparator;
 import java.util.List;
 
 public class KDTree extends AbstractCollection{
-    boolean isLeaf; /** does it directly contain the nodes **/
     /** depth of the root/leaf of the KDTree **/
     int depth; // depth == 0 for root.
     /** children of this tree **/
@@ -31,7 +30,6 @@ public class KDTree extends AbstractCollection{
      */
     private KDTree(List<SquareInterface> nodes, int depth, int limit) {
         this.count = nodes.size();
-        isLeaf = false;
         this.depth = depth;
         setDataLimit(limit);
         buildTree(nodes, depth);
@@ -43,7 +41,6 @@ public class KDTree extends AbstractCollection{
      */
     public KDTree(List<SquareInterface> nodes, int limit) {
         this.count = nodes.size();
-        isLeaf = false;
         this.depth = 0;
         setDataLimit(limit);
         buildTree(nodes, depth);
@@ -59,7 +56,6 @@ public class KDTree extends AbstractCollection{
         if (nodes.size() <= this.dataLimit) { // if below data limit
             this.nodes = nodes;
             this.depth = depth;
-            isLeaf = true;
         } else {
             if (depth % 2 == 0) { // even depth
                 // split vertically
@@ -115,34 +111,34 @@ public class KDTree extends AbstractCollection{
 
     private Collection<SquareInterface> query2D(KDTree subTree, BoundingBox range) {
         Collection<SquareInterface> leavesInRange = new ArrayList<>();
-        if (subTree.isLeaf) {
-            for (SquareInterface d : nodes) {
-                if (range.intersects(d)) {
-                    leavesInRange.add(d);
-                }
+        for (SquareInterface d : subTree.nodes) {
+            if (range.intersects(d)) {
+                leavesInRange.add(d);
             }
-        } else {
-            if (intersects(range)) { // intersects the splitter
-                // query both children
-                leavesInRange.addAll(query2D(left, range));
-                leavesInRange.addAll(query2D(right, range));
-            } else { // check which to query
-                Point btmLeft = range.getBottomLeft();
-                double rangeDimension, splitterDimension;
+        }
+        if (subTree.left == null) {
+            return leavesInRange;
+        }
+        if (subTree.intersects(range)) { // intersects the splitter
+            // query both children
+            leavesInRange.addAll(query2D(subTree.left, range));
+            leavesInRange.addAll(query2D(subTree.right, range));
+        } else { // check which to query
+            Point btmLeft = range.getBottomLeft();
+            double rangeDimension, splitterDimension;
 
-                if (depth % 2 == 0) { // vertical check
-                    rangeDimension = btmLeft.getY();
-                    splitterDimension = splitter.getY();
-                } else { // horizontal check
-                    rangeDimension = btmLeft.getX();
-                    splitterDimension = splitter.getX();
-                }
-                // query according to the location of the range box
-                if (rangeDimension < splitterDimension) {
-                    leavesInRange.addAll(query2D(left, range));
-                } else {
-                    leavesInRange.addAll(query2D(right, range));
-                }
+            if (subTree.depth % 2 == 0) { // vertical check
+                rangeDimension = btmLeft.getY();
+                splitterDimension = subTree.splitter.getY();
+            } else { // horizontal check
+                rangeDimension = btmLeft.getX();
+                splitterDimension = subTree.splitter.getX();
+            }
+            // query according to the location of the range box
+            if (rangeDimension < splitterDimension) {
+                leavesInRange.addAll(query2D(subTree.left, range));
+            } else {
+                leavesInRange.addAll(query2D(subTree.right, range));
             }
         }
         return leavesInRange;
