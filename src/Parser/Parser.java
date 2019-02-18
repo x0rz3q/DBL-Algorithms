@@ -124,7 +124,7 @@ public class Parser implements ParserInterface {
 
         writer.write(
             "aspect ratio: " + record.aspectRatio + "\n"
-            + "number of labels: " + record.labels.size() + "\n"
+            + "number of points: " + record.labels.size() + "\n"
             + "height: " + format.format(record.height / record.aspectRatio) + "\n"
         );
 
