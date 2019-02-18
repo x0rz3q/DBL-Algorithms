@@ -106,6 +106,9 @@ public class QuadTree extends AbstractCollection {
     public Collection<SquareInterface> query2D(BoundingBox bbox) {
         Collection<SquareInterface> data = new ArrayList<>();
 
+        if (this.intersects(bbox))
+            return data;
+
         for (SquareInterface square : this.data) {
             if (bbox.intersects(square))
                 data.add(square);
