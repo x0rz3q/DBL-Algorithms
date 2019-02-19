@@ -81,6 +81,7 @@ public class Parser implements ParserInterface {
 
         rec.labels = Collections.unmodifiableList(rec.labels);
         if (collectionClass == QuadTree.class) {
+            //TODO: xmin etc can be removed.
             rec.collection = initQuadTree(rec.labels, xMin, xMax, yMin, yMax);
         } else if (collectionClass == KDTree.class) {
             rec.collection = initKDTree();
@@ -93,7 +94,7 @@ public class Parser implements ParserInterface {
     }
 
     private QuadTree initQuadTree(Collection<LabelInterface> points, double xMin, double xMax, double yMin, double yMax) {
-        return new QuadTree(new Square(new Anchor(xMin, yMin), Math.max(yMax - yMin, xMax - xMin)), points);
+        return new QuadTree(new Square(new Anchor(-10000, -10000), 25000),rec.points);
     }
 
     private KDTree initKDTree() {
