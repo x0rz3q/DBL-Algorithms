@@ -48,7 +48,7 @@ public class Parser implements ParserInterface {
         try {
             while (!sc.hasNextInt()) sc.next();
             int n = sc.nextInt();
-            rec.points = new ArrayList<>(n);
+            rec.labels = new ArrayList<>(n);
 
             for (int i = 0; i < n; i++) {
                 int x = sc.nextInt();
@@ -73,17 +73,18 @@ public class Parser implements ParserInterface {
                         break;
                 }
 
-                rec.points.add(label);
+                rec.labels.add(label);
             }
         } catch (NoSuchElementException e) {
-            throw new IOException("parser.input: number of points does not correspond to found coordinates");
+            throw new IOException("parser.input: number of labels does not correspond to found coordinates");
         }
 
+        rec.labels = Collections.unmodifiableList(rec.labels);
         if (collectionClass == QuadTree.class) {
-            rec.collection = new QuadTree(new Square(new Anchor(-10000, -10000), 25000),
-                                            rec.points);
+            //TODO: xmin etc can be removed.
+            rec.collection = initQuadTree(rec.labels, xMin, xMax, yMin, yMax);
         } else if (collectionClass == KDTree.class) {
-            rec.collection = initKDTree(rec.points);
+            rec.collection = initKDTree();
         } else {
             throw new InputMismatchException("parser.input collection class initializer undefined");
         }
@@ -92,14 +93,12 @@ public class Parser implements ParserInterface {
         return rec;
     }
 
-    private QuadTree initQuadTree(Collection<LabelInterface> points) {
-//        return new QuadTree(points);
-        return null;
+    private QuadTree initQuadTree(Collection<LabelInterface> points, double xMin, double xMax, double yMin, double yMax) {
+        return new QuadTree(new Square(new Anchor(-10000, -10000), 25000),rec.points);
     }
 
-    private KDTree initKDTree(Collection<LabelInterface> points) {
-        // @TODO initialize a KDTree
-        return null;
+    private KDTree initKDTree() {
+        throw new UnsupportedOperationException("parser.initKDTree not implemented yet");
     }
 
     @Override
@@ -126,11 +125,11 @@ public class Parser implements ParserInterface {
 
         writer.write(
             "aspect ratio: " + record.aspectRatio + "\n"
-            + "number of points: " + record.points.size() + "\n"
+            + "number of points: " + record.labels.size() + "\n"
             + "height: " + format.format(record.height / record.aspectRatio) + "\n"
         );
 
-        for (LabelInterface label : record.points) {
+        for (LabelInterface label : record.labels) {
             if (label.getPOI().getEdgeLength() != 0) {
                 throw new IllegalStateException("parser.output POI of label not of width/height 0");
             }
