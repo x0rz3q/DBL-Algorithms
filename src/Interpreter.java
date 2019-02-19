@@ -14,9 +14,9 @@ class Interpreter {
 
 
     static boolean isValid (DataRecord record) {
-        if (record.points == null || record.placementModel == null) return false;
+        if (record.labels == null || record.placementModel == null) return false;
 
-        for (LabelInterface label : record.points) {
+        for (LabelInterface label : record.labels) {
             if (record.collection.query2D(label).size() > 1) return false;
         }
 
