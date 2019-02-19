@@ -19,6 +19,7 @@ public class KDTree extends AbstractCollection{
     KDTree right;
     /** node for on which the split happens **/
     AnchorInterface splitter;
+    /** comparators for sorting collections of SquareInterface **/
     private Comparator<SquareInterface> verticalC = verticalComparator();
     private Comparator<SquareInterface> horizontalC = horizontalComparator();
 
@@ -30,6 +31,7 @@ public class KDTree extends AbstractCollection{
      */
     private KDTree(List<SquareInterface> nodes, int depth, int limit) {
         this.count = nodes.size();
+        this.nodes = new ArrayList<>();
         this.depth = depth;
         setDataLimit(limit);
         buildTree(nodes, depth);
@@ -69,7 +71,10 @@ public class KDTree extends AbstractCollection{
             right = new KDTree(nodes.subList(nodes.size() / 2, nodes.size()), depth + 1, this.dataLimit);
         }
     }
-
+    /**
+     * Provides a SquareInterface Comparator for sorting anchors vertically.
+     * @return Comparator sorting by Y anchor coordinate
+     */
     private static Comparator<SquareInterface> verticalComparator(){
         return new Comparator<SquareInterface>() {
             public int compare(SquareInterface s1, SquareInterface s2) {
@@ -79,6 +84,10 @@ public class KDTree extends AbstractCollection{
             }
         };
     }
+    /**
+     * Provides a SquareInterface Comparator for sorting anchors horizontally.
+     * @return Comparator sorting by X anchor coordinate
+     */
     private static Comparator<SquareInterface> horizontalComparator(){
        return new Comparator<SquareInterface>() {
             public int compare(SquareInterface s1, SquareInterface s2) {
@@ -91,12 +100,47 @@ public class KDTree extends AbstractCollection{
 
     @Override
     public void insert(SquareInterface node) throws NullPointerException {
+        if (intersects(node)) { // in both
+            this.nodes.add(node); // store in root
+            return;
+        } else { // only in one or none
+            AnchorInterface btmLeft = node.getAnchor();
+            double rangeDimension,  splitterDimension; // dimensions to check for node and the splitter
 
+            if (this.depth % 2 == 0) { // vertical check
+                rangeDimension = btmLeft.getY();
+                splitterDimension = this.splitter.getY();
+            } else { // horizontal check
+                rangeDimension = btmLeft.getX();
+                splitterDimension = this.splitter.getX();
+            }
+
+            if (rangeDimension < splitterDimension) { // insert in left
+                this.insertInSubtree(left, node);
+            } else { // insert in right subtree
+                this.insertInSubtree(right, node);
+            }
+        }
     }
 
-    @Override
-    public void remove(SquareInterface node) throws NullPointerException {
 
+    @Override
+    public void remove(SquareInterface node) throws NullPointerException {}
+
+    /**
+     * Inserts a node in a subtree
+     * @param subTree subtree in which to insert
+     * @param node node to insert in the subtree
+     */
+    private static void insertInSubtree(KDTree subTree, SquareInterface node) {
+        if (subTree.left == null) { // is leaf
+            subTree.nodes.add(node);
+            if (subTree.size() > subTree.dataLimit) { // leaf is full 
+                subTree = new KDTree(subTree.nodes, subTree.depth, subTree.dataLimit); 
+            }
+        } else { // not leaf, go down the tree
+            subTree.insert(node); 
+        }
     }
 
     @Override
@@ -111,15 +155,15 @@ public class KDTree extends AbstractCollection{
 
     private Collection<SquareInterface> query2D(KDTree subTree, BoundingBox range) {
         Collection<SquareInterface> leavesInRange = new ArrayList<>();
-        for (SquareInterface d : subTree.nodes) {
+        for (SquareInterface d : subTree.nodes) { // add the data which intersects
             if (range.intersects(d)) {
                 leavesInRange.add(d);
             }
         }
-        if (subTree.left == null) {
+        if (subTree.left == null) { // leaf, nowhere to go
             return leavesInRange;
         }
-        if (subTree.intersects(range)) { // intersects the splitter
+        if (subTree.intersects(range)) { // intersects the splitter line
             // query both children
             leavesInRange.addAll(query2D(subTree.left, range));
             leavesInRange.addAll(query2D(subTree.right, range));
