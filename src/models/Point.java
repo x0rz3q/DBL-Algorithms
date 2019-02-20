@@ -1,61 +1,102 @@
 package models;
 
-import interfaces.models.AnchorInterface;
-import interfaces.models.SquareInterface;
+import interfaces.models.GeometryInterface;
+import interfaces.models.PointInterface;
 
-public class Point extends AbstractSquare {
-    public Point(AnchorInterface anchor) {
-        super(anchor, 0.0);
-    }
+public class Point implements PointInterface {
+    private double x;
+    private double y;
 
     public Point(double x, double y) {
-        super(new Anchor(x, y), 0.0);
+        this.x = x;
+        this.y = y;
     }
 
     @Override
-    public SquareInterface getBottomLeft() {
+    public double getX() {
+        return this.x;
+    }
+
+    @Override
+    public double getY() {
+        return this.y;
+    }
+
+    @Override
+    public double getDistanceTo(PointInterface point) {
+        return this.getDistanceTo(point.getX(), point.getY());
+    }
+
+    @Override
+    public double getDistanceTo(double x, double y) {
+        return Math.sqrt(Math.pow(x - this.x, 2) + Math.pow(this.y - y, 2));
+    }
+
+    @Override
+    public GeometryInterface getBottomLeft() {
         return this;
     }
 
     @Override
-    public SquareInterface getBottomRight() {
+    public GeometryInterface getBottomRight() {
         return this;
     }
 
     @Override
-    public SquareInterface getTopLeft() {
+    public GeometryInterface getTopLeft() {
         return this;
     }
 
     @Override
-    public SquareInterface getTopRight() {
+    public GeometryInterface getTopRight() {
         return this;
     }
 
     @Override
-    public SquareInterface getCenter() {
+    public GeometryInterface getCenter() {
         return this;
     }
 
-    /**
-     * Reject setting edgeLength for a point.
-     *
-     * @param edgeLength Double
-     * @pre {@code edgeLength  == 0}
-     * @throws IllegalArgumentException if {@code edgeLength <> 0}
-     */
     @Override
-    public void setEdgeLength(Double edgeLength) throws IllegalArgumentException {
-        if (edgeLength != 0) {
-            throw new IllegalArgumentException("Point.setEdgeLength.pre violated: edgeLength <> 0");
-        }
+    public boolean equals(GeometryInterface geometry) {
+        return geometry.getXMax() == this.getXMax() &&
+               geometry.getXMin() == this.getXMin() &&
+               geometry.getYMax() == this.getYMax() &&
+               geometry.getYMin() == this.getYMin();
     }
 
-    public Double getX() {
-        return this.getAnchor().getX();
+    @Override
+    public double getXMax() {
+        return this.getX();
     }
 
-    public Double getY() {
-        return this.getAnchor().getY();
+    @Override
+    public double getXMin() {
+        return this.getX();
+    }
+
+    @Override
+    public double getYMax() {
+        return this.getYMax();
+    }
+
+    @Override
+    public double getYMin() {
+        return this.getYMin();
+    }
+
+    @Override
+    public boolean intersects(GeometryInterface geometry) {
+        return this.equals(geometry);
+    }
+
+    @Override
+    public boolean touch(GeometryInterface geometry) {
+        return this.equals(geometry);
+    }
+
+    @Override
+    public boolean intersectOrTouch(GeometryInterface geometry) {
+        return this.equals(geometry);
     }
 }

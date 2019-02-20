@@ -7,8 +7,6 @@ package algorithms;
 import Parser.DataRecord;
 import interfaces.AbstractAlgorithmInterface;
 import interfaces.models.LabelInterface;
-import interfaces.models.SquareInterface;
-import models.BoundingBox;
 import models.Point;
 import models.SliderLabel;
 

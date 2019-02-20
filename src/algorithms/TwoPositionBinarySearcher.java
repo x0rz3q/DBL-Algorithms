@@ -1,9 +1,7 @@
 package algorithms;
 
 import interfaces.models.LabelInterface;
-import interfaces.models.SquareInterface;
 import Parser.DataRecord;
-import models.BoundingBox;
 import models.DirectionEnum;
 import models.PositionLabel;
 

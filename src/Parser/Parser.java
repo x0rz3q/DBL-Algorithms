@@ -105,7 +105,7 @@ public class Parser implements ParserInterface {
     }
 
     private QuadTree initQuadTree(Collection<LabelInterface> points, double xMin, double xMax, double yMin, double yMax) {
-        return new QuadTree(new Square(new Anchor(-10000, -10000), 25000), points);
+        return new QuadTree(new Rectangle(-10000, -10000, 15000, 15000), points);
     }
 
     private KDTree initKDTree() {
@@ -157,9 +157,6 @@ public class Parser implements ParserInterface {
         );
 
         for (LabelInterface label : record.labels) {
-            if (label.getPOI().getEdgeLength() != 0) {
-                throw new IllegalStateException("parser.output POI of label not of width/height 0");
-            }
             writer.write( Math.round(label.getPOI().getXMin()) + " " + Math.round(label.getPOI().getYMin() / record.aspectRatio) + " " + label.getPlacement() + "\n");
         }
 

@@ -1,19 +1,24 @@
 package models;
 
 import interfaces.models.LabelInterface;
+import interfaces.models.PointInterface;
 
-public abstract class AbstractLabel extends Square implements LabelInterface {
-    protected Point poi;
-    protected Integer ID;
+public abstract class AbstractLabel implements LabelInterface {
+    protected Rectangle rectangle;
+    protected int ID;
+    protected double aspectRation;
+    protected PointInterface poi;
 
-    public AbstractLabel(double x, double y, double size, int ID) {
-        super(new Anchor(x, y), size);
+    public AbstractLabel(double x, double y, double size, double aspectRation, int ID) {
         this.poi = new Point(x, y);
         this.ID = ID;
+        this.aspectRation = aspectRation;
+
+        this.rectangle = new Rectangle(x, y, size*aspectRation, y);
     }
 
     @Override
-    public Point getPOI() {
+    public PointInterface getPOI() {
         return this.poi;
     }
 

@@ -1,6 +1,6 @@
 package interfaces.models;
 
-public interface LabelInterface extends SquareInterface {
+public interface LabelInterface extends GeometryInterface {
     /**
      * Serialize as a string.
      *
@@ -21,7 +21,7 @@ public interface LabelInterface extends SquareInterface {
      *
      * @return SquareInterface
      */
-    SquareInterface getPOI();
+    PointInterface getPOI();
 
     /**
      * Get unique ID.

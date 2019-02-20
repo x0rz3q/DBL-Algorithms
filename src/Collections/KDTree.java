@@ -1,38 +1,33 @@
 package Collections;
 
-import interfaces.models.SquareInterface;
-import models.BoundingBox;
+import interfaces.models.GeometryInterface;
+import models.Rectangle;
 
 import java.util.Collection;
 
 public class KDTree extends AbstractCollection{
     @Override
-    public Boolean insert(SquareInterface node) throws NullPointerException {
+    public Boolean insert(GeometryInterface node) throws NullPointerException {
         return false;
     }
 
     @Override
-    public void remove(SquareInterface node) throws NullPointerException {
+    public void remove(GeometryInterface node) throws NullPointerException {
 
     }
 
     @Override
-    public Collection query2D(SquareInterface range) {
+    public Collection query2D(GeometryInterface range) {
         return null;
     }
 
     @Override
-    public Collection<SquareInterface> query2D(BoundingBox range) {
+    public Boolean intersects(GeometryInterface node) {
         return null;
     }
 
     @Override
-    public Boolean intersects(SquareInterface node) {
-        return null;
-    }
-
-    @Override
-    public Boolean intersects(BoundingBox node) {
+    public Boolean intersects(Rectangle node) {
         return null;
     }
 
