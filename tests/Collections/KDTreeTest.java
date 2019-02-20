@@ -70,9 +70,9 @@ public class KDTreeTest extends AbstractCollectionTest{
         points = new ArrayList<>();
         instance = new KDTree(points, 1);
         int count = 0;
-        for (int x = 0; x < 100; x+=10) {
-            for (int y = 0; y < 500; y+=20) {
-                SquareInterface square = new Square(new Anchor(x,y), 10);
+        for (int x = 0; x < 100; x += 10) {
+            for (int y = 0; y < 500; y += 20) {
+                SquareInterface square = new Square(new Anchor(x , y), 10);
                 instance.insert(square);
                 count ++;
             }

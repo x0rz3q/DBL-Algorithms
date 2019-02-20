@@ -6,10 +6,8 @@ import models.BoundingBox;
 import models.Point;
 import models.Square;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class KDTree extends AbstractCollection{
     /** depth of the root/leaf of the KDTree **/
@@ -56,8 +54,8 @@ public class KDTree extends AbstractCollection{
      * @return
      */
     private void buildTree(List<SquareInterface> nodes, int depth) {
-        if (nodes.size() <= this.dataLimit) { // if below data limit
-            this.nodes = nodes;
+        if (nodes.size() + this.nodes.size() <= this.dataLimit) { // if below data limit
+            this.nodes.addAll(nodes);
             this.depth = depth;
         } else {
             if (depth % 2 == 0) { // even depth
@@ -105,14 +103,15 @@ public class KDTree extends AbstractCollection{
     public void insert(SquareInterface node) throws NullPointerException {
         this.count ++;
 
-        if (splitter == null || this.intersects(node)) { // in both
-            this.nodes.add(node); // store in root
-
-            if (splitter == null && this.nodes.size() > this.dataLimit) { // leaf and over limit
-                List<SquareInterface> copyNodes = new ArrayList<>(this.nodes); // split it up
-                this.nodes.clear();
-                buildTree(copyNodes, this.depth);
+        if (splitter == null || this.intersects(node)) { // leaf or intersects
+            if (splitter == null && this.nodes.size() == this.dataLimit) {
+                List<SquareInterface> solo = new ArrayList<>();
+                solo.add(node);
+                buildTree(solo, this.depth);
+            } else {
+                this.nodes.add(node);
             }
+
         } else { // only in one or none
             AnchorInterface btmLeft = node.getAnchor();
             double rangeDimension,  splitterDimension; // dimensions to check for node and the splitter
