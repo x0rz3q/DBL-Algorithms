@@ -6,14 +6,20 @@ package Parser;
 import interfaces.AbstractCollectionInterface;
 import interfaces.ParserInterface;
 import interfaces.models.LabelInterface;
+import javafx.util.Pair;
 import models.*;
 import Collections.QuadTree;
 import Collections.KDTree;
 
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.*;
 
-class Parser implements ParserInterface {
+public class Parser implements ParserInterface {
+
+    private boolean testMode = false;
+    private double optHeight;
+
     @Override
     public DataRecord input(InputStream source, Class<? extends AbstractCollectionInterface> collectionClass) throws NullPointerException, IOException {
         if (source == null) throw new NullPointerException("parser.input: source not found");
@@ -21,19 +27,13 @@ class Parser implements ParserInterface {
         DataRecord rec = new DataRecord();
         Scanner sc = new Scanner(source);
 
+        if (!sc.hasNext()) {
+            throw new IllegalArgumentException("Parser.input.pre violated: source length is zero");
+        }
+
         try {
             while (!sc.hasNext("2pos|4pos|1slider")) sc.next();
-            switch (sc.next("2pos|4pos|1slider")) {
-                case "2pos":
-                    rec.placementModel = PlacementModelEnum.TWO_POS;
-                    break;
-                case "4pos":
-                    rec.placementModel = PlacementModelEnum.FOUR_POS;
-                    break;
-                case "1slider":
-                    rec.placementModel = PlacementModelEnum.ONE_SLIDER;
-                    break;
-            }
+            rec.placementModel = PlacementModelEnum.fromString(sc.next("2pos|4pos|1slider"));
         } catch (NoSuchElementException e) {
             throw new IOException("parser.input: no placement model found");
         }
@@ -45,14 +45,27 @@ class Parser implements ParserInterface {
             throw new IOException("parser.input: no aspect ratio found");
         }
 
+        double xMin = 10001;
+        double yMin = 10001;
+        double xMax = -1;
+        double yMax = -1;
+
         try {
             while (!sc.hasNextInt()) sc.next();
             int n = sc.nextInt();
-            rec.points = new ArrayList<>(n);
+            rec.labels = new ArrayList<>(n);
 
             for (int i = 0; i < n; i++) {
                 int x = sc.nextInt();
                 int y = sc.nextInt();
+                if (x < 0 || x > 10000 || y < 0 || y > 10000) {
+                    throw new InputMismatchException("parser.input coordinates not in range {0,1,...,10000}");
+                }
+
+                xMin = Math.min(xMin, x);
+                yMin = Math.min(yMin, y);
+                xMax = Math.max(xMax, x);
+                yMax = Math.max(yMax, y);
 
                 LabelInterface label = null;
                 switch (rec.placementModel) {
@@ -64,31 +77,55 @@ class Parser implements ParserInterface {
                         label = new SliderLabel(x, y*rec.aspectRatio, 0, 0, i);
                         break;
                 }
-                rec.points.add(label);
+
+                rec.labels.add(label);
             }
         } catch (NoSuchElementException e) {
-            throw new IOException("parser.input: number of points does not correspond to found coordinates");
+            throw new IOException("parser.input: number of labels does not correspond to found coordinates");
         }
 
+        rec.labels = Collections.unmodifiableList(rec.labels);
         if (collectionClass == QuadTree.class) {
-            rec.collection = initQuadTree(rec.points);
+            //TODO: xmin etc can be removed.
+            rec.collection = initQuadTree(rec.labels, xMin, xMax, yMin, yMax);
         } else if (collectionClass == KDTree.class) {
-            rec.collection = initKDTree(rec.points);
+            rec.collection = initKDTree();
         } else {
             throw new InputMismatchException("parser.input collection class initializer undefined");
+        }
+
+        // when in test-mode, the input file contains a
+        if (testMode) {
+            while (!sc.hasNextDouble()) sc.next();
+            optHeight = sc.nextDouble();
         }
 
         sc.close();
         return rec;
     }
 
-    private QuadTree initQuadTree(Collection<LabelInterface> points) {
-        return new QuadTree(points);
+    private QuadTree initQuadTree(Collection<LabelInterface> points, double xMin, double xMax, double yMin, double yMax) {
+        return new QuadTree(new Square(new Anchor(-10000, -10000), 25000), points);
     }
 
-    private KDTree initKDTree(Collection<LabelInterface> points) {
-        // @TODO initialize a KDTree
-        return null;
+    private KDTree initKDTree() {
+        throw new UnsupportedOperationException("parser.initKDTree not implemented yet");
+    }
+
+    /**
+     * Parse a test input to program structure retrieving a parsed DataRecord and the optimal height value.
+     *
+     * @param source {@link Readable}
+     * @param collectionClass {@link interfaces.AbstractAlgorithmInterface}
+     * @return Pair<DataRecord, Double>
+     * @throws NullPointerException if {@code source == null}
+     * @throws IOException if read error occurs
+     */
+    public Pair<DataRecord, Double> inputTestMode(InputStream source, Class<? extends AbstractCollectionInterface> collectionClass) throws IOException {
+        testMode = true;
+        DataRecord rec = input(source, collectionClass);
+        testMode = false;
+        return new Pair<DataRecord, Double>(rec, optHeight);
     }
 
     @Override
@@ -111,13 +148,15 @@ class Parser implements ParserInterface {
                 throw new NoSuchElementException("parser.output placement model unknown");
         }
 
+        DecimalFormat format = new DecimalFormat(".00");
+
         writer.write(
             "aspect ratio: " + record.aspectRatio + "\n"
-            + "number of points" + record.points.size() + "\n"
-            + "height:" + record.height + "\n"
+            + "number of points: " + record.labels.size() + "\n"
+            + "height: " + format.format(record.height / record.aspectRatio) + "\n"
         );
 
-        for (LabelInterface label : record.points) {
+        for (LabelInterface label : record.labels) {
             if (label.getPOI().getEdgeLength() != 0) {
                 throw new IllegalStateException("parser.output POI of label not of width/height 0");
             }
@@ -127,4 +166,3 @@ class Parser implements ParserInterface {
         writer.flush();
     }
 }
-

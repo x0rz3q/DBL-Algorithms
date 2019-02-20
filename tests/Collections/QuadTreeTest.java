@@ -35,7 +35,7 @@ class QuadTreeTest extends AbstractCollectionTest {
         SquareInterface point2 = new Point(6000, 6000);
         this.instance.insert(point1);
         this.instance.insert(point2);
-        SquareInterface range = new Square(new Anchor(4000, 4000), 2000);
+        SquareInterface range = new Square(new Anchor(4000, 4000), 3000);
         Collection<SquareInterface> points = this.instance.query2D(range);
         assertTrue(points.contains(point1));
         assertTrue(points.contains(point2));
@@ -47,7 +47,7 @@ class QuadTreeTest extends AbstractCollectionTest {
         SquareInterface point2 = new Point(6000, 6000);
         this.instance.insert(point1);
         this.instance.insert(point2);
-        SquareInterface range = new Square(new Anchor(4000, 4000), 2000);
+        SquareInterface range = new Square(new Anchor(3000, 3000), 4000);
         Collection<SquareInterface> points = this.instance.query2D(range);
         assertTrue(points.contains(point1));
         assertTrue(points.contains(point2));
@@ -114,6 +114,21 @@ class QuadTreeTest extends AbstractCollectionTest {
     void intersects3() {
         SquareInterface point = new Point(11000, 5000);
         assertFalse(this.instance.intersects(point));
+    }
+
+    @Test
+    void squareAdding() {
+        int count = 0;
+
+        for (int x = 0; x < 100; x+= 10) {
+            for (int y = 0; y < 500; y+= 20) {
+                SquareInterface square = new Square(new Anchor(x, y), 10);
+                assertTrue(this.instance.insert(square));
+                count++;
+            }
+        }
+
+        assertEquals(count, this.instance.size());
     }
 
     @Test

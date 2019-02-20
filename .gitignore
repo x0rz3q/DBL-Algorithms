@@ -25,4 +25,5 @@ hs_err_pid*
 
 # Intellij
 .idea
-Code.iml
+*.iml
+out/
