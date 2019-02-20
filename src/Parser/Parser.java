@@ -6,6 +6,7 @@ package Parser;
 import interfaces.AbstractCollectionInterface;
 import interfaces.ParserInterface;
 import interfaces.models.LabelInterface;
+import javafx.util.Pair;
 import models.*;
 import Collections.QuadTree;
 import Collections.KDTree;
@@ -15,6 +16,10 @@ import java.text.DecimalFormat;
 import java.util.*;
 
 public class Parser implements ParserInterface {
+
+    private boolean testMode = false;
+    private double optHeight;
+
     @Override
     public DataRecord input(InputStream source, Class<? extends AbstractCollectionInterface> collectionClass) throws NullPointerException, IOException {
         if (source == null) throw new NullPointerException("parser.input: source not found");
@@ -89,6 +94,12 @@ public class Parser implements ParserInterface {
             throw new InputMismatchException("parser.input collection class initializer undefined");
         }
 
+        // when in test-mode, the input file contains a
+        if (testMode) {
+            while (!sc.hasNextDouble()) sc.next();
+            optHeight = sc.nextDouble();
+        }
+
         sc.close();
         return rec;
     }
@@ -99,6 +110,13 @@ public class Parser implements ParserInterface {
 
     private KDTree initKDTree() {
         throw new UnsupportedOperationException("parser.initKDTree not implemented yet");
+    }
+
+    public Pair<DataRecord, Double> inputTestMode(InputStream source, Class<? extends AbstractCollectionInterface> collectionClass) throws IOException {
+        testMode = true;
+        DataRecord rec = input(source, collectionClass);
+        testMode = false;
+        return new Pair<DataRecord, Double>(rec, optHeight);
     }
 
     @Override
