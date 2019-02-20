@@ -3,6 +3,7 @@ package algorithms;
 import Collections.QuadTree;
 import Parser.DataRecord;
 import Parser.Parser;
+import javafx.util.Pair;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -27,8 +28,7 @@ public class AlgorithmTester {
                 throw new UnsupportedOperationException("No 4-pos algorithm implemented yet ");
         }
 
-        assertEquals(record.height, optHeight, "the height found is not correct in file: " + fileName
-                + " expected: " + optHeight + " returned: " + record.height);
+        assertEquals(optHeight * 1.0, (record.height / record.aspectRatio), "the height found is not correct in file: " + fileName);
 
     }
 
@@ -41,8 +41,8 @@ public class AlgorithmTester {
 
         for (int i = 0; i < listOfFiles.length; i++) {
             if (listOfFiles[i].isFile()) {
-                DataRecord record = parser.input(new FileInputStream(listOfFiles[i]), QuadTree.class);
-                runTest(record, listOfFiles[i].getName(), new Double(10));
+                Pair<DataRecord, Double> input = parser.inputTestMode(new FileInputStream(listOfFiles[i]), QuadTree.class);
+                runTest(input.getKey(), listOfFiles[i].getName(), input.getValue());
             }
         }
     }
@@ -50,6 +50,26 @@ public class AlgorithmTester {
 
     @Test
     public void TwoPosTest() {
-
+        try {
+            readInFiles("tests/algorithms/TestFiles/TwoPosTestFiles");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    @Test
+    public void FourPosTest() {
+        try {
+            readInFiles("tests/algorithms/TestFiles/FourPosTestFiles");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    @Test
+    public void SliderTest() {
+        try {
+            readInFiles("tests/algorithms/TestFiles/SliderTestFiles");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
