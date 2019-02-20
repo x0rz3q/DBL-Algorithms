@@ -38,21 +38,19 @@ public abstract class AbstractFourPosition implements AbstractAlgorithmInterface
      * squares it intersects (try to delete them); 4) If p has a candidate p_i which overlaps the last two
      * candidates of another site, then update and eliminate p_i.
      *
-     * @param record the given DataRecord
-     * @modifies record
+     * @modifies conflictGraph dataStructure
      * @post record does not contain candidates which can't be part of the solution
      * @return wether all points still have candidates left (if not there is no solution for this size)
      */
-    abstract boolean eliminateImpossibleCandidates(DataRecord record);
+    abstract boolean eliminateImpossibleCandidates();
 
     /**
-     * Try to solve if given record does not have an obvious solution.
+     * Try to solve if record does not have an obvious solution.
      * For those points which still have two or more candidates left, choose exactly two (heuristic),
      * and check, whether this remaining problem is solvable with 2-SAT (like 2 position)
      *
-     * @param record
      * @modifies record
      * @post record is solved
      */
-    abstract void doTwoSat(DataRecord record);
+    abstract void doTwoSat();
 }

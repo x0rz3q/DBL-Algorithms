@@ -47,12 +47,12 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
     }
 
     @Override
-    boolean eliminateImpossibleCandidates(DataRecord record) {
+    boolean eliminateImpossibleCandidates() {
         return false;
     }
 
     @Override
-    void doTwoSat(DataRecord record) {
+    void doTwoSat() {
 
     }
 
