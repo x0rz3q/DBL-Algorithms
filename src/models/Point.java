@@ -33,27 +33,27 @@ public class Point implements PointInterface {
     }
 
     @Override
-    public GeometryInterface getBottomLeft() {
+    public PointInterface getBottomLeft() {
         return this;
     }
 
     @Override
-    public GeometryInterface getBottomRight() {
+    public PointInterface getBottomRight() {
         return this;
     }
 
     @Override
-    public GeometryInterface getTopLeft() {
+    public PointInterface getTopLeft() {
         return this;
     }
 
     @Override
-    public GeometryInterface getTopRight() {
+    public PointInterface getTopRight() {
         return this;
     }
 
     @Override
-    public GeometryInterface getCenter() {
+    public PointInterface getCenter() {
         return this;
     }
 
@@ -77,12 +77,12 @@ public class Point implements PointInterface {
 
     @Override
     public double getYMax() {
-        return this.getYMax();
+        return this.getY();
     }
 
     @Override
     public double getYMin() {
-        return this.getYMin();
+        return this.getY();
     }
 
     @Override

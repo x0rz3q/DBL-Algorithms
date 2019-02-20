@@ -6,7 +6,6 @@ package Parser;
 import interfaces.AbstractCollectionInterface;
 import interfaces.ParserInterface;
 import interfaces.models.LabelInterface;
-import javafx.util.Pair;
 import models.*;
 import Collections.QuadTree;
 import Collections.KDTree;
@@ -71,10 +70,10 @@ public class Parser implements ParserInterface {
                 switch (rec.placementModel) {
                     case TWO_POS:
                     case FOUR_POS:
-                        label = new PositionLabel(x, y*rec.aspectRatio, 0, DirectionEnum.NE, i);
+                        label = new PositionLabel(x, y, 0, rec.aspectRatio, i, DirectionEnum.NE);
                         break;
                     case ONE_SLIDER:
-                        label = new SliderLabel(x, y*rec.aspectRatio, 0, 0, i);
+                        label = new SliderLabel(x, y, 0, rec.aspectRatio,0, i);
                         break;
                 }
 
@@ -153,11 +152,11 @@ public class Parser implements ParserInterface {
         writer.write(
             "aspect ratio: " + record.aspectRatio + "\n"
             + "number of points: " + record.labels.size() + "\n"
-            + "height: " + format.format(record.height / record.aspectRatio) + "\n"
+            + "height: " + format.format(record.height) + "\n"
         );
 
         for (LabelInterface label : record.labels) {
-            writer.write( Math.round(label.getPOI().getXMin()) + " " + Math.round(label.getPOI().getYMin() / record.aspectRatio) + " " + label.getPlacement() + "\n");
+            writer.write( Math.round(label.getPOI().getXMin()) + " " + Math.round(label.getPOI().getYMin()) + " " + label.getPlacement() + "\n");
         }
 
         writer.flush();

@@ -69,7 +69,7 @@ public class Rectangle implements GeometryInterface {
 
     @Override
     public double getYMin() {
-        return this.getTopLeft().getYMin();
+        return this.getBottomLeft().getYMin();
     }
 
     @Override
@@ -98,7 +98,7 @@ public class Rectangle implements GeometryInterface {
 
     @Override
     public boolean intersectOrTouch(GeometryInterface geometry) {
-        return this.intersects(geometry) && this.touch(geometry);
+        return this.intersects(geometry) || this.touch(geometry);
     }
 
     public boolean intersectOrTouch(double xMin, double yMin, double xMax, double yMax) {

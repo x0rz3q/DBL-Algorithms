@@ -6,8 +6,10 @@ package algorithms;
 
 import Parser.DataRecord;
 import interfaces.AbstractAlgorithmInterface;
+import interfaces.models.GeometryInterface;
 import interfaces.models.LabelInterface;
 import models.Point;
+import models.Rectangle;
 import models.SliderLabel;
 
 import java.util.*;
@@ -20,8 +22,8 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
      * {@code p1.x < p2.x || (p1.x == p2.x && p1.y > p2.y)}
      */
     private static Comparator<SliderLabel> comparator = (Comparator<SliderLabel>) (l1, l2) -> {
-        int x1 = l1.getPOI().getX().intValue();
-        int x2 = l2.getPOI().getX().intValue();
+        double x1 = l1.getPOI().getX();
+        double x2 = l2.getPOI().getX();
         double y1 = l1.getPOI().getY();
         double y2 = l2.getPOI().getY();
         if (x1 < x2) return -1;
@@ -88,11 +90,11 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
      * @return whether it is possible to have label be placeable in collection with given width
      */
     private boolean setLabel(DataRecord record, SliderLabel label, double width) {
-        BoundingBox queryArea = new BoundingBox(new Point(label.getPOI().getX()-width, label.getPOI().getY()-width), label.getPOI());
-        Collection<SquareInterface> queryResult = record.collection.query2D(queryArea);
+        Rectangle queryArea = new Rectangle(new Point(label.getPOI().getX()-width, label.getPOI().getY()-width), label.getPOI());
+        Collection<GeometryInterface> queryResult = record.collection.query2D(queryArea);
 
         double xMax = label.getPOI().getX() - width;
-        for (SquareInterface entry : queryResult) {
+        for (GeometryInterface entry : queryResult) {
             if (entry != label) xMax = Math.max(xMax, entry.getXMax());
         }
 
@@ -100,7 +102,7 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
 
         // @TODO work around rounding errors in a better way
         double shift = (xMax - label.getPOI().getX()) / width + 1;
-        label.setEdgeLength(width, Math.min(Math.max(0, shift), 1));
+        label.setSize(width, Math.min(Math.max(0, shift), 1));
 
         return true;
     }
