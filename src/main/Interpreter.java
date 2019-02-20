@@ -1,4 +1,4 @@
-/*
+package main;/*
  * author = Jeroen Schols
  */
 

@@ -1,3 +1,5 @@
+package main;
+
 import Collections.QuadTree;
 import algorithms.GreedySliderAlgorithm;
 import algorithms.TwoPositionBinarySearcher;
