@@ -3,6 +3,7 @@ package algorithms;
 import Parser.DataRecord;
 import interfaces.models.LabelInterface;
 import models.Anchor;
+import models.FourPositionLabel;
 import models.PositionLabel;
 import models.Square;
 
@@ -45,6 +46,12 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
             }
         }
     }
+
+    @Override
+    FourPositionLabel[] createConflictGraph() {
+        return new FourPositionLabel[0];
+    }
+
 
     @Override
     boolean eliminateImpossibleCandidates() {
