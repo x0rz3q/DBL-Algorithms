@@ -112,6 +112,15 @@ public class Parser implements ParserInterface {
         throw new UnsupportedOperationException("parser.initKDTree not implemented yet");
     }
 
+    /**
+     * Parse a test input to program structure retrieving a parsed DataRecord and the optimal height value.
+     *
+     * @param source {@link Readable}
+     * @param collectionClass {@link interfaces.AbstractAlgorithmInterface}
+     * @return Pair<DataRecord, Double>
+     * @throws NullPointerException if {@code source == null}
+     * @throws IOException if read error occurs
+     */
     public Pair<DataRecord, Double> inputTestMode(InputStream source, Class<? extends AbstractCollectionInterface> collectionClass) throws IOException {
         testMode = true;
         DataRecord rec = input(source, collectionClass);
