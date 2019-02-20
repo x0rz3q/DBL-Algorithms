@@ -7,10 +7,7 @@ import models.BoundingBox;
 import models.DirectionEnum;
 import models.PositionLabel;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 public class TwoPositionBinarySearcher extends BinarySearcher {
 
@@ -39,6 +36,37 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
     // keeps track of which rectangles have been set in getSolution()
     private boolean[] isSet;
 
+
+    @Override
+    double[] getSolutionSpace(DataRecord record) {
+        double maxHeight = Math.min(20000, (20000.0 * record.aspectRatio));
+        SortedSet<Double> solutions = new TreeSet<>();
+
+        double index = 0;
+        while (index < maxHeight) {
+            solutions.add(new Double(index));
+            index++;
+        }
+
+        index = 0;
+        while(index * record.aspectRatio< maxHeight) {
+            solutions.add(new Double(index * record.aspectRatio));
+            index += 0.5;
+        }
+
+
+
+        double[] solutionSpace = new double[solutions.size()];
+        int counter = 0;
+        for (Double d : solutions) {
+            solutionSpace[counter] = d;
+            counter++;
+        }
+
+
+
+        return solutionSpace;
+    }
 
     @Override
     boolean isSolvable(DataRecord record, double height) {
