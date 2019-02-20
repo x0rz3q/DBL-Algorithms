@@ -42,6 +42,7 @@ public class KDTree extends AbstractCollection{
      * @param nodes Collection of {@link SquareInterface} to be contained in the tree
      */
     public KDTree(List<SquareInterface> nodes, int limit) {
+        this.nodes = new ArrayList<>();
         this.count = nodes.size();
         this.depth = 0;
         setDataLimit(limit);
@@ -102,9 +103,14 @@ public class KDTree extends AbstractCollection{
 
     @Override
     public void insert(SquareInterface node) throws NullPointerException {
-        if (intersects(node)) { // in both
+        this.count ++;
+        if (this.intersects(node)) { // in both
             this.nodes.add(node); // store in root
-            return;
+            if (splitter == null && this.nodes.size() > this.dataLimit) { // leaf and over limit
+                List<SquareInterface> copyNodes = new ArrayList<>(this.nodes); // split it up
+                this.nodes.clear();
+                buildTree(copyNodes, this.depth);
+            }
         } else { // only in one or none
             AnchorInterface btmLeft = node.getAnchor();
             double rangeDimension,  splitterDimension; // dimensions to check for node and the splitter
@@ -125,7 +131,6 @@ public class KDTree extends AbstractCollection{
         }
     }
 
-
     @Override
     public void remove(SquareInterface node) throws NullPointerException {}
 
@@ -134,11 +139,14 @@ public class KDTree extends AbstractCollection{
      * @param subTree subtree in which to insert
      * @param node node to insert in the subtree
      */
-    private static void insertInSubtree(KDTree subTree, SquareInterface node) {
+    private void insertInSubtree(KDTree subTree, SquareInterface node) {
         if (subTree.left == null) { // is leaf
             subTree.nodes.add(node);
-            if (subTree.size() > subTree.dataLimit) { // leaf is full 
-                subTree = new KDTree(subTree.nodes, subTree.depth, subTree.dataLimit); 
+            subTree.count ++;
+            if (subTree.size() > subTree.dataLimit) { // leaf is full
+                List<SquareInterface> copyNodes = new ArrayList<>(subTree.nodes); // split it up
+                subTree.nodes.clear();
+                subTree.buildTree(copyNodes, subTree.depth);
             }
         } else { // not leaf, go down the tree
             subTree.insert(node); 
@@ -201,6 +209,7 @@ public class KDTree extends AbstractCollection{
      */
     @Override
     public Boolean intersects(BoundingBox node) {
+        if (splitter == null) return true;
         if (depth % 2 == 0) {
             return splitter.getY() < node.getYMax() && splitter.getY() > node.getYMin();
         } else {
