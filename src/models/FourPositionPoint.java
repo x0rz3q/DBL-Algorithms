@@ -1,21 +1,19 @@
 package models;
 
 import interfaces.models.AnchorInterface;
+import interfaces.models.LabelInterface;
 
 import java.util.ArrayList;
 
-public class FourPositionPoint extends Point {
+public class FourPositionPoint extends Square {
+
+    ArrayList<LabelInterface> candidates = new ArrayList<>();
+
     public FourPositionPoint(AnchorInterface anchor) {
-        super(anchor);
+        super(anchor, 0);
     }
 
-    public FourPositionPoint(double x, double y) {
-        super(x, y);
-    }
-
-    ArrayList<FourPositionLabel> candidates = new ArrayList<>();
-
-    public void addCandidate(FourPositionLabel label) {
+    public void addCandidate(LabelInterface label) {
         candidates.add(label);
     }
 
