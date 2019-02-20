@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-public class KDTreeTest extends AbstractCollectionTest{
+public class KDTreeTest extends AbstractCollectionTest {
     List<SquareInterface> points;
 
     @Override
@@ -35,7 +35,7 @@ public class KDTreeTest extends AbstractCollectionTest{
         instance.insert(p);
         assertEquals(1, instance.size());
         assertTrue(instance.nodes.contains(p));
-        assertNull(((KDTree) instance ).left);
+        assertNull(((KDTree) instance).left);
         SquareInterface p1 = new Point(6000, 6000);
         instance.insert(p1);
         assertFalse(instance.nodes.contains(p1));
@@ -52,16 +52,16 @@ public class KDTreeTest extends AbstractCollectionTest{
     @Test
     void insert2() {
         points = new ArrayList<>();
-        SquareInterface p = new Point (2000, 2000);
-        SquareInterface p1 = new Point (6000, 6000);
-        SquareInterface p2 = new Point (3000, 2000);
+        SquareInterface p = new Point(2000, 2000);
+        SquareInterface p1 = new Point(6000, 6000);
+        SquareInterface p2 = new Point(3000, 2000);
         points.add(p);
         points.add(p1);
         points.add(p2);
         instance = new KDTree(points, 1);
         assertEquals(3, instance.size());
         assertNotNull(((KDTree) instance).left);
-        instance.insert(new Point( 8000, 8000));
+        instance.insert(new Point(8000, 8000));
         assertEquals(4, instance.size());
     }
 
@@ -72,17 +72,45 @@ public class KDTreeTest extends AbstractCollectionTest{
         int count = 0;
         for (int x = 0; x < 100; x += 10) {
             for (int y = 0; y < 500; y += 20) {
-                SquareInterface square = new Square(new Anchor(x , y), 10);
+                SquareInterface square = new Square(new Anchor(x, y), 10);
                 instance.insert(square);
-                count ++;
+                count++;
             }
         }
         assertEquals(count, instance.size());
     }
 
     @Test
-    void query2D() {}
-
+    void query2D2() {
+        SquareInterface point1 = new Point(5000, 5000);
+        SquareInterface point2 = new Point(3000, 3000);
+        SquareInterface point3 = new Point(9000, 1);
+        SquareInterface point4 = new Point(7000, 8000);
+        points = new ArrayList<>();
+        points.add(point1);
+        points.add(point2);
+        points.add(point3);
+        points.add(point4);
+        instance = new KDTree(points, 1);
+        SquareInterface queryRange = new Square(new Anchor(2500, 2500), 3000);
+        Collection<SquareInterface> points = this.instance.query2D(queryRange);
+        assertTrue(points.contains(point1));
+        assertTrue(points.contains(point2));
+    }
     @Test
-    void query2D2() {}
+    void query2D3() {
+        SquareInterface point1 = new Point(5000, 5000);
+        SquareInterface point2 = new Point(3000, 3000);
+        SquareInterface point3 = new Point(9000, 1);
+        SquareInterface point4 = new Point(7000, 8000);
+        points = new ArrayList<>();
+        points.add(point1);
+        points.add(point2);
+        points.add(point3);
+        points.add(point4);
+        instance = new KDTree(points, 1);
+        SquareInterface queryRange = new Square(new Anchor(2500, 2500), 1);
+        Collection<SquareInterface> points = this.instance.query2D(queryRange);
+        assertTrue(points.isEmpty());
+    }
 }
