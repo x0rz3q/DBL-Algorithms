@@ -20,7 +20,7 @@ public class AlgorithmTester {
 
         algorithms.solve(record);
 
-        assertEquals(optHeight * 1.0, (record.height / record.aspectRatio), "the height found is not correct in file: " + fileName);
+        assertTrue(Math.abs((record.height / record.aspectRatio) - optHeight) < 0.1, "the height found is not correct in file: " + fileName);
         assertTrue(Interpreter.isValid(record), "the solution found is not valid in file: " + fileName);
 
     }
@@ -52,7 +52,7 @@ public class AlgorithmTester {
     @Test
     public void FourPosTest() {
         try {
-            readInFiles("tests/algorithms/TestFiles/FourPosTestFiles", null);
+            readInFiles("tests/algorithms/TestFiles/FourPosTestFiles", new TwoPositionBinarySearcher());
         } catch (IOException e) {
             e.printStackTrace();
         }

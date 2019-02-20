@@ -1,5 +1,5 @@
 placement model: 2pos
-aspect ratio: 2
+aspect ratio: 2912
 number of points: 5
 0 0
 0 1
