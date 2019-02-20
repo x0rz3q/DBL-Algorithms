@@ -2,6 +2,7 @@ package algorithms;
 
 import Parser.DataRecord;
 import interfaces.AbstractAlgorithmInterface;
+import models.FourPositionLabel;
 
 public abstract class AbstractFourPosition implements AbstractAlgorithmInterface {
 
@@ -30,6 +31,15 @@ public abstract class AbstractFourPosition implements AbstractAlgorithmInterface
     abstract void preprocessing(DataRecord record, Double sigma);
 
     /**
+     * Creates the conflict graph of label candidates, where a conflict (and thus edge) is defined as an intersection.
+     * Conflicting candidates are stored in the labels themselves.
+     *
+     * @pre global DataRecord with labels set
+     * @return array of FourPositionLabels defining the conflict graph
+     */
+    abstract FourPositionLabel[] createConflictGraph();
+
+    /**
      * Eliminates all impossible candidates from the record for a given label size.
      * This function checks for the following four requirements: 1) if all candidates of
      * a point p have been eliminated, we return false since there is no solution; 2) If point p
@@ -40,7 +50,7 @@ public abstract class AbstractFourPosition implements AbstractAlgorithmInterface
      *
      * @modifies conflictGraph dataStructure
      * @post record does not contain candidates which can't be part of the solution
-     * @return wether all points still have candidates left (if not there is no solution for this size)
+     * @return whether all points still have candidates left (if not there is no solution for this size)
      */
     abstract boolean eliminateImpossibleCandidates();
 
