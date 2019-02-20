@@ -7,8 +7,8 @@ import java.util.Collection;
 
 public class KDTree extends AbstractCollection{
     @Override
-    public void insert(SquareInterface node) throws NullPointerException {
-
+    public Boolean insert(SquareInterface node) throws NullPointerException {
+        return false;
     }
 
     @Override
