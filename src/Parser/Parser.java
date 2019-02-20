@@ -94,7 +94,7 @@ public class Parser implements ParserInterface {
     }
 
     private QuadTree initQuadTree(Collection<LabelInterface> points, double xMin, double xMax, double yMin, double yMax) {
-        return new QuadTree(new Square(new Anchor(-10000, -10000), 25000),rec.points);
+        return new QuadTree(new Square(new Anchor(-10000, -10000), 25000), points);
     }
 
     private KDTree initKDTree() {
