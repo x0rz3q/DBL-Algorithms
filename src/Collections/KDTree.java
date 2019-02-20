@@ -60,9 +60,10 @@ public class KDTree extends AbstractCollection{
             this.depth = depth;
         } else {
             if (depth % 2 == 0) { // even depth
-                // split vertically
-                java.util.Collections.sort(nodes, verticalC);
+               // split vertically
+               java.util.Collections.sort(nodes, verticalC);
             } else { // odd depth
+
                 // split horizontally
                 java.util.Collections.sort(nodes, horizontalC);
             }
@@ -80,7 +81,7 @@ public class KDTree extends AbstractCollection{
             public int compare(SquareInterface s1, SquareInterface s2) {
                 if (s1.getAnchor().getY() > s2.getAnchor().getY()) return 1;
                 if (s1.getAnchor().getY() < s2.getAnchor().getY()) return -1;
-                return -1;
+                return 0;
             }
         };
     }
@@ -93,7 +94,7 @@ public class KDTree extends AbstractCollection{
             public int compare(SquareInterface s1, SquareInterface s2) {
                 if (s1.getAnchor().getX() > s2.getAnchor().getX()) return 1;
                 if (s1.getAnchor().getX() < s2.getAnchor().getX()) return -1;
-                return -1;
+                return 0;
             }
         };
     }
