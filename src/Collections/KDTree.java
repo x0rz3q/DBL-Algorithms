@@ -104,8 +104,10 @@ public class KDTree extends AbstractCollection{
     @Override
     public void insert(SquareInterface node) throws NullPointerException {
         this.count ++;
-        if (this.intersects(node)) { // in both
+
+        if (splitter == null || this.intersects(node)) { // in both
             this.nodes.add(node); // store in root
+
             if (splitter == null && this.nodes.size() > this.dataLimit) { // leaf and over limit
                 List<SquareInterface> copyNodes = new ArrayList<>(this.nodes); // split it up
                 this.nodes.clear();
@@ -124,34 +126,15 @@ public class KDTree extends AbstractCollection{
             }
 
             if (rangeDimension < splitterDimension) { // insert in left
-                this.insertInSubtree(left, node);
+                this.left.insert(node);
             } else { // insert in right subtree
-                this.insertInSubtree(right, node);
+                this.right.insert(node);
             }
         }
     }
 
     @Override
     public void remove(SquareInterface node) throws NullPointerException {}
-
-    /**
-     * Inserts a node in a subtree
-     * @param subTree subtree in which to insert
-     * @param node node to insert in the subtree
-     */
-    private void insertInSubtree(KDTree subTree, SquareInterface node) {
-        if (subTree.left == null) { // is leaf
-            subTree.nodes.add(node);
-            subTree.count ++;
-            if (subTree.size() > subTree.dataLimit) { // leaf is full
-                List<SquareInterface> copyNodes = new ArrayList<>(subTree.nodes); // split it up
-                subTree.nodes.clear();
-                subTree.buildTree(copyNodes, subTree.depth);
-            }
-        } else { // not leaf, go down the tree
-            subTree.insert(node); 
-        }
-    }
 
     @Override
     public Collection<SquareInterface> query2D(SquareInterface range) {
@@ -209,7 +192,6 @@ public class KDTree extends AbstractCollection{
      */
     @Override
     public Boolean intersects(BoundingBox node) {
-        if (splitter == null) return true;
         if (depth % 2 == 0) {
             return splitter.getY() < node.getYMax() && splitter.getY() > node.getYMin();
         } else {
