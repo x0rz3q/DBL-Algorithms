@@ -6,6 +6,7 @@ package Parser;
 import interfaces.AbstractCollectionInterface;
 import interfaces.ParserInterface;
 import interfaces.models.LabelInterface;
+import javafx.util.Pair;
 import models.*;
 import Collections.QuadTree;
 import Collections.KDTree;
@@ -15,6 +16,10 @@ import java.text.DecimalFormat;
 import java.util.*;
 
 public class Parser implements ParserInterface {
+
+    private boolean testMode = false;
+    private double optHeight;
+
     @Override
     public DataRecord input(InputStream source, Class<? extends AbstractCollectionInterface> collectionClass) throws NullPointerException, IOException {
         if (source == null) throw new NullPointerException("parser.input: source not found");
@@ -89,16 +94,38 @@ public class Parser implements ParserInterface {
             throw new InputMismatchException("parser.input collection class initializer undefined");
         }
 
+        // when in test-mode, the input file contains a
+        if (testMode) {
+            while (!sc.hasNextDouble()) sc.next();
+            optHeight = sc.nextDouble();
+        }
+
         sc.close();
         return rec;
     }
 
     private QuadTree initQuadTree(Collection<LabelInterface> points, double xMin, double xMax, double yMin, double yMax) {
-        return new QuadTree(new Square(new Anchor(-10000, -10000), 25000),rec.points);
+        return new QuadTree(new Square(new Anchor(-10000, -10000), 25000), points);
     }
 
     private KDTree initKDTree() {
         throw new UnsupportedOperationException("parser.initKDTree not implemented yet");
+    }
+
+    /**
+     * Parse a test input to program structure retrieving a parsed DataRecord and the optimal height value.
+     *
+     * @param source {@link Readable}
+     * @param collectionClass {@link interfaces.AbstractAlgorithmInterface}
+     * @return Pair<DataRecord, Double>
+     * @throws NullPointerException if {@code source == null}
+     * @throws IOException if read error occurs
+     */
+    public Pair<DataRecord, Double> inputTestMode(InputStream source, Class<? extends AbstractCollectionInterface> collectionClass) throws IOException {
+        testMode = true;
+        DataRecord rec = input(source, collectionClass);
+        testMode = false;
+        return new Pair<DataRecord, Double>(rec, optHeight);
     }
 
     @Override
