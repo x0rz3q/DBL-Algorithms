@@ -11,7 +11,6 @@ public class FourPositionLabel extends PositionLabel {
     public FourPositionLabel(double x, double y, double size, DirectionEnum direction, int ID, FourPositionPoint point) {
         super(x, y, size, direction, ID);
         PoI = point;
-        point.addCandidate(this);
     }
 
     public FourPositionPoint getPoI() {
