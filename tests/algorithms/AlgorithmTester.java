@@ -4,12 +4,12 @@ import Collections.QuadTree;
 import Parser.DataRecord;
 import Parser.Parser;
 import javafx.util.Pair;
+import main.Interpreter;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,6 +29,7 @@ public class AlgorithmTester {
         }
 
         assertEquals(optHeight * 1.0, (record.height / record.aspectRatio), "the height found is not correct in file: " + fileName);
+        assertTrue(Interpreter.isValid(record), "the solution found is not valid in file: " + fileName);
 
     }
 

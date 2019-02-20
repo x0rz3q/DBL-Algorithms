@@ -5,7 +5,7 @@ package main;/*
 import Parser.DataRecord;
 import interfaces.models.LabelInterface;
 
-class Interpreter {
+public class Interpreter {
 
     static double getScore (DataRecord record) {
         if (isValid(record)) return record.height;
@@ -13,7 +13,7 @@ class Interpreter {
     }
 
 
-    static boolean isValid (DataRecord record) {
+    public static boolean isValid (DataRecord record) {
         if (record.labels == null || record.placementModel == null) return false;
 
         for (LabelInterface label : record.labels) {
