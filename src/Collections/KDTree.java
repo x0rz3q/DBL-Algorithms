@@ -67,9 +67,10 @@ public class KDTree extends AbstractCollection{
                 // split horizontally
                 java.util.Collections.sort(nodes, horizontalC);
             }
-            splitter = nodes.get(nodes.size() / 2).getAnchor();
-            left = new KDTree(nodes.subList(0, nodes.size() / 2), depth + 1, this.dataLimit);
-            right = new KDTree(nodes.subList(nodes.size() / 2, nodes.size()), depth + 1, this.dataLimit);
+            int medianIndex = (int) Math.floor(nodes.size() / 2);
+            splitter = nodes.get(medianIndex).getAnchor();
+            left = new KDTree(nodes.subList(0, medianIndex), depth + 1, this.dataLimit);
+            right = new KDTree(nodes.subList(medianIndex, nodes.size()), depth + 1, this.dataLimit);
         }
     }
     /**
