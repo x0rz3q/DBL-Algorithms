@@ -34,9 +34,9 @@ class BinarySearchTest {
         };
         DataRecord record = new DataRecord();
         record.aspectRatio = aspectRatio;
-        record.points = new ArrayList<LabelInterface>();
+        record.labels = new ArrayList<LabelInterface>();
         for (int i = 0; i < 10000; i++) {
-            record.points.add(new PositionLabel(i, i, 1, DirectionEnum.NE, 0));
+            record.labels.add(new PositionLabel(i, i, 1, DirectionEnum.NE, 0));
 
         }
         searcher.solve(record);
