@@ -4,18 +4,20 @@ import interfaces.models.AnchorInterface;
 import interfaces.models.SquareInterface;
 import models.BoundingBox;
 import models.Point;
-import models.Square;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
+/**
+ * Implementation of KDTree with only 2 Dimensions
+ * @author Juris
+ */
 public class KDTree extends AbstractCollection{
     /** depth of the root/leaf of the KDTree **/
     int depth; // depth == 0 for root.
     /** children of this tree **/
     KDTree left;
     KDTree right;
-    /** node for on which the split happens **/
+    /**  SquareInterfaces anchor on which the split happens **/
     AnchorInterface splitter;
     /** comparators for sorting collections of SquareInterface **/
     private Comparator<SquareInterface> verticalC = verticalComparator();
@@ -28,23 +30,19 @@ public class KDTree extends AbstractCollection{
      * @param depth Depth of this root.
      */
     private KDTree(List<SquareInterface> nodes, int depth, int limit) {
-        this.count = nodes.size();
         this.nodes = new ArrayList<>();
+        this.count = nodes.size();
         this.depth = depth;
         setDataLimit(limit);
         buildTree(nodes, depth);
     }
     /**
-     * Constructor for initializing a non-leaf KDTree (e.g. root).
+     * Constructor for initializing the root of KDTree.
      * used by client.
      * @param nodes Collection of {@link SquareInterface} to be contained in the tree
      */
     public KDTree(List<SquareInterface> nodes, int limit) {
-        this.nodes = new ArrayList<>();
-        this.count = nodes.size();
-        this.depth = 0;
-        setDataLimit(limit);
-        buildTree(nodes, depth);
+        this(nodes,0, limit);
     }
 
     /**
@@ -101,14 +99,17 @@ public class KDTree extends AbstractCollection{
 
     @Override
     public void insert(SquareInterface node) throws NullPointerException {
+        if (node == null) {
+            throw new NullPointerException(this.getClass().toString() + ".insert() got null element");
+        }
         this.count ++;
 
-        if (splitter == null || this.intersects(node)) { // leaf or intersects
-            if (splitter == null && this.nodes.size() == this.dataLimit) {
+        if (splitter == null || this.intersects(node)) { // leaf or on splitter line
+            if (splitter == null && this.nodes.size() == this.dataLimit) { // leaf is full
                 List<SquareInterface> solo = new ArrayList<>();
-                solo.add(node);
+                solo.add(node); // pass on this node to its children
                 buildTree(solo, this.depth);
-            } else {
+            } else { // not full, add it to the list
                 this.nodes.add(node);
             }
 
@@ -145,6 +146,12 @@ public class KDTree extends AbstractCollection{
         return query2D(this, range);
     }
 
+    /**
+     * Search for elements in some range
+     * @param subTree subtree on which query is done
+     * @param range range in which to search for elements
+     * @return Collection of SquareInterfaces such that range.intersects(element)
+     */
     private Collection<SquareInterface> query2D(KDTree subTree, BoundingBox range) {
         Collection<SquareInterface> leavesInRange = new ArrayList<>();
         for (SquareInterface d : subTree.nodes) { // add the data which intersects
@@ -153,13 +160,13 @@ public class KDTree extends AbstractCollection{
             }
         }
         if (subTree.left == null) { // leaf, nowhere to go
-            return leavesInRange;
+            return leavesInRange; // return what we have
         }
         if (subTree.intersects(range)) { // intersects the splitter line
             // query both children
             leavesInRange.addAll(query2D(subTree.left, range));
             leavesInRange.addAll(query2D(subTree.right, range));
-        } else { // check which to query
+        } else { // otherwise only on one side check which to query
             Point btmLeft = range.getBottomLeft();
             double rangeDimension, splitterDimension;
 
@@ -181,16 +188,16 @@ public class KDTree extends AbstractCollection{
     }
 
     @Override
-    public Boolean intersects(SquareInterface node) {
+    protected Boolean intersects(SquareInterface node) {
         return intersects(new BoundingBox(node.getXMin(), node.getYMin(), node.getXMax(), node.getYMax()));
     }
 
     /**
      * @param node {@link BoundingBox}
-     * @return true if bounding box intersects to both children
+     * @return true if node is on the splitter line
      */
     @Override
-    public Boolean intersects(BoundingBox node) {
+    protected Boolean intersects(BoundingBox node) {
         if (depth % 2 == 0) {
             return splitter.getY() < node.getYMax() && splitter.getY() > node.getYMin();
         } else {

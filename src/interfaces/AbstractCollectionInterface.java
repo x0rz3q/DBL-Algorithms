@@ -43,20 +43,6 @@ public interface AbstractCollectionInterface {
      */
     Collection<SquareInterface> query2D(BoundingBox range);
     /**
-     * Check if an item intersects with given node.
-     *
-     * @param node {@link SquareInterface}
-     * @return Boolean
-     */
-    Boolean intersects(SquareInterface node);
-
-    /**
-     * Check if an item intersects with given node
-     * @param node {@link BoundingBox}
-     * @return Boolean
-     */
-    Boolean intersects(BoundingBox node);
-    /**
      * Get the size of the collection.
      *
      * @return int
