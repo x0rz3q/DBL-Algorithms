@@ -44,7 +44,7 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
         sortedLabels.sort(comparator);
 
         //@TODO write a better binary search algorithm, currently is simple structure as placeholder
-        double epsilon = 0.5;
+        double epsilon = 0.1;
         double low = 0;
         double high = Double.MAX_VALUE / 10;
         while (true) {
@@ -102,7 +102,18 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
 
         // @TODO work around rounding errors in a better way
         double shift = (xMax - label.getPOI().getX()) / width + 1;
-        label.setEdgeLength(width, Math.min(Math.max(0, shift), 1));
+
+        if (0 > shift || shift > 1) {
+            System.out.print( "\n" +
+                    "width: " + width + "\n" +
+                    "xMax: " + xMax + "\n" +
+                    "p_x: " + label.getPOI().getX() + "\n" +
+                    "shift: " + shift + "\n"
+            );
+        }
+
+        label.setEdgeLength(width, shift);
+//        label.setEdgeLength(width, Math.min(Math.max(0, shift), 1));
 
         return true;
     }
