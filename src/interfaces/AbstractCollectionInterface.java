@@ -17,16 +17,6 @@ public interface AbstractCollectionInterface {
     void insert(SquareInterface node) throws NullPointerException;
 
     /**
-     * Remove node from collection.
-     *
-     * @param node {@link SquareInterface}
-     * @pre {@code node <> null}
-     * @post {@code !this.intersects(node)}
-     * @throws NullPointerException if {@code node == null}
-     */
-    void remove(SquareInterface node) throws NullPointerException;
-
-    /**
      * Get all items that intersect with a given range.
      *
      * @param range {@link SquareInterface}

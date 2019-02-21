@@ -134,9 +134,6 @@ public class KDTree extends AbstractCollection{
     }
 
     @Override
-    public void remove(SquareInterface node) throws NullPointerException {}
-
-    @Override
     public Collection<SquareInterface> query2D(SquareInterface range) {
         return query2D(new BoundingBox(range.getXMin(), range.getYMin(), range.getXMax(), range.getYMax()));
     }
@@ -185,6 +182,27 @@ public class KDTree extends AbstractCollection{
             }
         }
         return leavesInRange;
+    }
+
+    /**
+     * @param n amount of neighbours to return
+     * @param node node too look for the neighbours around for
+     * @return set of SquareInterface s.t. closest n neighbours
+     */
+    public Set<SquareInterface> nearestNeighbours(int n, SquareInterface node){
+        AnchorInterface cntr = node.getAnchor();
+        Set<SquareInterface> neighbours = new HashSet<>();
+        Set<SquareInterface> anchors = new HashSet<>();
+        for (int i = 0 ; i < n ; i ++) { // repeat nearest neighbour search n times
+            int minDist = Integer.MAX_VALUE;
+            // compute dist with splitter
+            // select min distance
+            // check if this.data has anyone smaller
+            // check children
+            // if child dist(child.splitter, node) >= then disregard that child
+            // repeat until leaf
+            // add the closest node to set
+        } 
     }
 
     @Override

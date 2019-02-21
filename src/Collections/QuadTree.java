@@ -139,11 +139,6 @@ public class QuadTree extends AbstractCollection
     }
 
     @Override
-    public void remove(SquareInterface node) throws NullPointerException {
-        // not supported yet or at all, needs discussion
-    }
-
-    @Override
     public Collection<SquareInterface> query2D(SquareInterface range) {
         return query2D(this, range);
     }
