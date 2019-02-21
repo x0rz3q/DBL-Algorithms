@@ -87,14 +87,15 @@ public class KDTree extends AbstractCollection{
      * Provides a SquareInterface Comparator for sorting anchors horizontally.
      * @return Comparator sorting by X anchor coordinate
      */
-    private static Comparator<SquareInterface> horizontalComparator(){
-       return new Comparator<SquareInterface>() {
+    private static Comparator<SquareInterface> horizontalComparator() {
+        return new Comparator<SquareInterface>() {
             public int compare(SquareInterface s1, SquareInterface s2) {
                 if (s1.getAnchor().getX() > s2.getAnchor().getX()) return 1;
                 if (s1.getAnchor().getX() < s2.getAnchor().getX()) return -1;
                 return 0;
             }
         };
+    }
 
     @Override
     public Boolean insert(SquareInterface node) throws NullPointerException {
@@ -203,6 +204,7 @@ public class KDTree extends AbstractCollection{
             // repeat until leaf
             // add the closest node to set
         } 
+        return null;
     }
 
     @Override
