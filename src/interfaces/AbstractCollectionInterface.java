@@ -14,7 +14,7 @@ public interface AbstractCollectionInterface {
      * @post {@code this.intersects(node)}
      * @throws NullPointerException if {@code node == null}
      */
-    void insert(SquareInterface node) throws NullPointerException;
+    Boolean insert(SquareInterface node) throws NullPointerException;
 
     /**
      * Get all items that intersect with a given range.

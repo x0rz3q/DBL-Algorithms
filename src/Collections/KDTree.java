@@ -95,10 +95,9 @@ public class KDTree extends AbstractCollection{
                 return 0;
             }
         };
-    }
 
     @Override
-    public void insert(SquareInterface node) throws NullPointerException {
+    public Boolean insert(SquareInterface node) throws NullPointerException {
         if (node == null) {
             throw new NullPointerException(this.getClass().toString() + ".insert() got null element");
         }
@@ -131,6 +130,7 @@ public class KDTree extends AbstractCollection{
                 this.right.insert(node);
             }
         }
+        return true; // always can insert
     }
 
     @Override
