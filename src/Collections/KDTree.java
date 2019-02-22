@@ -191,19 +191,38 @@ public class KDTree extends AbstractCollection {
         }
         /* closest n neighbours of node */
         Set<GeometryInterface> neighbours = new HashSet<GeometryInterface>();
+        /* closest distance */
+        double cd;
+        /* closest node with distance cd */
+        GeometryInterface cn;
         for (int i = 0; i < n; i++) { // do nearest neighbour n times, ignoring the ones in the set
-            neighbours.add(nearest(dist, node, Integer.MAX_VALUE, neighbours)); 
+            cd = Double.MAX_VALUE; // default values
+            cn = null;
+            /* check for closer stuff in root */
+            if (!this.nodes.isEmpty()) { 
+                 for (GeometryInterface o : this.nodes) {
+                    if (!neighbours.contains(o)) { // if not a neighbour already
+                         double newDist = dist.calculate(node.getBottomLeft(), o.getBottomLeft()); // calc distance
+                         if (newDist < cd) { // if better, update
+                            cd = newDist;
+                            cn = o;
+                         }
+                    }
+                 }
+            }
+            neighbours.add(nearest(dist, node, cd, cn, neighbours)); 
         } 
         return neighbours;
     }
     /**
      * @param dist distance function
      * @param node object to look for nearest neighbour
-     * @param smallest current smallest distance
+     * @param cd current closest distance
+     * @param cn current closest node
      * @param ignorables nodes to ingore during the search
      */
-    private GeometryInterface nearest(AbstractDistance dist, GeometryInterface node, int smallest, Set<GeometryInterface> ignorables) {
-        return null; 
+    private GeometryInterface nearest(AbstractDistance dist, GeometryInterface node, double cd, GeometryInterface cn, Set<GeometryInterface> ignorables) {
+        return cn; 
     }
 
     @Override
