@@ -114,7 +114,7 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
                 return false;
             } else if (hasCandidateWithoutIntersections(point)) {
 
-            } else if (oneCandidates(point)) {
+            } else if (oneCandidate(point)) {
 
             } else if (candidateIntersectsAllRemaining(point)) {
 
@@ -167,11 +167,34 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
                 labelsWithConflicts.remove(candidate);
             }
         }
+        // remove selected label from conflict graph TODO: determine whether required
+        labelsWithConflicts.remove(selected);
         return true;
     }
 
-    private boolean oneCandidates(FourPositionPoint point) {
-        return false;
+
+    /**
+     * Checks whether a point has only one candidate left, and if so, selects this candidate
+     * @param point the point to be processed
+     * @return whether the one candidate was found and selected
+     */
+    private boolean oneCandidate(FourPositionPoint point) {
+        if (point.getCandidates().size() != 1) {
+            return false;
+        }
+
+        // only one candidate left
+        FourPositionLabel selected = point.getCandidates().get(0);
+        selectedLabels.add(selected);
+
+        // remove conflicting labels
+        for (FourPositionLabel conflict : selected.getConflicts()) {
+            pointsQueue.addFirst(conflict.getPoI());
+            labelsWithConflicts.remove(conflict);
+        }
+        // remove selected label from conflict graph TODO: determine whether required
+        labelsWithConflicts.remove(selected);
+        return true;
     }
 
     private boolean candidateIntersectsAllRemaining(FourPositionPoint point) {
