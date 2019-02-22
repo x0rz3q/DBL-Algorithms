@@ -40,6 +40,7 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
     @Override
     public void solve(DataRecord record) {
 
+        // casts labels to sliderlabels in an new sorted List
         List<SliderLabel> sortedLabels = new ArrayList<>();
         for (LabelInterface label : record.labels) {
             if (label.getClass() != SliderLabel.class)
@@ -48,10 +49,9 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
         }
         sortedLabels.sort(comparator);
 
-        //@TODO write a better binary search algorithm, currently is simple structure as placeholder
         double epsilon = 0.0001;
         double low = 0;
-        double high = Integer.MAX_VALUE;
+        double high = 1000000000000d;
         while (true) {
             double mid = (low + high) / 2;
             System.out.println("\nmid = " + mid);
@@ -78,15 +78,15 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
      *
      * @param record       {@link DataRecord}
      * @param sortedLabels a List containing all labels sorted by this.comparator
-     * @param height        double denoting the height assigned to each label
+     * @param width        double denoting the width assigned to each label
      * @return whether there exists a solution
      * @pre sortedLabels is sorted by using this.comparator
      * @modifies record
      * @post if there is a solution record.collection contains it, else record.collection holds an invalid solution
      */
-    private boolean solve(DataRecord record, List<SliderLabel> sortedLabels, double height) {
+    private boolean solve(DataRecord record, List<SliderLabel> sortedLabels, double width) {
         for (SliderLabel label : sortedLabels) {
-            if (!setLabel(record, label, height)) {
+            if (!setLabel(record, label, width)) {
                 for (SliderLabel l : sortedLabels) {
                     l.setWidth(0);
                 }
@@ -101,27 +101,30 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
      *
      * @param record {@link DataRecord}
      * @param label  {@link SliderLabel}
-     * @param height  double denoting the height assigned to label
+     * @param width  double denoting the width assigned to label
      * @return whether it is possible to have label be placeable in collection with given width
      */
-    private boolean setLabel(DataRecord record, SliderLabel label, double height) {
-        Rectangle queryArea = new Rectangle(new Point(label.getPOI().getX()-height, label.getPOI().getY()), new Point(label.getPOI().getX(), label.getPOI().getY() + height));
+    private boolean setLabel(DataRecord record, SliderLabel label, double width) {
+        Rectangle queryArea = new Rectangle(
+                label.getPOI().getX() - width,
+                label.getPOI().getY(),
+                label.getPOI().getX(),
+                label.getPOI().getY() + width / record.aspectRatio);
         Collection<GeometryInterface> queryResult = record.collection.query2D(queryArea);
 
-        double xMax = label.getPOI().getX() - height;
+        double xMax = label.getPOI().getX() - width;
         for (GeometryInterface entry : queryResult) {
             if (entry != label) xMax = Math.max(xMax, entry.getXMax());
         }
 
         if (xMax > label.getPOI().getX()) return false;
 
-        double shift = (xMax - label.getPOI().getX()) / height + 1;
-        label.setShift(shift);
-        label.setHeight(height);
-
-
-        //TODO: Jeroen please check how to adjust this to the new interface
-//        label.setEdgeLength(width, Math.min(Math.max(0, shift), 1));
+        label.setRectangle(new Rectangle(
+                xMax,
+                label.getPOI().getY(),
+                xMax + width,
+                label.getPOI().getY() + width / record.aspectRatio
+        ));
 
         return true;
     }
