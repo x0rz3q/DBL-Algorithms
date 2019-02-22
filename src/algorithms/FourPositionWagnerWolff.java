@@ -1,9 +1,11 @@
 package algorithms;
 
 import Parser.DataRecord;
+import interfaces.models.GeometryInterface;
 import interfaces.models.LabelInterface;
-import interfaces.models.SquareInterface;
-import models.*;
+import models.FourPositionLabel;
+import models.FourPositionPoint;
+import models.Rectangle;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -30,37 +32,41 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
     @Override
     void preprocessing(DataRecord record, Double sigma) {
         labels = new DataRecord();
+        double ratio = record.aspectRatio;
+        double height = sigma;
+        double width = sigma*ratio;
 
-        for (LabelInterface p : record.points) {
+        for (LabelInterface p : record.labels) {
             double pX = p.getXMax();
             double pY = p.getYMax();
 
-            FourPositionPoint point = new FourPositionPoint(p.getAnchor());
+            FourPositionPoint point = new FourPositionPoint(p.getBottomLeft());
             pointsQueue.add(point);
 
             // adding new labels (All id's are 0 for now)
             // add NE square
-            if (record.collection.query2D(new Square(new Anchor(pX, pY), sigma)).size() == 0) {
-                FourPositionLabel northEastLabel = new FourPositionLabel(pX, pY, sigma, NE, 0, point);
-                Collection<SquareInterface> conflictingLabels = labels.collection.query2D(new BoundingBox(pX, pY, pX+sigma, pY+sigma));
+            if (record.collection.query2D(new Rectangle(pX, pY, pX+width, pY+height)).size() == 0) {
+                FourPositionLabel northEastLabel = new FourPositionLabel(pX, pY, height, ratio, 0, point, NE);
+                Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX, pY, pX+width, pY+height));
                 preprocessingLabel(northEastLabel, conflictingLabels);
             }
             // add NW
-            if (record.collection.query2D(new Square(new Anchor(pX-sigma, pY), sigma)).size() == 0) {
-                FourPositionLabel northWestLabel = new FourPositionLabel(pX, pY, sigma, NW, 0, point);
-                Collection<SquareInterface> conflictingLabels = labels.collection.query2D(new BoundingBox(pX-sigma, pY, pX, pY+sigma));
+            if (record.collection.query2D(new Rectangle(pX-width, pY, pX, pY+height)).size() == 0) {
+                FourPositionLabel northWestLabel = new FourPositionLabel(pX, pY, height, ratio, 0, point, NW);
+                Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX-width, pY, pX, pY+height));
                 preprocessingLabel(northWestLabel, conflictingLabels);
             }
             // add SE
-            if (record.collection.query2D(new Square(new Anchor(pX, pY-sigma), sigma)).size() == 0) {
-                FourPositionLabel southEastlabel = new FourPositionLabel(pX, pY, sigma, SE, 0, point);
-                Collection<SquareInterface> conflictingLabels = labels.collection.query2D(new BoundingBox(pX, pY-sigma, pX+sigma, pY));
-                preprocessingLabel(southEastlabel, conflictingLabels);
+            if (record.collection.query2D(new Rectangle(pX, pY-height, pX+width, pY)).size() == 0) {
+                FourPositionLabel southEastLabel = new FourPositionLabel(pX, pY, height, ratio, 0, point, SE);
+                Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX, pY-height, pX+width, pY));
+                preprocessingLabel(southEastLabel, conflictingLabels);
             }
             // add SW
-            if (record.collection.query2D(new Square(new Anchor(pX-sigma, pY-sigma), sigma)).size() == 0) {
-                labelsWithConflicts.add(new FourPositionLabel(pX, pY, sigma, SW, 0, point));
-                Collection<SquareInterface> conflictingLabels = labels.collection.query2D(new BoundingBox(pX-sigma, pY-sigma, pX, pY));
+            if (record.collection.query2D(new Rectangle(pX-width, pY-height, pX, pY)).size() == 0) {
+                FourPositionLabel southWestLabel = new FourPositionLabel(pX, pY, height, ratio, 0, point, SW);
+                Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX-width, pY-height, pX, pY));
+                preprocessingLabel(southWestLabel, conflictingLabels);
             }
         }
     }
@@ -71,7 +77,7 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
      * @param label
      * @param conflictingLabels
      */
-    private void preprocessingLabel(FourPositionLabel label, Collection<SquareInterface> conflictingLabels) {
+    private void preprocessingLabel(FourPositionLabel label, Collection<GeometryInterface> conflictingLabels) {
         // TODO: Discuss wether labelsWithConflicts should only contain labels with conflicts or it should consits all labels at start
 
         // If new label intersects with existing labels, add it to labelsWithConflicts
@@ -81,7 +87,7 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
         //      add square to conflict list of the new label
         //      add new label to the conflicts list of the square
         //      add square to labelsWithConflicts lists if its not in there yet
-        for (SquareInterface square : conflictingLabels) {
+        for (GeometryInterface square : conflictingLabels) {
             label.addConflict((FourPositionLabel) square);
             ((FourPositionLabel) square).addConflict(label);
             if (!labelsWithConflicts.contains(square)) { labelsWithConflicts.add((FourPositionLabel) square); }
