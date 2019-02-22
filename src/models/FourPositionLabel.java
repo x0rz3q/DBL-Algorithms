@@ -21,7 +21,7 @@ public class FourPositionLabel extends PositionLabel {
         return conflicts;
     }
 
-    public void addConflicts(FourPositionLabel label) {
+    public void addConflict(FourPositionLabel label) {
         conflicts.add(label);
     }
 
