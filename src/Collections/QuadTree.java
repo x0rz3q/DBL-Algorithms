@@ -56,7 +56,7 @@ public class QuadTree extends AbstractCollection {
     }
 
     public boolean insert(GeometryInterface square) {
-        if (!this.boundary.intersectOrTouch(square))
+        if (!this.boundary.intersects(square))
             return false;
 
         if (this.data.size() == QT_NODE_CAPACITY && this.NW == null) {

@@ -119,7 +119,7 @@ public class Parser implements ParserInterface {
      *
      * @param source          {@link Readable}
      * @param collectionClass {@link interfaces.AbstractAlgorithmInterface}
-     * @return Pair<DataRecord   ,       Double>
+     * @return Pair<DataRecord       ,               Double>
      * @throws NullPointerException if {@code source == null}
      * @throws IOException          if read error occurs
      */

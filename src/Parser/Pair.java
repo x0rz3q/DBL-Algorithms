@@ -13,7 +13,7 @@ public class Pair<K, V> {
     /**
      * Constructor of the Pair.
      *
-     * @param key key
+     * @param key   key
      * @param value value
      */
     public Pair(K key, V value) {
