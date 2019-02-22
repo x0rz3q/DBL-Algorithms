@@ -46,6 +46,12 @@ public class KDTree extends AbstractCollection {
     }
 
     /**
+     * Constructor without parameters for initializing empty KDTree object
+     * used by client
+     */
+    public KDTree() {this(new ArrayList<>(), 0, 1);}
+
+    /**
      * Builds a subtree
      * @param nodes what nodes to put in this subtree
      * @param depth depth of the root
