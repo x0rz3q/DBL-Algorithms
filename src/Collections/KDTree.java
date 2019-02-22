@@ -210,7 +210,8 @@ public class KDTree extends AbstractCollection {
                 }
             }
             /* add nearest neighbour s.t. not in neighbours already */
-            neighbours.add(nearest(this, dist, node, cd, cn, neighbours)); 
+            if (splitter != null) cn = nearest(this, dist, node, cd, cn, neighbours);
+            neighbours.add(cn);
         } 
         return neighbours;
     }
