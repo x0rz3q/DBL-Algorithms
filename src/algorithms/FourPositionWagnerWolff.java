@@ -64,6 +64,12 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
         }
     }
 
+    /**
+     * Subtask from the preprocessing function.
+     *
+     * @param label
+     * @param conflictingLabels
+     */
     private void preprocessingLabel(FourPositionLabel label, Collection<SquareInterface> conflictingLabels) {
         // TODO: Discuss wether labelsWithConflicts should only contain labels with conflicts or it should consits all labels at start
 
