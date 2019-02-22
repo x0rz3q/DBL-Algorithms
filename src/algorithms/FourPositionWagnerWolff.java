@@ -125,7 +125,7 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
      * returns whether a point has no alive candidates left.
      *
      * @param point
-     * @return wether point has candidates alive
+     * @return whether point has candidates alive
      */
     private boolean noCandidates(FourPositionPoint point) {
         return point.getCandidates().isEmpty();
