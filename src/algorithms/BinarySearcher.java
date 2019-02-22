@@ -13,6 +13,12 @@ public abstract class BinarySearcher implements AbstractAlgorithmInterface {
     @Override
     public void solve(DataRecord record) {
         double[] solutionSpace = getSolutionSpace(record);
+
+        if (isSolvable(record, solutionSpace[solutionSpace.length - 1])) {
+            getSolution(record, solutionSpace[solutionSpace.length - 1]);
+            return;
+        }
+
         int low = 0;
         int high = solutionSpace.length;
 
@@ -31,7 +37,7 @@ public abstract class BinarySearcher implements AbstractAlgorithmInterface {
     /**
      * @param record
      * @return double[] solution space
-     * @post \forall(i ; \result.has(i); \result[i] is possible solution for record)
+     * @post \forall(i ; \result.has(i); \result[i] is candidate solution for record)
      * @post \forall(i; 0 <= i < \result.length - 1; \result[i] <= \result[i + 1]
      */
     abstract double[] getSolutionSpace(DataRecord record);
