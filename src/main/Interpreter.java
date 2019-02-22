@@ -17,7 +17,7 @@ public class Interpreter {
         if (record.labels == null || record.placementModel == null) return false;
 
         for (LabelInterface label : record.labels) {
-            if (record.collection.query2D(label).size() > 1) return false;
+            if (record.collection.query2D(label.getRectangle()).size() > 1) return false;
         }
 
         return true;

@@ -1,5 +1,7 @@
 package interfaces.models;
 
+import models.Rectangle;
+
 public interface LabelInterface extends GeometryInterface {
     /**
      * Serialize as a string.
@@ -29,4 +31,11 @@ public interface LabelInterface extends GeometryInterface {
      * @return Integer
      */
     Integer getID();
+
+    /**
+     * Get rectangle.
+     *
+     * @return Rectangle
+     */
+    Rectangle getRectangle();
 }
