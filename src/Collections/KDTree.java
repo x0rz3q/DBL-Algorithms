@@ -4,6 +4,7 @@ import distance.AbstractDistance;
 import interfaces.models.GeometryInterface;
 import interfaces.models.PointInterface;
 import models.Rectangle;
+import models.Point;
 
 import java.util.*;
 
@@ -139,7 +140,7 @@ public class KDTree extends AbstractCollection {
      * Search for elements in some range
      * @param subTree subtree on which query is done
      * @param range range in which to search for elements
-     * @return Collection of SquareInterfaces such that range.intersects(element)
+     * @return collection of SquareInterfaces such that range.intersects(element)
      */
     private Collection<GeometryInterface> query2D(KDTree subTree, Rectangle range) {
         Collection<GeometryInterface> leavesInRange = new ArrayList<>();
@@ -179,7 +180,7 @@ public class KDTree extends AbstractCollection {
     /**
      * Gives a set of elements in the tree such that they are n nearest neighbours according to
      * the distance function
-     * @throws IllegalArgumentException if n > this.size()
+     * @throws IllegalArgumentException if n >= this.size()
      * @param dist distance function for calculating nearby points
      * @param n amount of neighbours to return
      * @param node node too look for the neighbours around for
@@ -187,31 +188,20 @@ public class KDTree extends AbstractCollection {
      * @author juris
      */
     public Set<GeometryInterface> nearestNeighbours(AbstractDistance dist, int n, GeometryInterface node) throws IllegalArgumentException {
-        if (n > this.size()) {
+        if (n >= this.size()) {
             throw new IllegalArgumentException("KDTree.nearestNeighbours asked for "+ n + " neighbours for tree of size " + size() + ".");
         }
         /* closest n neighbours of node */
         Set<GeometryInterface> neighbours = new HashSet<GeometryInterface>();
         /* closest distance */
-        double cd;
+        Double cd;
         /* closest node with distance cd */
         GeometryInterface cn;
         for (int i = 0; i < n; i++) { // do nearest neighbour n times, ignoring the ones in the set
             cd = Double.MAX_VALUE; // default values
             cn = null;
-            /* check for closer stuff in root */
-            for (GeometryInterface o : this.nodes) {
-                if (!neighbours.contains(o) && !o.equals(node)) { // if not a neighbour already
-                    double newDist = dist.calculate(node.getBottomLeft(), o.getBottomLeft()); // calc distance
-                    if (newDist < cd) { // if better, update
-                        cd = newDist;
-                        cn = o;
-                    }
-                }
-            }
             /* add nearest neighbour s.t. not in neighbours already */
-            if (splitter != null) cn = nearest(this, dist, node, cd, cn, neighbours);
-            neighbours.add(cn);
+            neighbours.add(nearest(this, dist, node, cd, cn, neighbours));
         } 
         return neighbours;
     }
@@ -219,14 +209,49 @@ public class KDTree extends AbstractCollection {
     /**
      * Finds nearest neighbour of node n
      * @param dist distance function
+     * @param t tree in which to search
      * @param node object to look for nearest neighbour
      * @param cd current closest distance
      * @param cn current closest node
      * @param ignorables nodes to ingore during the search
      * @author juris
      */
-    private GeometryInterface nearest(KDTree t, AbstractDistance dist, GeometryInterface node, double cd, GeometryInterface cn, Set<GeometryInterface> ignorables) {
-
+    private static GeometryInterface nearest(KDTree t, AbstractDistance dist, GeometryInterface node, Double cd, GeometryInterface cn, Set<GeometryInterface> ignorables) {
+        /* if not leaf and current search radius doesnt intersect KDTree boundry */
+        if (t.splitter != null && t.nodes.isEmpty() && t.distanceToSplitter(node, dist) > cd) return cn;
+        // else 
+        /* check for closer stuff in t */
+        for (GeometryInterface o : t.nodes) {
+            if (!ignorables.contains(o) && !o.equals(node)) { // if not a neighbour already
+                double newDist = dist.calculate(node.getBottomLeft(), o.getBottomLeft()); // calc distance
+                if (newDist < cd) { // if better, update
+                    cd = newDist;
+                    cn = o;
+                }
+            }
+        }
+        if (t.splitter == null) { // at leaf, have inspected nodes already, so return cur best
+            return cn;
+        } // not at leaf
+        // go down deeper
+        double rangeDimension, splitterDimension;
+        if (t.depth % 2 == 0) { // vertical check
+            /* left and right is inverted in Y axis */
+            rangeDimension = -1 * Math.abs(node.getBottomLeft().getY());
+            splitterDimension = -1 * Math.abs(t.splitter.getY());
+        } else { // horizontal check
+            rangeDimension = node.getBottomLeft().getX();
+            splitterDimension = t.splitter.getX();
+        }
+        if (rangeDimension < splitterDimension) { // node in left 
+            // search left first
+            cn = nearest(t.left, dist, node, cd, cn, ignorables);
+            cn = nearest(t.right, dist, node, cd, cn, ignorables);
+        } else { // node in right
+            // search right first
+            cn = nearest(t.right, dist, node, cd, cn, ignorables);
+            cn = nearest(t.left, dist, node, cd, cn, ignorables);
+        }
         return cn; 
     }
 
@@ -236,9 +261,9 @@ public class KDTree extends AbstractCollection {
     private double distanceToSplitter(GeometryInterface node, AbstractDistance dist) { 
         PointInterface projection;
         if (this.depth % 2 == 0) {
-            projection = new Point(node.getX(), this.splitter.getY());
+            projection = new Point(node.getBottomLeft().getX(), this.splitter.getY());
         } else {
-            projection = new Point(this.splitter.getX(), node.getY());
+            projection = new Point(this.splitter.getX(), node.getBottomLeft().getY());
         }
         return dist.calculate(projection, node.getBottomLeft());
     }
