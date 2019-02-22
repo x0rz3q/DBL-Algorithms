@@ -48,11 +48,10 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
         }
 
         index = 0;
-        while(index * record.aspectRatio< maxHeight) {
+        while (index * record.aspectRatio < maxHeight) {
             solutions.add(new Double(index * record.aspectRatio));
             index += 0.5;
         }
-
 
 
         double[] solutionSpace = new double[solutions.size()];
@@ -63,7 +62,6 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
         }
 
 
-
         return solutionSpace;
     }
 
@@ -72,6 +70,13 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
         int noInputs = record.labels.size();
 
         createGraph(record, height, noInputs);
+
+
+//        for (int i = 0; i < adj.length; i++) {
+//            for (int j : adj[i]) {
+//                System.out.println(i + " " + j);
+//            }
+//        }
 
         // check if label and its inverse are in the same component
         for (int i = 0; i < noInputs; i++) {
@@ -91,11 +96,6 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
         // set height
         record.height = height;
 
-//        for (int i = 0; i < adj.length; i++) {
-//            for(int j : adj[i]) {
-//                System.out.println(i + " " + j);
-//            }
-//        }
 
         // assign labels to each point in reverse topological order
         isSet = new boolean[noPoints];
@@ -125,30 +125,35 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
         // ------------ adding edges to graph ------------
         // loop over every point and for both rectangles check overlaps
 
+        double width = height * record.aspectRatio;
+
         for (LabelInterface point : record.labels) {
             double x = point.getXMin();
             double y = point.getYMin();
 
 
             // label NE of point intersects with NE lables
-            Collection<GeometryInterface> collection = record.collection.query2D(new Rectangle(x - height, y - height, x + height, y + height));
-
+            Collection<GeometryInterface> collection = record.collection.query2D(new Rectangle(x - width, y - height, x + width, y + height));
+            // System.out.println((x - width) + " " + (y - height) + " " + (x + width) + " " + (y + height));
             if (collection != null) {
                 for (GeometryInterface square : collection) {
+                    // System.out.println("ids: " + ((LabelInterface) square).getID());
                     addEdgeAndInverse(point.getID(), ((LabelInterface) square).getID() + noPoints, noPoints);
                 }
             }
 
             // label NE of point intersects with NW lables
-            collection = record.collection.query2D(new Rectangle(x, y - height, x + 2 * height, y + height));
+            collection = record.collection.query2D(new Rectangle(x, y - height, x + 2 * width, y + height));
+            // System.out.println((x) + " " + (y - height) + " " + (x + 2 * width) + " " + (y + height));
             if (collection != null) {
                 for (GeometryInterface square : collection) {
+                    // System.out.println("ids: " + ((LabelInterface) square).getID());
                     addEdgeAndInverse(point.getID(), ((LabelInterface) square).getID(), noPoints);
                 }
             }
 
             // label NW of point intersects with NE lables
-            collection = record.collection.query2D(new Rectangle(x - 2 * height, y - height, x, y + height));
+            collection = record.collection.query2D(new Rectangle(x - 2 * width, y - height, x, y + height));
             if (collection != null) {
                 for (GeometryInterface square : collection) {
                     addEdgeAndInverse(point.getID() + noPoints, ((LabelInterface) square).getID() + noPoints, noPoints);
@@ -156,7 +161,7 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
             }
 
             // label NW of point intersects with NW lables
-            collection = record.collection.query2D(new Rectangle(x - height, y - height, x + height, y + height));
+            collection = record.collection.query2D(new Rectangle(x - width, y - height, x + width, y + height));
             if (collection != null) {
                 for (GeometryInterface square : collection) {
                     addEdgeAndInverse(point.getID() + noPoints, ((LabelInterface) square).getID(), noPoints);
