@@ -64,7 +64,7 @@ public class KDTree extends AbstractCollection {
                 // split horizontally
                 java.util.Collections.sort(nodes, horizontalC);
             }
-            int medianIndex = (int) Math.floor(nodes.size() / 2);
+            int medianIndex = (int) Math.floor(nodes.size() / 2.0);
             splitter = nodes.get(medianIndex).getBottomLeft();
             left = new KDTree(nodes.subList(0, medianIndex), depth + 1, this.dataLimit);
             right = new KDTree(nodes.subList(medianIndex, nodes.size()), depth + 1, this.dataLimit);
@@ -77,7 +77,7 @@ public class KDTree extends AbstractCollection {
     private static Comparator<GeometryInterface> verticalComparator(){
         return new Comparator<GeometryInterface>() {
             public int compare(GeometryInterface s1, GeometryInterface s2) {
-                return Double.compare(s1.getBottomLeft().getY(), s2.getBottomLeft().getY());
+                return -1 * Double.compare(s1.getBottomLeft().getY(), s2.getBottomLeft().getY());
             }
         };
     }
@@ -114,8 +114,9 @@ public class KDTree extends AbstractCollection {
             double rangeDimension,  splitterDimension; // dimensions to check for node and the splitter
 
             if (this.depth % 2 == 0) { // vertical check
-                rangeDimension = btmLeft.getY();
-                splitterDimension = this.splitter.getY();
+                /* left and right is inverted in Y axis */
+                rangeDimension = -1 * Math.abs(btmLeft.getY());
+                splitterDimension = -1 * Math.abs(this.splitter.getY());
             } else { // horizontal check
                 rangeDimension = btmLeft.getX();
                 splitterDimension = this.splitter.getX();
@@ -184,6 +185,7 @@ public class KDTree extends AbstractCollection {
      * @param n amount of neighbours to return
      * @param node node too look for the neighbours around for
      * @return set of SquareInterface s.t. closest n neighbours
+     * @author juris
      */
     public Set<GeometryInterface> nearestNeighbours(AbstractDistance dist, int n, GeometryInterface node) throws IllegalArgumentException {
         if (n > this.size()) {
@@ -199,29 +201,44 @@ public class KDTree extends AbstractCollection {
             cd = Double.MAX_VALUE; // default values
             cn = null;
             /* check for closer stuff in root */
-             for (GeometryInterface o : this.nodes) {
-                if (!neighbours.contains(o)) { // if not a neighbour already
-                     double newDist = dist.calculate(node.getBottomLeft(), o.getBottomLeft()); // calc distance
-                     if (newDist < cd) { // if better, update
+            for (GeometryInterface o : this.nodes) {
+                if (!neighbours.contains(o) && !o.equals(node)) { // if not a neighbour already
+                    double newDist = dist.calculate(node.getBottomLeft(), o.getBottomLeft()); // calc distance
+                    if (newDist < cd) { // if better, update
                         cd = newDist;
                         cn = o;
-                     }
+                    }
                 }
-             }
+            }
             /* add nearest neighbour s.t. not in neighbours already */
             neighbours.add(nearest(dist, node, cd, cn, neighbours)); 
         } 
         return neighbours;
     }
+    
     /**
+     * Finds nearest neighbour of node n
      * @param dist distance function
      * @param node object to look for nearest neighbour
      * @param cd current closest distance
      * @param cn current closest node
      * @param ignorables nodes to ingore during the search
+     * @author juris
      */
     private GeometryInterface nearest(AbstractDistance dist, GeometryInterface node, double cd, GeometryInterface cn, Set<GeometryInterface> ignorables) {
         return cn; 
+    }
+
+    /** 
+     * Calculates distance to the splitter line
+     */
+    private double distanceToSplitter(GeometryInterface node, AbstractDistance dist) { 
+        if (this.depth % 2 == 0) {
+
+        } else {
+
+        }
+        return 0.0d;
     }
 
     @Override
