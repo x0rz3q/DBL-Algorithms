@@ -3,9 +3,8 @@ package main;/*
  */
 
 import Parser.DataRecord;
+import interfaces.models.GeometryInterface;
 import interfaces.models.LabelInterface;
-import interfaces.models.SquareInterface;
-import javafx.util.Pair;
 
 import java.util.Collection;
 
@@ -22,10 +21,10 @@ public class Interpreter {
 
         boolean valid = true;
         for (LabelInterface label : record.labels) {
-            Collection<SquareInterface> labels = record.collection.query2D(label);
+            Collection<GeometryInterface> labels = record.collection.query2D(label.getRectangle());
             if (labels.size() > 1) {
                 System.out.println();
-                for (SquareInterface l : labels) {
+                for (GeometryInterface l : labels) {
                     System.out.println("X = ["+l.getXMin()+","+l.getXMax()+"], y = ["+l.getYMin()+","+l.getYMax()+"]");
                 }
 //                valid = false;
