@@ -199,17 +199,16 @@ public class KDTree extends AbstractCollection {
             cd = Double.MAX_VALUE; // default values
             cn = null;
             /* check for closer stuff in root */
-            if (!this.nodes.isEmpty()) { 
-                 for (GeometryInterface o : this.nodes) {
-                    if (!neighbours.contains(o)) { // if not a neighbour already
-                         double newDist = dist.calculate(node.getBottomLeft(), o.getBottomLeft()); // calc distance
-                         if (newDist < cd) { // if better, update
-                            cd = newDist;
-                            cn = o;
-                         }
-                    }
-                 }
-            }
+             for (GeometryInterface o : this.nodes) {
+                if (!neighbours.contains(o)) { // if not a neighbour already
+                     double newDist = dist.calculate(node.getBottomLeft(), o.getBottomLeft()); // calc distance
+                     if (newDist < cd) { // if better, update
+                        cd = newDist;
+                        cn = o;
+                     }
+                }
+             }
+            /* add nearest neighbour s.t. not in neighbours already */
             neighbours.add(nearest(dist, node, cd, cn, neighbours)); 
         } 
         return neighbours;
