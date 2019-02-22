@@ -38,4 +38,8 @@ public class SliderLabel extends AbstractLabel {
         this.height = height;
         this.setShift(this.shift);
     }
+
+    @Override
+    public void setWidth(double width) {
+    }
 }

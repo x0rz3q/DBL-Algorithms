@@ -96,5 +96,23 @@ public abstract class AbstractLabel implements LabelInterface {
         return this.rectangle.intersectOrTouch(geometry);
     }
 
-    public abstract void setHeight(double size);
+    /**
+     * Set the height of the label.
+     *
+     * @param height double
+     * @post {@code this.height == height && this.width == height * this.aspectRatio}
+     */
+    public void setHeight(double height) {
+        this.height = height;
+    }
+
+    /**
+     * Set the width of the label.
+     *
+     * @param width double
+     * @post {@code this.height == width / this.aspectRatio && this.width == width}
+     */
+    public void setWidth(double width) {
+        this.height = width / this.aspectRation;
+    }
 }
