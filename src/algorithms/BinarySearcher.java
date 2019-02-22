@@ -12,9 +12,11 @@ public abstract class BinarySearcher implements AbstractAlgorithmInterface {
      */
     @Override
     public void solve(DataRecord record) {
+        double alpha = record.aspectRatio;
+
         // --------- calculating the initial bounds -------------
         // estimate of upper bound which may be too low
-        int high = (int) (20000);
+        int high = (int) (20000 * alpha);
         int low = 0;
 
 
@@ -36,18 +38,18 @@ public abstract class BinarySearcher implements AbstractAlgorithmInterface {
 
         // check half step of width and calculate indices for height search
         if (isSolvable(record, low + 0.5)) {
-            i_low =  (int) Math.ceil((low + 0.5));
-            i_high =  (int) Math.ceil((high));
+            i_low =  (int) Math.ceil((low + 0.5) / alpha);
+            i_high =  (int) Math.ceil((high) / alpha);
             height = low + 0.5;
         } else {
-            i_low =  (int) Math.ceil((low));
-            i_high =  (int) Math.ceil((low + 0.5));
+            i_low =  (int) Math.ceil((low) / alpha);
+            i_high =  (int) Math.ceil((low + 0.5) / alpha);
         }
 
         // binary search on height
         while (i_low < i_high - 1) {
             int mid = (i_high + i_low) / 2;
-            if (isSolvable(record, mid)) {
+            if (isSolvable(record, mid * alpha)) {
                 i_low = mid;
             } else {
                 i_high = mid;
@@ -55,9 +57,9 @@ public abstract class BinarySearcher implements AbstractAlgorithmInterface {
         }
 
         // check if new value is valid
-        if(i_low < high && i_low > low) {
-            if (isSolvable(record, i_low )) {
-                height = Math.max(low, i_low);
+        if(i_low * alpha < high && i_low * alpha > low) {
+            if (isSolvable(record, i_low * alpha)) {
+                height = Math.max(low, i_low * alpha);
             }
         }
 

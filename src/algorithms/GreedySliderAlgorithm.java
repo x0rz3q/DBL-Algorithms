@@ -102,7 +102,9 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
 
         // @TODO work around rounding errors in a better way
         double shift = (xMax - label.getPOI().getX()) / width + 1;
-        label.setSize(width, Math.min(Math.max(0, shift), 1));
+        label.setShift(shift);
+        //TODO: Jeroen please check how to adjust this to the new interface
+//        label.setEdgeLength(width, Math.min(Math.max(0, shift), 1));
 
         return true;
     }

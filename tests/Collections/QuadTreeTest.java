@@ -1,7 +1,6 @@
 package Collections;
 
 import interfaces.models.GeometryInterface;
-import models.Anchor;
 import models.Point;
 import models.Rectangle;
 import org.junit.jupiter.api.Test;

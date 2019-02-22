@@ -6,8 +6,7 @@ public class SliderLabel extends AbstractLabel {
     public SliderLabel(double x, double y, double height, double aspectRatio, double shift, int ID) {
         super(x, y, height, aspectRatio, ID);
         this.shift = shift;
-        this.setSize(height);
-//        this.setShift(shift);
+        this.setHeight(height);
     }
 
     public void setShift(double shift) {
@@ -15,30 +14,13 @@ public class SliderLabel extends AbstractLabel {
             throw new IllegalArgumentException("SliderLabel.setEdgeLength.pre violated: shift > 1 || shift < 0");
         }
 
-        this.rectangle = new Rectangle()
+        this.rectangle = new Rectangle(this.poi.getX(), this.poi.getY(),
+                                        this.poi.getX() + this.height*this.aspectRation * this.shift,
+                                        this.poi.getY() + this.height);
     }
 
-//    public void setEdgeLength(double edgeLength, double shift) throws IllegalArgumentException {
-//        if (edgeLength < 0) {
-//            throw new IllegalArgumentException("SliderLabel.setEdgeLength.pre violated: edgeLength < 0");
-//        }
-//
-//        if (shift > 1 || shift < 0) {
-//            throw new IllegalArgumentException("SliderLabel.setEdgeLength.pre violated: shift > 1 || shift < 0");
-//        }
-//
-//        this.setAnchor(new Anchor(this.poi.getX() + edgeLength * shift, this.poi.getY()));
-//        this.edgeLength = edgeLength;
-//        this.shift = shift;
-//    }
-//
     public double getShift() {
         return this.shift;
-    }
-
-    public void setSize(double height) {
-        this.height = height;
-        this.setShift(this.shift);
     }
 
     public String getPlacement() {
@@ -46,7 +28,8 @@ public class SliderLabel extends AbstractLabel {
     }
 
     @Override
-    public void setHeight(double size) {
-
+    public void setHeight(double height) {
+        this.height = height;
+        this.setShift(this.shift);
     }
 }

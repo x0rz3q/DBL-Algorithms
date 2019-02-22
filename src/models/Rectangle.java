@@ -2,7 +2,6 @@ package models;
 
 import interfaces.models.GeometryInterface;
 import interfaces.models.PointInterface;
-import org.w3c.dom.css.Rect;
 
 public class Rectangle implements GeometryInterface {
     private PointInterface bottomLeft;

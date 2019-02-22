@@ -108,32 +108,32 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
             Collection<GeometryInterface> collection = record.collection.query2D(new Rectangle(x - height, y - height, x + height, y + height));
 
             if (collection != null) {
-                for (GeometryInterface geom : collection) {
-                    addEdgeAndInverse(point.getID(), ((LabelInterface) geom).getID() + noPoints, noPoints);
+                for (GeometryInterface square : collection) {
+                    addEdgeAndInverse(point.getID(), ((LabelInterface) square).getID() + noPoints, noPoints);
                 }
             }
 
             // label NE of point intersects with NW lables
             collection = record.collection.query2D(new Rectangle(x, y - height, x + 2 * height, y + height));
             if (collection != null) {
-                for (GeometryInterface geom : collection) {
-                    addEdgeAndInverse(point.getID(), ((LabelInterface) geom).getID(), noPoints);
+                for (GeometryInterface square : collection) {
+                    addEdgeAndInverse(point.getID(), ((LabelInterface) square).getID(), noPoints);
                 }
             }
 
             // label NW of point intersects with NE lables
             collection = record.collection.query2D(new Rectangle(x - 2 * height, y - height, x, y + height));
             if (collection != null) {
-                for (GeometryInterface geom : collection) {
-                    addEdgeAndInverse(point.getID() + noPoints, ((LabelInterface) geom).getID() + noPoints, noPoints);
+                for (GeometryInterface square : collection) {
+                    addEdgeAndInverse(point.getID() + noPoints, ((LabelInterface) square).getID() + noPoints, noPoints);
                 }
             }
 
             // label NW of point intersects with NW lables
             collection = record.collection.query2D(new Rectangle(x - height, y - height, x + height, y + height));
             if (collection != null) {
-                for (GeometryInterface geom : collection) {
-                    addEdgeAndInverse(point.getID() + noPoints, ((LabelInterface) geom).getID(), noPoints);
+                for (GeometryInterface square : collection) {
+                    addEdgeAndInverse(point.getID() + noPoints, ((LabelInterface) square).getID(), noPoints);
                 }
             }
         }
