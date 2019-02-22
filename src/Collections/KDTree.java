@@ -179,14 +179,31 @@ public class KDTree extends AbstractCollection {
     /**
      * Gives a set of elements in the tree such that they are n nearest neighbours according to
      * the distance function
-     *
+     * @throws IllegalArgumentException if n > this.size()
      * @param dist distance function for calculating nearby points
      * @param n amount of neighbours to return
      * @param node node too look for the neighbours around for
      * @return set of SquareInterface s.t. closest n neighbours
      */
-    public Set<GeometryInterface> nearestNeighbours(AbstractDistance dist, int n, GeometryInterface node){
-        return null;
+    public Set<GeometryInterface> nearestNeighbours(AbstractDistance dist, int n, GeometryInterface node) throws IllegalArgumentException {
+        if (n > this.size()) {
+            throw new IllegalArgumentException("KDTree.nearestNeighbours asked for "+ n + " neighbours for tree of size " + size() + ".");
+        }
+        /* closest n neighbours of node */
+        Set<GeometryInterface> neighbours = new HashSet<GeometryInterface>();
+        for (int i = 0; i < n; i++) { // do nearest neighbour n times, ignoring the ones in the set
+            neighbours.add(nearest(dist, node, Integer.MAX_VALUE, neighbours)); 
+        } 
+        return neighbours;
+    }
+    /**
+     * @param dist distance function
+     * @param node object to look for nearest neighbour
+     * @param smallest current smallest distance
+     * @param ignorables nodes to ingore during the search
+     */
+    private GeometryInterface nearest(AbstractDistance dist, GeometryInterface node, int smallest, Set<GeometryInterface> ignorables) {
+        return null; 
     }
 
     @Override
