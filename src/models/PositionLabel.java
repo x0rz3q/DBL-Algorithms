@@ -50,4 +50,9 @@ public class PositionLabel extends AbstractLabel {
     public String getPlacement() {
         return this.direction.toString();
     }
+
+    @Override
+    public Rectangle getRectangle() {
+        return this.rectangle;
+    }
 }

@@ -34,6 +34,11 @@ public class SliderLabel extends AbstractLabel {
     }
 
     @Override
+    public Rectangle getRectangle() {
+        return this.rectangle;
+    }
+
+    @Override
     public void setHeight(double height) {
         this.height = height;
         this.setShift(this.shift);
@@ -41,5 +46,7 @@ public class SliderLabel extends AbstractLabel {
 
     @Override
     public void setWidth(double width) {
+        this.setHeight(width / this.aspectRation);
+        this.setShift(this.shift);
     }
 }

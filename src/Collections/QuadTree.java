@@ -85,12 +85,7 @@ public class QuadTree extends AbstractCollection {
         return true;
     }
 
-    @Override
-    public void remove(GeometryInterface node) throws NullPointerException {
-
-    }
-
-    public Collection<GeometryInterface> query2D(GeometryInterface range) {
+    public Collection<GeometryInterface> query2D(Rectangle range) {
         Collection<GeometryInterface> data = new ArrayList<>();
 
         if (!this.intersects(range))

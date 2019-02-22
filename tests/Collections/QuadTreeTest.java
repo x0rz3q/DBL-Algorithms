@@ -22,7 +22,7 @@ class QuadTreeTest extends AbstractCollectionTest {
     void insert() {
         GeometryInterface point1 = new Point(5000, 5000);
         this.instance.insert(point1);
-        GeometryInterface range = new Rectangle(4000, 4000, 6000, 6000);
+        Rectangle range = new Rectangle(4000, 4000, 6000, 6000);
         Collection<GeometryInterface> points = this.instance.query2D(range);
         assertTrue(points.contains(point1));
     }
@@ -33,7 +33,7 @@ class QuadTreeTest extends AbstractCollectionTest {
         GeometryInterface point2 = new Point(6000, 6000);
         this.instance.insert(point1);
         this.instance.insert(point2);
-        GeometryInterface range = new Rectangle(4000, 4000, 7000, 7000);
+        Rectangle range = new Rectangle(4000, 4000, 7000, 7000);
         Collection<GeometryInterface> points = this.instance.query2D(range);
         assertTrue(points.contains(point1));
         assertTrue(points.contains(point2));
@@ -45,7 +45,7 @@ class QuadTreeTest extends AbstractCollectionTest {
         GeometryInterface point2 = new Point(6000, 6000);
         this.instance.insert(point1);
         this.instance.insert(point2);
-        GeometryInterface range = new Rectangle(3000, 3000, 7000, 7000);
+        Rectangle range = new Rectangle(3000, 3000, 7000, 7000);
         Collection<GeometryInterface> points = this.instance.query2D(range);
         assertTrue(points.contains(point1));
         assertTrue(points.contains(point2));
@@ -69,7 +69,7 @@ class QuadTreeTest extends AbstractCollectionTest {
         this.instance.insert(point2);
         this.instance.insert(point3);
         this.instance.insert(point4);
-        GeometryInterface queryRange = new Rectangle(2500, 2500, 2501, 2501);
+        Rectangle queryRange = new Rectangle(2500, 2500, 2501, 2501);
         Collection<GeometryInterface> points = this.instance.query2D(queryRange);
         assertTrue(points.isEmpty());
     }
@@ -85,7 +85,7 @@ class QuadTreeTest extends AbstractCollectionTest {
         this.instance.insert(point2);
         this.instance.insert(point3);
         this.instance.insert(point4);
-        GeometryInterface queryRange = new Rectangle(2500, 2500, 5500, 5500);
+        Rectangle queryRange = new Rectangle(2500, 2500, 5500, 5500);
         Collection<GeometryInterface> points = this.instance.query2D(queryRange);
         assertTrue(points.contains(point1));
         assertTrue(points.contains(point2));
