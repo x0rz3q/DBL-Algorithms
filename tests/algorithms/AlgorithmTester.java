@@ -1,10 +1,12 @@
 package algorithms;
 
+import Collections.AbstractCollection;
 import Collections.QuadTree;
 import Parser.DataRecord;
 import Parser.Parser;
 import Parser.Pair;
 import interfaces.AbstractAlgorithmInterface;
+import interfaces.AbstractCollectionInterface;
 import main.Interpreter;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
@@ -33,7 +35,7 @@ public class AlgorithmTester {
     }
 
 
-    private Collection<DynamicTest> readInFiles(String filePath, AbstractAlgorithmInterface algorithm) {
+    private Collection<DynamicTest> readInFiles(String filePath, AbstractAlgorithmInterface algorithm, Class<? extends AbstractCollectionInterface> collection) {
         try {
             File folder = new File(filePath);
             File[] listOfFiles = folder.listFiles();
@@ -42,13 +44,12 @@ public class AlgorithmTester {
             Collection<DynamicTest> tests = new ArrayList<>();
             for (File file : listOfFiles) {
                 if (file.isFile()) {
-                    Pair<DataRecord, Double> input = parser.inputTestMode(new FileInputStream(file), QuadTree.class);
+                    Pair<DataRecord, Double> input = parser.inputTestMode(new FileInputStream(file), collection);
                     tests.add(dynamicTest("test of " + algorithm.getClass() + " on file: " + file.getName(),
                             () -> runTest(input.getKey(), file.getName(), input.getValue(), algorithm)));
                 }
             }
             return tests;
-            
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -58,16 +59,16 @@ public class AlgorithmTester {
 
     @TestFactory
     public Collection<DynamicTest> TwoPosTest() {
-        return readInFiles("tests/algorithms/TestFiles/TwoPosTestFiles", new TwoPositionBinarySearcher());
+        return readInFiles("tests/algorithms/TestFiles/TwoPosTestFiles", new TwoPositionBinarySearcher(), QuadTree.class);
     }
 
     @TestFactory
     public Collection<DynamicTest> FourPosTest() {
-        return readInFiles("tests/algorithms/TestFiles/FourPosTestFiles", new TwoPositionBinarySearcher());
+        return readInFiles("tests/algorithms/TestFiles/FourPosTestFiles", new TwoPositionBinarySearcher(), QuadTree.class);
     }
 
     @TestFactory
     public Collection<DynamicTest> SliderTest() {
-        return readInFiles("tests/algorithms/TestFiles/SliderTestFiles", new GreedySliderAlgorithm());
+        return readInFiles("tests/algorithms/TestFiles/SliderTestFiles", new GreedySliderAlgorithm(), QuadTree.class);
     }
 }
