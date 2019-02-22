@@ -48,7 +48,7 @@ public class Rectangle implements GeometryInterface {
     @Override
     public boolean equals(GeometryInterface geometry) {
         return this.getBottomLeft().equals(geometry.getBottomLeft()) &&
-               this.getBottomRight().equals(geometry.getTopRight());
+                this.getBottomRight().equals(geometry.getTopRight());
     }
 
     @Override
@@ -74,7 +74,7 @@ public class Rectangle implements GeometryInterface {
     @Override
     public boolean intersects(GeometryInterface geometry) {
         return this.intersects(geometry.getXMin(), geometry.getYMin(),
-                                geometry.getXMax(), geometry.getYMax());
+                geometry.getXMax(), geometry.getYMax());
     }
 
     public boolean intersects(double xMin, double yMin, double xMax, double yMax) {
@@ -102,7 +102,7 @@ public class Rectangle implements GeometryInterface {
 
     public boolean intersectOrTouch(double xMin, double yMin, double xMax, double yMax) {
         return this.intersects(xMin, yMin, xMax, yMax) &&
-               this.touch(xMin, yMin, xMax, yMax);
+                this.touch(xMin, yMin, xMax, yMax);
     }
 
     public double getWidth() {

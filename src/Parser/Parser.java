@@ -3,14 +3,17 @@ package Parser;
  * @author = Jeroen Schols
  */
 
+import Collections.KDTree;
+import Collections.QuadTree;
 import interfaces.AbstractCollectionInterface;
 import interfaces.ParserInterface;
 import interfaces.models.LabelInterface;
 import models.*;
-import Collections.QuadTree;
-import Collections.KDTree;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -73,7 +76,7 @@ public class Parser implements ParserInterface {
                         label = new PositionLabel(x, y, 0, rec.aspectRatio, i, DirectionEnum.NE);
                         break;
                     case ONE_SLIDER:
-                        label = new SliderLabel(x, y, 0, rec.aspectRatio,0, i);
+                        label = new SliderLabel(x, y, 0, rec.aspectRatio, 0, i);
                         break;
                 }
 
@@ -114,11 +117,11 @@ public class Parser implements ParserInterface {
     /**
      * Parse a test input to program structure retrieving a parsed DataRecord and the optimal height value.
      *
-     * @param source {@link Readable}
+     * @param source          {@link Readable}
      * @param collectionClass {@link interfaces.AbstractAlgorithmInterface}
-     * @return Pair<DataRecord, Double>
+     * @return Pair<DataRecord   ,       Double>
      * @throws NullPointerException if {@code source == null}
-     * @throws IOException if read error occurs
+     * @throws IOException          if read error occurs
      */
     public Pair<DataRecord, Double> inputTestMode(InputStream source, Class<? extends AbstractCollectionInterface> collectionClass) throws IOException {
         testMode = true;
@@ -150,13 +153,13 @@ public class Parser implements ParserInterface {
         DecimalFormat format = new DecimalFormat(".00");
 
         writer.write(
-            "aspect ratio: " + record.aspectRatio + "\n"
-            + "number of points: " + record.labels.size() + "\n"
-            + "height: " + format.format(record.height) + "\n"
+                "aspect ratio: " + record.aspectRatio + "\n"
+                        + "number of points: " + record.labels.size() + "\n"
+                        + "height: " + format.format(record.height) + "\n"
         );
 
         for (LabelInterface label : record.labels) {
-            writer.write( Math.round(label.getPOI().getXMin()) + " " + Math.round(label.getPOI().getYMin()) + " " + label.getPlacement() + "\n");
+            writer.write(Math.round(label.getPOI().getXMin()) + " " + Math.round(label.getPOI().getYMin()) + " " + label.getPlacement() + "\n");
         }
 
         writer.flush();

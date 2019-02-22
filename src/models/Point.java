@@ -60,9 +60,9 @@ public class Point implements PointInterface {
     @Override
     public boolean equals(GeometryInterface geometry) {
         return geometry.getXMax() == this.getXMax() &&
-               geometry.getXMin() == this.getXMin() &&
-               geometry.getYMax() == this.getYMax() &&
-               geometry.getYMin() == this.getYMin();
+                geometry.getXMin() == this.getXMin() &&
+                geometry.getYMax() == this.getYMax() &&
+                geometry.getYMin() == this.getYMin();
     }
 
     @Override

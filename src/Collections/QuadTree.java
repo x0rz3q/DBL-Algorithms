@@ -24,34 +24,34 @@ public class QuadTree extends AbstractCollection {
     public QuadTree(Rectangle bbox, Collection<? extends GeometryInterface> nodes) {
         this(bbox);
 
-        for(GeometryInterface node : nodes) {
+        for (GeometryInterface node : nodes) {
             this.insert(node);
         }
     }
 
     private void subdivide() {
-        this.NW = new QuadTree(new Rectangle (
-            this.boundary.getBottomLeft().getX(),
-            this.boundary.getCenter().getY(),
-            this.boundary.getCenter().getX(),
-            this.boundary.getTopRight().getY()
+        this.NW = new QuadTree(new Rectangle(
+                this.boundary.getBottomLeft().getX(),
+                this.boundary.getCenter().getY(),
+                this.boundary.getCenter().getX(),
+                this.boundary.getTopRight().getY()
         ));
 
-        this.NE = new QuadTree(new Rectangle (
-            this.boundary.getCenter(),
-            this.boundary.getTopRight()
+        this.NE = new QuadTree(new Rectangle(
+                this.boundary.getCenter(),
+                this.boundary.getTopRight()
         ));
 
-        this.SW = new QuadTree(new Rectangle (
-            this.boundary.getBottomLeft(),
-            this.boundary.getCenter()
+        this.SW = new QuadTree(new Rectangle(
+                this.boundary.getBottomLeft(),
+                this.boundary.getCenter()
         ));
 
-        this.SE = new QuadTree(new Rectangle (
-            this.boundary.getCenter().getX(),
-            this.boundary.getBottomLeft().getY(),
-            this.boundary.getBottomRight().getX(),
-            this.boundary.getCenter().getY()
+        this.SE = new QuadTree(new Rectangle(
+                this.boundary.getCenter().getX(),
+                this.boundary.getBottomLeft().getY(),
+                this.boundary.getBottomRight().getX(),
+                this.boundary.getCenter().getY()
         ));
     }
 

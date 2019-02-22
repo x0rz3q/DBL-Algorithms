@@ -5,7 +5,7 @@ import models.Rectangle;
 
 import java.util.Collection;
 
-public class KDTree extends AbstractCollection{
+public class KDTree extends AbstractCollection {
     @Override
     public boolean insert(GeometryInterface node) throws NullPointerException {
         return false;

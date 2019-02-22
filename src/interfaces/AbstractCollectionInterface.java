@@ -10,9 +10,9 @@ public interface AbstractCollectionInterface {
      * Insert node into collection.
      *
      * @param node {@link GeometryInterface}
+     * @throws NullPointerException if {@code node == null}
      * @pre {@code node <> null}
      * @post {@code this.intersects(node)}
-     * @throws NullPointerException if {@code node == null}
      */
     boolean insert(GeometryInterface node) throws NullPointerException;
 
@@ -20,9 +20,9 @@ public interface AbstractCollectionInterface {
      * Remove node from collection.
      *
      * @param node {@link GeometryInterface}
+     * @throws NullPointerException if {@code node == null}
      * @pre {@code node <> null}
      * @post {@code !this.intersects(node)}
-     * @throws NullPointerException if {@code node == null}
      */
     void remove(GeometryInterface node) throws NullPointerException;
 
@@ -45,6 +45,7 @@ public interface AbstractCollectionInterface {
 
     /**
      * Check if an item intersects with given node
+     *
      * @param node {@link Rectangle}
      * @return boolean
      */

@@ -24,11 +24,11 @@ public class PositionLabel extends AbstractLabel {
                         point.getX() + this.height * this.aspectRation, point.getY() + this.height);
                 break;
             case NW:
-                this.rectangle = new Rectangle(point.getX() - this.height*this.aspectRation,
-                                        point.getY(),
-                                        point.getX(),
-                                        point.getY() + this.height
-                                    );
+                this.rectangle = new Rectangle(point.getX() - this.height * this.aspectRation,
+                        point.getY(),
+                        point.getX(),
+                        point.getY() + this.height
+                );
                 break;
             default:
                 throw new IllegalArgumentException("Not supported direction");

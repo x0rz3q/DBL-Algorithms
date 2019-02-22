@@ -69,7 +69,6 @@ public interface GeometryInterface {
      * Get the minimal Y coordinate of the geometry.
      *
      * @return PointInterface
-     *
      */
     double getYMin();
 

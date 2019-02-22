@@ -1,8 +1,8 @@
 package algorithms;
 
+import Parser.DataRecord;
 import interfaces.models.GeometryInterface;
 import interfaces.models.LabelInterface;
-import Parser.DataRecord;
 import models.DirectionEnum;
 import models.PositionLabel;
 import models.Rectangle;
@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Stack;
 
 public class TwoPositionBinarySearcher extends BinarySearcher {
-
 
     // variable for dfs to keep track of visited nodes
     private boolean[] visited;
@@ -84,7 +83,6 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
         createComponents(noPoints);
     }
 
-
     private void initializeGraph(DataRecord record, double height, int noPoints) {
         // ------------ initialize variables ------------
         adj = new ArrayList[noPoints * 2];
@@ -140,8 +138,6 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
 
     }
 
-
-
     private void createComponents(int noPoints) {
         // initialize variables
         visited = new boolean[noPoints * 2];
@@ -178,7 +174,6 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
         adj[a].add(b);
         adjInv[b].add(a);
     }
-
 
     private void dfsFirst(int start) {
         if (visited[start]) {

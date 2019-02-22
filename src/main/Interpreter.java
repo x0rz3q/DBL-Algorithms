@@ -7,13 +7,13 @@ import interfaces.models.LabelInterface;
 
 class Interpreter {
 
-    static double getScore (DataRecord record) {
+    static double getScore(DataRecord record) {
         if (isValid(record)) return record.height;
         return 0;
     }
 
 
-    static boolean isValid (DataRecord record) {
+    static boolean isValid(DataRecord record) {
         if (record.labels == null || record.placementModel == null) return false;
 
         for (LabelInterface label : record.labels) {

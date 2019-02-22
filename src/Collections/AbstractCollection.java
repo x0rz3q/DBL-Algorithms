@@ -14,5 +14,7 @@ public abstract class AbstractCollection implements AbstractCollectionInterface 
         return this.count;
     }
 
-    public void setDataLimit(int d) {this.dataLimit = d;}
+    public void setDataLimit(int d) {
+        this.dataLimit = d;
+    }
 }

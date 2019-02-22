@@ -1,11 +1,10 @@
 package algorithms;
 
-import interfaces.AbstractAlgorithmInterface;
 import Parser.DataRecord;
+import interfaces.AbstractAlgorithmInterface;
 
 public abstract class BinarySearcher implements AbstractAlgorithmInterface {
     /**
-     *
      * uses binary search to find the optimal height for the rectangles
      *
      * @param record {@link DataRecord}
@@ -38,12 +37,12 @@ public abstract class BinarySearcher implements AbstractAlgorithmInterface {
 
         // check half step of width and calculate indices for height search
         if (isSolvable(record, low + 0.5)) {
-            i_low =  (int) Math.ceil((low + 0.5) / alpha);
-            i_high =  (int) Math.ceil((high) / alpha);
+            i_low = (int) Math.ceil((low + 0.5) / alpha);
+            i_high = (int) Math.ceil((high) / alpha);
             height = low + 0.5;
         } else {
-            i_low =  (int) Math.ceil((low) / alpha);
-            i_high =  (int) Math.ceil((low + 0.5) / alpha);
+            i_low = (int) Math.ceil((low) / alpha);
+            i_high = (int) Math.ceil((low + 0.5) / alpha);
         }
 
         // binary search on height
@@ -57,7 +56,7 @@ public abstract class BinarySearcher implements AbstractAlgorithmInterface {
         }
 
         // check if new value is valid
-        if(i_low * alpha < high && i_low * alpha > low) {
+        if (i_low * alpha < high && i_low * alpha > low) {
             if (isSolvable(record, i_low * alpha)) {
                 height = Math.max(low, i_low * alpha);
             }
@@ -71,18 +70,18 @@ public abstract class BinarySearcher implements AbstractAlgorithmInterface {
     /**
      * returns if labels can be placed for a given height
      *
-     * @modifies none
      * @param record {@link DataRecord}
      * @param height required height for rectangles
+     * @modifies none
      */
     abstract boolean isSolvable(DataRecord record, double height);
 
     /**
      * Place all labels with the given height (this method is not robust to reduce computation time)
      *
-     * @modifies nodes
      * @param record {@link DataRecord}
      * @param height required height for rectangles
+     * @modifies nodes
      * @pre isSolvable(nodes, height)
      */
     abstract void getSolution(DataRecord record, double height);
