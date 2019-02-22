@@ -1,10 +1,11 @@
 package main;
 
 import Collections.QuadTree;
+import Parser.DataRecord;
+import Parser.Parser;
 import algorithms.GreedySliderAlgorithm;
 import algorithms.TwoPositionBinarySearcher;
 import interfaces.ParserInterface;
-import Parser.*;
 
 import java.io.IOException;
 
@@ -15,7 +16,15 @@ public class Controller {
         this.parser = new Parser();
     }
 
-    public void run() throws IOException, NullPointerException{
+    public static void main(String[] args) {
+        try {
+            (new Controller()).run();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void run() throws IOException, NullPointerException {
         DataRecord record = this.parser.input(System.in, QuadTree.class);
         switch (record.placementModel) {
             case ONE_SLIDER:
@@ -28,13 +37,5 @@ public class Controller {
                 throw new UnsupportedOperationException("No 4-pos algorithm implemented yet");
         }
         this.parser.output(record, System.out);
-    }
-
-    public static void main(String[] args) {
-        try {
-            (new Controller()).run();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }
