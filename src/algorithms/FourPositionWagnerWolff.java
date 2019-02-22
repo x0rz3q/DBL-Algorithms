@@ -124,7 +124,7 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
     }
 
     /**
-     * returns wether a point has no alive candidates left.
+     * returns whether a point has no alive candidates left.
      *
      * @param point
      * @return wether point has candidates alive
@@ -165,10 +165,12 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
                     conflict.removeConflict(candidate);
                 }
                 labelsWithConflicts.remove(candidate);
+                candidate.getPoI().removeCandidate(candidate);
             }
         }
         // remove selected label from conflict graph TODO: determine whether required
         labelsWithConflicts.remove(selected);
+        pointsQueue.remove(selected.getPoI());
         return true;
     }
 
@@ -191,9 +193,11 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
         for (FourPositionLabel conflict : selected.getConflicts()) {
             pointsQueue.addFirst(conflict.getPoI());
             labelsWithConflicts.remove(conflict);
+            conflict.getPoI().removeCandidate(conflict);
         }
         // remove selected label from conflict graph TODO: determine whether required
         labelsWithConflicts.remove(selected);
+        pointsQueue.remove(selected.getPoI());
         return true;
     }
 
