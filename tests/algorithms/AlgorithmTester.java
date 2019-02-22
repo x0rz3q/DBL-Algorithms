@@ -1,29 +1,23 @@
 package algorithms;
 
-import Collections.AbstractCollection;
 import Collections.QuadTree;
 import Parser.DataRecord;
-import Parser.Parser;
 import Parser.Pair;
+import Parser.Parser;
 import interfaces.AbstractAlgorithmInterface;
 import interfaces.AbstractCollectionInterface;
 import main.Interpreter;
 import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
-import org.junit.jupiter.api.function.ThrowingConsumer;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.function.Function;
-import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 public class AlgorithmTester {
