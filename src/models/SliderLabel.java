@@ -17,7 +17,8 @@ public class SliderLabel extends AbstractLabel {
             throw new IllegalArgumentException("SliderLabel.setEdgeLength.pre violated: shift > 1 || shift < 0");
         }
 
-        this.setAnchor(new Anchor(this.poi.getX() + edgeLength * shift, this.poi.getY()));
+//        this.setAnchor(new Anchor(this.poi.getX() + shift * edgeLength, this.poi.getY()));
+        this.setAnchor(new Anchor(this.poi.getX() + (shift - 1) * edgeLength, this.poi.getY()));
         this.edgeLength = edgeLength;
         this.shift = shift;
     }
