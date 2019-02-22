@@ -1,209 +1,131 @@
 package Collections;
 
-import interfaces.models.AnchorInterface;
-import interfaces.models.SquareInterface;
-import models.BoundingBox;
-import models.Square;
-import models.Anchor;
+import interfaces.models.GeometryInterface;
+import models.Rectangle;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class QuadTree extends AbstractCollection
-{
-    /** boundary for this specific quad tree. e.g. root has boundary {0, 10k} for x and y **/
-    private SquareInterface boundary;
-    /** children quadtrees **/
-    private QuadTree NW;
-    private QuadTree NE;
-    private QuadTree SE;
-    private QuadTree SW;
-    /** if has not been subdivided **/
-    private boolean leaf; // leaf == data.size() <= dataLimit
-    /** data of this quad tree **/
-    private Collection<SquareInterface> data;
-    /** limit of data per tree **/
-    private int dataLimit;
+public class QuadTree extends AbstractCollection {
+    private static final int QT_NODE_CAPACITY = 4;
 
-    public QuadTree(SquareInterface boundary) {
-        super();
+    private Rectangle boundary;
+    private QuadTree NW = null;
+    private QuadTree NE = null;
+    private QuadTree SE = null;
+    private QuadTree SW = null;
+    private Collection<GeometryInterface> data;
+
+    public QuadTree(Rectangle boundary) {
+        this.boundary = boundary;
         this.data = new ArrayList<>();
-        this.leaf = true;
-        setBoundary(boundary);
     }
-    
-    public QuadTree(SquareInterface boundary, Collection<? extends SquareInterface> nodes) {
-        this(boundary);
-        setDataLimit(1);
-        for (SquareInterface s : nodes) {
-            insert(s);
+
+    public QuadTree(Rectangle bbox, Collection<? extends GeometryInterface> nodes) {
+        this(bbox);
+
+        for (GeometryInterface node : nodes) {
+            this.insert(node);
         }
     }
 
-    public QuadTree(Collection<? extends SquareInterface> nodes) {
-        super();
-        this.boundary = new Square(new Anchor(0, 0), 10000);
-        setDataLimit(1);
-        this.data = new ArrayList<>();
-        this.leaf = true;
-        for (SquareInterface s : nodes) {
-            insert(s);
-        }
+    private void subdivide() {
+        this.NW = new QuadTree(new Rectangle(
+                this.boundary.getBottomLeft().getX(),
+                this.boundary.getCenter().getY(),
+                this.boundary.getCenter().getX(),
+                this.boundary.getTopRight().getY()
+        ));
+
+        this.NE = new QuadTree(new Rectangle(
+                this.boundary.getCenter(),
+                this.boundary.getTopRight()
+        ));
+
+        this.SW = new QuadTree(new Rectangle(
+                this.boundary.getBottomLeft(),
+                this.boundary.getCenter()
+        ));
+
+        this.SE = new QuadTree(new Rectangle(
+                this.boundary.getCenter().getX(),
+                this.boundary.getBottomLeft().getY(),
+                this.boundary.getBottomRight().getX(),
+                this.boundary.getCenter().getY()
+        ));
     }
 
+    public boolean insert(GeometryInterface square) {
+        if (!this.boundary.intersects(square))
+            return false;
 
-    /**
-     * Sets the boundary of this quad tree.
-     * @param r a square
-     */
-    private void setBoundary(SquareInterface r) {
-        this.boundary = r;
-    }
-
-    /**
-     * Sets the amount of data allowed in a leaf of quadtree.
-     * @param l
-     * @pre {@code l > 0}
-     */
-    @Override
-    public void setDataLimit(final int l) {
-        this.dataLimit = l;
-    }
-
-    /**
-     * Subdivides the QuadTree in 4 sub-trees
-     * @post {@code NW <> null && NE <> null && SW <> null && SE <> null &&
-     * data.size() == 0 && count == 0 && leaf == false}
-     */
-    private void subDivide() {
-        SquareInterface NW, NE, SW, SE;
-        double newWidth = this.boundary.getEdgeLength() / 2;
-        AnchorInterface bottomLeft = this.boundary.getAnchor();
-
-        NW = new Square(new Anchor(bottomLeft.getX(), bottomLeft.getY() + newWidth), newWidth);
-        this.NW = subDivide(NW);
-        NE = new Square(new Anchor(bottomLeft.getX() + newWidth, bottomLeft.getY() + newWidth), newWidth);
-        this.NE = subDivide(NE);
-        SW = new Square(bottomLeft, newWidth);
-        this.SW = subDivide(SW);
-        SE = new Square(new Anchor(bottomLeft.getX() + newWidth, bottomLeft.getY()), newWidth);
-        this.SE = subDivide(SE);
-
-        this.data.clear();
-        this.leaf = false;
-    }
-
-    /**
-     * Produce one of the 4 subdivisons with boundary b
-     * @param b the boundary of the subdivision
-     * @return QuadTree, the new subdivision
-     */
-    private QuadTree subDivide(SquareInterface b) {
-        return new QuadTree(b, getData()); // add root data to subtree
-    }
-
-    /**
-     * Getter for data in a leaf
-     * @return Collection over GeometryInterface
-     * @post \return.size() <= maxDataLimit
-     */
-    private Collection<SquareInterface> getData() {
-        return this.data;
-    }
-
-    @Override
-    public void insert(SquareInterface node) throws NullPointerException {
-
-        if (node == null) {
-            throw new NullPointerException("QuadTree.insert() null node provided");
-        }
-        if (!this.boundary.intersectOrTouch(node)) { // if node is not in this quad tree
-            return; // do nothing
-        }
-        this.count++; // subtree wil contain node, so increment
-
-        if (this.leaf) { // if this is a leaf
-            this.data.add(node);
-
-            if (this.data.size() > this.dataLimit) { // over the limit
-                subDivide(); // make children
-            }
-
-        } else { // not a leaf, so insert in subrees
-            NW.insert(node);
-            NE.insert(node);
-            SE.insert(node);
-            SW.insert(node);
+        if (this.data.size() == QT_NODE_CAPACITY && this.NW == null) {
+            this.subdivide();
         }
 
-    }
+        int intersectMultiple = 0;
 
-    @Override
-    public void remove(SquareInterface node) throws NullPointerException {
-        // not supported yet or at all, needs discussion
-    }
+        if (this.NW != null) {
+            intersectMultiple += this.NE.intersects(square) ? 1 : 0;
+            intersectMultiple += this.NW.intersects(square) ? 1 : 0;
+            intersectMultiple += this.SW.intersects(square) ? 1 : 0;
+            intersectMultiple += this.SE.intersects(square) ? 1 : 0;
+        }
 
-    @Override
-    public Collection<SquareInterface> query2D(SquareInterface range) {
-        return query2D(this, range);
-    }
-
-    @Override
-    public Collection<SquareInterface> query2D(BoundingBox range) {
-        return query2D(this, range);
-    }
-
-    /**
-     * Retrieves all  SquareInterface in the intersection of given subTree and range
-     *
-     * @param subTree subtree that is being searched
-     * @param range range that is searched for
-     * @post {@code \result == (\forall i; i.intesect(subTree); i.instersects(range))}
-     */
-    private Collection<SquareInterface> query2D(QuadTree subTree, SquareInterface range) {
-        BoundingBox bbox = new BoundingBox(range.getXMin(), range.getYMin(), range.getXMax(), range.getYMax());
-
-        return this.query2D(bbox);
-    }
-
-    /**
-     * Retrieves all  BoundingBox in the intersection of given subTree and range
-     *
-     * @param subTree subtree that is being searched
-     * @param range range that is searched for
-     * @post {@code \result == (\forall i; i.intersect(subTree); i.intersects(range))}
-     */
-    private Collection<SquareInterface> query2D(QuadTree subTree, BoundingBox range) {
-        Collection<SquareInterface> allLeaves = new ArrayList<>();
-        if (subTree.leaf) {
-            for (SquareInterface leave : subTree.getData())
-                if (range.intersects(leave))
-                    allLeaves.add(leave);
+        if (intersectMultiple > 1 || this.data.size() < QT_NODE_CAPACITY) {
+            this.data.add(square);
         } else {
-            if (subTree.NE.intersects(range))
-                allLeaves.addAll(query2D(subTree.NE, range));
-            if (subTree.NW.intersects(range))
-                allLeaves.addAll(query2D(subTree.NW, range));
-            if (subTree.SE.intersects(range))
-                allLeaves.addAll(query2D(subTree.SE, range));
-            if (subTree.SW.intersects(range))
-                allLeaves.addAll(query2D(subTree.SW, range));
+            if (this.NW.insert(square)) return true;
+            if (this.NE.insert(square)) return true;
+            if (this.SE.insert(square)) return true;
+
+            return this.SW.insert(square);
         }
-        return allLeaves;
+
+        return true;
+    }
+
+    public Collection<GeometryInterface> query2D(Rectangle range) {
+        Collection<GeometryInterface> data = new ArrayList<>();
+
+        if (!this.intersects(range))
+            return data;
+
+        for (GeometryInterface square : this.data) {
+            if (range.intersects(square))
+                data.add(square);
+        }
+
+        if (this.NW == null) {
+            return data;
+        }
+
+        data.addAll(this.NW.query2D(range));
+        data.addAll(this.NE.query2D(range));
+        data.addAll(this.SE.query2D(range));
+        data.addAll(this.SW.query2D(range));
+
+        return data;
+    }
+
+    public boolean intersects(GeometryInterface square) {
+        return this.boundary.intersects(square);
     }
 
     @Override
-    public Boolean intersects(SquareInterface node) {
-        return boundary.intersects(node);
-    }
-
-    @Override
-    public Boolean intersects(BoundingBox node) {
-        return node.intersects(boundary);
+    public boolean intersects(Rectangle node) {
+        return this.boundary.intersects(node);
     }
 
     @Override
     public int size() {
-        return super.getSize();
+        int result = this.data.size();
+
+        return this.NW == null ? result : result + this.NW.size() + this.NE.size() + this.SW.size() + this.SE.size();
+    }
+
+    @Override
+    public int getSize() {
+        return size();
     }
 }
