@@ -3,18 +3,25 @@ package Parser;
  * @author = Jeroen Schols
  */
 
+import Collections.KDTree;
+import Collections.QuadTree;
 import interfaces.AbstractCollectionInterface;
 import interfaces.ParserInterface;
 import interfaces.models.LabelInterface;
 import models.*;
-import Collections.QuadTree;
-import Collections.KDTree;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.*;
 
 public class Parser implements ParserInterface {
+
+    private boolean testMode = false;
+    private double optHeight;
+
     @Override
     public DataRecord input(InputStream source, Class<? extends AbstractCollectionInterface> collectionClass) throws NullPointerException, IOException {
         if (source == null) throw new NullPointerException("parser.input: source not found");
@@ -48,7 +55,7 @@ public class Parser implements ParserInterface {
         try {
             while (!sc.hasNextInt()) sc.next();
             int n = sc.nextInt();
-            rec.points = new ArrayList<>(n);
+            rec.labels = new ArrayList<>(n);
 
             for (int i = 0; i < n; i++) {
                 int x = sc.nextInt();
@@ -66,39 +73,61 @@ public class Parser implements ParserInterface {
                 switch (rec.placementModel) {
                     case TWO_POS:
                     case FOUR_POS:
-                        label = new PositionLabel(x, y*rec.aspectRatio, 0, DirectionEnum.NE, i);
+                        label = new PositionLabel(x, y, 0, rec.aspectRatio, i, DirectionEnum.NE);
                         break;
                     case ONE_SLIDER:
-                        label = new SliderLabel(x, y*rec.aspectRatio, 0, 0, i);
+                        label = new SliderLabel(x, y, 0, rec.aspectRatio, 0, i);
                         break;
                 }
 
-                rec.points.add(label);
+                rec.labels.add(label);
             }
         } catch (NoSuchElementException e) {
-            throw new IOException("parser.input: number of points does not correspond to found coordinates");
+            throw new IOException("parser.input: number of labels does not correspond to found coordinates");
         }
 
+        rec.labels = Collections.unmodifiableList(rec.labels);
         if (collectionClass == QuadTree.class) {
-            rec.collection = new QuadTree(new Square(new Anchor(xMin, yMin), Math.max(yMax - yMin, xMax - xMin)),
-                                            rec.points);
+            //TODO: xmin etc can be removed.
+            rec.collection = initQuadTree(rec.labels, xMin, xMax, yMin, yMax);
         } else if (collectionClass == KDTree.class) {
-            rec.collection = initKDTree(rec.points);
+            rec.collection = initKDTree();
         } else {
             throw new InputMismatchException("parser.input collection class initializer undefined");
+        }
+
+        // when in test-mode, the input file contains a
+        if (testMode) {
+            while (!sc.hasNextDouble()) sc.next();
+            optHeight = sc.nextDouble();
         }
 
         sc.close();
         return rec;
     }
 
-    private QuadTree initQuadTree(Collection<LabelInterface> points) {
-        return new QuadTree(points);
+    private QuadTree initQuadTree(Collection<LabelInterface> points, double xMin, double xMax, double yMin, double yMax) {
+        return new QuadTree(new Rectangle(-10000, -10000, 15000, 15000), points);
     }
 
-    private KDTree initKDTree(Collection<LabelInterface> points) {
-        // @TODO initialize a KDTree
-        return null;
+    private KDTree initKDTree() {
+        throw new UnsupportedOperationException("parser.initKDTree not implemented yet");
+    }
+
+    /**
+     * Parse a test input to program structure retrieving a parsed DataRecord and the optimal height value.
+     *
+     * @param source          {@link Readable}
+     * @param collectionClass {@link interfaces.AbstractAlgorithmInterface}
+     * @return Pair<DataRecord       ,               Double>
+     * @throws NullPointerException if {@code source == null}
+     * @throws IOException          if read error occurs
+     */
+    public Pair<DataRecord, Double> inputTestMode(InputStream source, Class<? extends AbstractCollectionInterface> collectionClass) throws IOException {
+        testMode = true;
+        DataRecord rec = input(source, collectionClass);
+        testMode = false;
+        return new Pair<DataRecord, Double>(rec, optHeight);
     }
 
     @Override
@@ -124,16 +153,13 @@ public class Parser implements ParserInterface {
         DecimalFormat format = new DecimalFormat(".00");
 
         writer.write(
-            "aspect ratio: " + record.aspectRatio + "\n"
-            + "number of points: " + record.points.size() + "\n"
-            + "height: " + format.format(record.height / record.aspectRatio) + "\n"
+                "aspect ratio: " + record.aspectRatio + "\n"
+                        + "number of points: " + record.labels.size() + "\n"
+                        + "height: " + format.format(record.height) + "\n"
         );
 
-        for (LabelInterface label : record.points) {
-            if (label.getPOI().getEdgeLength() != 0) {
-                throw new IllegalStateException("parser.output POI of label not of width/height 0");
-            }
-            writer.write( Math.round(label.getPOI().getXMin()) + " " + Math.round(label.getPOI().getYMin() / record.aspectRatio) + " " + label.getPlacement() + "\n");
+        for (LabelInterface label : record.labels) {
+            writer.write(Math.round(label.getPOI().getXMin()) + " " + Math.round(label.getPOI().getYMin()) + " " + label.getPlacement() + "\n");
         }
 
         writer.flush();

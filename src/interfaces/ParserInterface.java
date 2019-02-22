@@ -13,7 +13,7 @@ public interface ParserInterface {
      * @param source {@link Readable}
      * @return DataRecord
      * @throws NullPointerException if {@code source == null}
-     * @throws IOException if read error occurs
+     * @throws IOException          if read error occurs
      */
     DataRecord input(InputStream source, Class<? extends AbstractCollectionInterface> collectionClass) throws NullPointerException, IOException;
 

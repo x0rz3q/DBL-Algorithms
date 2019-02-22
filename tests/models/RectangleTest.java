@@ -1,57 +1,57 @@
 package models;
 
-import interfaces.models.SquareInterface;
+import interfaces.models.PointInterface;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class BoundingBoxTest {
-    private BoundingBox instance;
-    private Double xMin = 10.0;
-    private Double yMin = 10.0;
-    private Double xMax = 20.0;
-    private Double yMax = 20.0;
+class RectangleTest {
+    private Rectangle instance;
+    private double xMin = 10.0;
+    private double yMin = 10.0;
+    private double xMax = 20.0;
+    private double yMax = 20.0;
 
     @BeforeEach
     void setUp() {
-        this.instance = new BoundingBox(this.xMin, this.yMin, this.xMax, this.yMax);
+        this.instance = new Rectangle(this.xMin, this.yMin, this.xMax, this.yMax);
     }
 
     @Test
     void getBottomLeft() {
-        SquareInterface bottomLeft = instance.getBottomLeft();
+        PointInterface bottomLeft = instance.getBottomLeft();
         assertEquals(this.xMin, bottomLeft.getXMin());
         assertEquals(this.yMin, bottomLeft.getYMin());
     }
 
     @Test
     void getTopRight() {
-        SquareInterface topRight = instance.getTopRight();
+        PointInterface topRight = instance.getTopRight();
         assertEquals(this.xMax, topRight.getXMin());
         assertEquals(this.yMax, topRight.getYMin());
     }
 
     @Test
     void getBottomRight() {
-        SquareInterface bottomRight = instance.getBottomRight();
+        PointInterface bottomRight = instance.getBottomRight();
         assertEquals(this.xMax, bottomRight.getXMin());
         assertEquals(this.yMin, bottomRight.getYMin());
     }
 
     @Test
     void getTopLeft() {
-        SquareInterface topLeft = instance.getTopLeft();
+        PointInterface topLeft = instance.getTopLeft();
         assertEquals(this.xMin, topLeft.getXMin());
         assertEquals(this.yMax, topLeft.getYMin());
     }
 
     @Test
     void getCenter() {
-        Double x = this.xMax - (this.xMax - this.xMin) / 2;
-        Double y = this.yMax - (this.yMax - this.yMin) / 2;
+        double x = this.xMax - (this.xMax - this.xMin) / 2;
+        double y = this.yMax - (this.yMax - this.yMin) / 2;
 
-        SquareInterface center = instance.getCenter();
+        PointInterface center = instance.getCenter();
         assertEquals(x, center.getXMin());
         assertEquals(y, center.getYMin());
     }
@@ -83,7 +83,7 @@ class BoundingBoxTest {
 
     @Test
     void intersects1() {
-        assertTrue(this.instance.intersects(new BoundingBox(10, 10, 21, 11)));
+        assertTrue(this.instance.intersects(new Rectangle(10, 10, 21, 11)));
     }
 
     @Test
@@ -98,7 +98,7 @@ class BoundingBoxTest {
 
     @Test
     void notIntersects1() {
-        assertFalse(this.instance.intersects(new BoundingBox(100, 100, 100, 100)));
+        assertFalse(this.instance.intersects(new Rectangle(100, 100, 100, 100)));
     }
 
     @Test

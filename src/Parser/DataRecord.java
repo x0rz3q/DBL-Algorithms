@@ -7,9 +7,9 @@ import models.PlacementModelEnum;
 import java.util.List;
 
 public class DataRecord {
-    public List<LabelInterface> points;
+    public List<LabelInterface> labels;
     public AbstractCollectionInterface collection;
-    public Float aspectRatio;
+    public double aspectRatio;
     public PlacementModelEnum placementModel;
-    public Double height = 0.0d;
+    public double height = 0.0d;
 }
