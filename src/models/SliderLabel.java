@@ -28,7 +28,7 @@ public class SliderLabel extends AbstractLabel {
 
         this.rectangle = new Rectangle(this.poi.getX() - offset,
                 this.poi.getY(),
-                this.height * this.aspectRation - offset,
+                this.poi.getX() + this.height * this.aspectRation - offset,
                 this.poi.getY() + this.height);
         this.shift = shift;
     }
