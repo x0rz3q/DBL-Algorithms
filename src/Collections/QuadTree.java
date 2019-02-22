@@ -1,7 +1,7 @@
 package Collections;
 
-import interfaces.models.SquareInterface;
-import models.BoundingBox;
+import interfaces.models.GeometryInterface;
+import models.Rectangle;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,61 +9,53 @@ import java.util.Collection;
 public class QuadTree extends AbstractCollection {
     private static final int QT_NODE_CAPACITY = 4;
 
-    private BoundingBox boundary;
+    private Rectangle boundary;
     private QuadTree NW = null;
     private QuadTree NE = null;
     private QuadTree SE = null;
     private QuadTree SW = null;
-    private Collection<SquareInterface> data;
+    private Collection<GeometryInterface> data;
 
-    public QuadTree(BoundingBox boundary) {
+    public QuadTree(Rectangle boundary) {
         this.boundary = boundary;
         this.data = new ArrayList<>();
     }
 
-    public QuadTree(BoundingBox bbox, Collection<? extends SquareInterface> nodes) {
+    public QuadTree(Rectangle bbox, Collection<? extends GeometryInterface> nodes) {
         this(bbox);
 
-        for(SquareInterface node : nodes) {
+        for (GeometryInterface node : nodes) {
             this.insert(node);
         }
     }
 
-    public QuadTree(SquareInterface square) {
-        this(new BoundingBox(square));
-    }
-
-    public QuadTree(SquareInterface square, Collection<? extends SquareInterface> nodes) {
-        this(new BoundingBox(square), nodes);
-    }
-
     private void subdivide() {
-        this.NW = new QuadTree(new BoundingBox (
-            this.boundary.getBottomLeft().getX(),
-            this.boundary.getCenter().getY(),
-            this.boundary.getCenter().getX(),
-            this.boundary.getTopRight().getY()
+        this.NW = new QuadTree(new Rectangle(
+                this.boundary.getBottomLeft().getX(),
+                this.boundary.getCenter().getY(),
+                this.boundary.getCenter().getX(),
+                this.boundary.getTopRight().getY()
         ));
 
-        this.NE = new QuadTree(new BoundingBox (
-            this.boundary.getCenter(),
-            this.boundary.getTopRight()
+        this.NE = new QuadTree(new Rectangle(
+                this.boundary.getCenter(),
+                this.boundary.getTopRight()
         ));
 
-        this.SW = new QuadTree(new BoundingBox (
-            this.boundary.getBottomLeft(),
-            this.boundary.getCenter()
+        this.SW = new QuadTree(new Rectangle(
+                this.boundary.getBottomLeft(),
+                this.boundary.getCenter()
         ));
 
-        this.SE = new QuadTree(new BoundingBox (
-            this.boundary.getCenter().getX(),
-            this.boundary.getBottomLeft().getY(),
-            this.boundary.getBottomRight().getX(),
-            this.boundary.getCenter().getY()
+        this.SE = new QuadTree(new Rectangle(
+                this.boundary.getCenter().getX(),
+                this.boundary.getBottomLeft().getY(),
+                this.boundary.getBottomRight().getX(),
+                this.boundary.getCenter().getY()
         ));
     }
 
-    public Boolean insert(SquareInterface square) {
+    public boolean insert(GeometryInterface square) {
         if (!this.boundary.intersects(square))
             return false;
 
@@ -93,19 +85,14 @@ public class QuadTree extends AbstractCollection {
         return true;
     }
 
-    @Override
-    public Collection<SquareInterface> query2D(SquareInterface range) {
-        return this.query2D(new BoundingBox(range));
-    }
+    public Collection<GeometryInterface> query2D(Rectangle range) {
+        Collection<GeometryInterface> data = new ArrayList<>();
 
-    public Collection<SquareInterface> query2D(BoundingBox bbox) {
-        Collection<SquareInterface> data = new ArrayList<>();
-
-        if (!this.intersects(bbox))
+        if (!this.intersects(range))
             return data;
 
-        for (SquareInterface square : this.data) {
-            if (bbox.intersects(square))
+        for (GeometryInterface square : this.data) {
+            if (range.intersects(square))
                 data.add(square);
         }
 
@@ -113,20 +100,20 @@ public class QuadTree extends AbstractCollection {
             return data;
         }
 
-        data.addAll(this.NW.query2D(bbox));
-        data.addAll(this.NE.query2D(bbox));
-        data.addAll(this.SE.query2D(bbox));
-        data.addAll(this.SW.query2D(bbox));
+        data.addAll(this.NW.query2D(range));
+        data.addAll(this.NE.query2D(range));
+        data.addAll(this.SE.query2D(range));
+        data.addAll(this.SW.query2D(range));
 
         return data;
     }
 
-    public Boolean intersects(SquareInterface square) {
+    public boolean intersects(GeometryInterface square) {
         return this.boundary.intersects(square);
     }
 
     @Override
-    public Boolean intersects(BoundingBox node) {
+    public boolean intersects(Rectangle node) {
         return this.boundary.intersects(node);
     }
 

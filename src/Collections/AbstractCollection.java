@@ -1,16 +1,15 @@
 package Collections;
 
 import interfaces.AbstractCollectionInterface;
-import interfaces.models.SquareInterface;
-import models.BoundingBox;
+import interfaces.models.GeometryInterface;
+import models.Rectangle;
 
-import java.util.Collection;
 import java.util.List;
 
 public abstract class AbstractCollection implements AbstractCollectionInterface {
     protected int count;
     protected int dataLimit;
-    List<SquareInterface> nodes;
+    List<GeometryInterface> nodes;
 
     public AbstractCollection() {
         this.count = 0;
@@ -20,20 +19,22 @@ public abstract class AbstractCollection implements AbstractCollectionInterface 
         return this.count;
     }
 
-    public void setDataLimit(int d) {this.dataLimit = d;}
+    public void setDataLimit(int d) {
+        this.dataLimit = d;
+    }
 
     /**
      * Check if an item intersects with given node.
      *
-     * @param node {@link SquareInterface}
+     * @param node {@link GeometryInterface}
      * @return Boolean
      */
-    protected abstract Boolean intersects(SquareInterface node);
+    protected abstract boolean intersects(GeometryInterface node);
 
     /**
      * Check if an item intersects with given node
-     * @param node {@link BoundingBox}
+     * @param node {@link Rectangle}
      * @return Boolean
      */
-    protected abstract Boolean intersects(BoundingBox node);
+    protected abstract boolean intersects(Rectangle node);
 }
