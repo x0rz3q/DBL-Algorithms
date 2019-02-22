@@ -6,13 +6,23 @@ import Parser.Parser;
 import Parser.Pair;
 import interfaces.AbstractAlgorithmInterface;
 import main.Interpreter;
+import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
+import org.junit.jupiter.api.function.ThrowingConsumer;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 public class AlgorithmTester {
 
@@ -26,43 +36,55 @@ public class AlgorithmTester {
     }
 
 
-    private void readInFiles(String filePath, AbstractAlgorithmInterface algorithm) throws IOException, NullPointerException {
+
+
+    private Collection<DynamicTest> readInFiles(String filePath, AbstractAlgorithmInterface algorithm) throws IOException, NullPointerException {
         File folder = new File(filePath);
         File[] listOfFiles = folder.listFiles();
-
+        
         Parser parser = new Parser();
-
+        Collection<DynamicTest> tests = new ArrayList<>();
         for (int i = 0; i < listOfFiles.length; i++) {
             if (listOfFiles[i].isFile()) {
                 Pair<DataRecord, Double> input = parser.inputTestMode(new FileInputStream(listOfFiles[i]), QuadTree.class);
-                runTest(input.getKey(), listOfFiles[i].getName(), input.getValue(), algorithm);
+                final int index = i;
+                tests.add(dynamicTest("test of " + algorithm.getClass() + " on file: " + listOfFiles[i].getName(),
+                        () -> runTest(input.getKey(), listOfFiles[index].getName(), input.getValue(), algorithm)));
+
             }
         }
+        return tests;
     }
 
 
-    @Test
-    public void TwoPosTest() {
+
+    @TestFactory
+    public Collection<DynamicTest> TwoPosTest() {
         try {
-            readInFiles("tests/algorithms/TestFiles/TwoPosTestFiles", new TwoPositionBinarySearcher());
+            return readInFiles("tests/algorithms/TestFiles/TwoPosTestFiles", new TwoPositionBinarySearcher());
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return null;
     }
-    @Test
-    public void FourPosTest() {
+
+    @TestFactory
+    public Collection<DynamicTest> FourPosTest() {
         try {
-            readInFiles("tests/algorithms/TestFiles/FourPosTestFiles", new TwoPositionBinarySearcher());
+            return readInFiles("tests/algorithms/TestFiles/FourPosTestFiles", new TwoPositionBinarySearcher());
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return null;
     }
-    @Test
-    public void SliderTest() {
+
+    @TestFactory
+    public Collection<DynamicTest> SliderTest() {
         try {
-            readInFiles("tests/algorithms/TestFiles/SliderTestFiles", new GreedySliderAlgorithm());
+            return readInFiles("tests/algorithms/TestFiles/SliderTestFiles", new GreedySliderAlgorithm());
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return null;
     }
 }
