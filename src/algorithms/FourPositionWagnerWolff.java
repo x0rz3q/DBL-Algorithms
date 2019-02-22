@@ -8,6 +8,7 @@ import models.*;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Random;
 
 import static models.DirectionEnum.*;
 
@@ -18,6 +19,9 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
 
     // conflict graph
     private ArrayList<FourPositionLabel> labelsWithConflicts = new ArrayList<>();
+
+    // selected candidates
+    private ArrayList<FourPositionLabel> selectedLabels = new ArrayList<>();
 
     // DataRecord containing all labels of the current sigma
     private DataRecord labels;
@@ -118,8 +122,41 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
         return false;
     }
 
+
+    /**
+     * Checks whether the point has a candidate which is free of intersections with other labels, and selects such a
+     * label if found.
+     * @param point
+     * @return whether a candidate was chosen
+     */
     private boolean hasCandidateWithoutIntersections(FourPositionPoint point) {
-        return false;
+        FourPositionLabel selected = null;
+
+        // check individual candidates
+        for (FourPositionLabel candidate : point.getCandidates()) {
+            if (candidate.getConflicts().isEmpty()) {
+                selected = candidate;
+                continue;
+            }
+        }
+
+        if (selected == null) {
+            return false;
+        }
+
+        // select conflict free candidate
+        selectedLabels.add(selected);
+
+        // remove other labels
+        for (FourPositionLabel candidate : point.getCandidates()) {
+            if (candidate != selected) {
+                for (FourPositionLabel conflict : candidate.getConflicts()) {
+                    conflict.removeConflict(candidate);
+                }
+                labelsWithConflicts.remove(candidate);
+            }
+        }
+        return true;
     }
 
     private boolean oneCandidates(FourPositionPoint point) {
