@@ -16,11 +16,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class AlgorithmTester {
 
-    private void runTest(DataRecord record, String fileName, Double optHeight, AbstractAlgorithmInterface algorithms) {
+    private void runTest(DataRecord record, String fileName, double optHeight, AbstractAlgorithmInterface algorithms) {
 
         algorithms.solve(record);
 
-        assertTrue(Math.abs((record.height / record.aspectRatio) - optHeight) < 0.1, "the height found is not correct in file: " + fileName);
+        assertEquals(optHeight, record.height, "the height found is not correct in file: " + fileName);
         assertTrue(Interpreter.isValid(record), "the solution found is not valid in file: " + fileName);
 
     }
