@@ -102,7 +102,7 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
         while (!pointsQueue.isEmpty()) {
             FourPositionPoint point = pointsQueue.pollFirst(); // also removes element from queue
             if (noCandidates(point)) {
-
+                return false;
             } else if (hasCandidateWithoutIntersections(point)) {
 
             } else if (oneCandidates(point)) {

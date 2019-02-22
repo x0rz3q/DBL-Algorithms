@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class FourPositionPoint extends Square {
 
-    ArrayList<LabelInterface> candidates = new ArrayList<>();
+    private ArrayList<LabelInterface> candidates = new ArrayList<>();
 
     public FourPositionPoint(AnchorInterface anchor) {
         super(anchor, 0);
@@ -20,4 +20,6 @@ public class FourPositionPoint extends Square {
     public void removeCandidate(FourPositionLabel label) {
         candidates.remove(label);
     }
+
+    public ArrayList<LabelInterface> getCandidates() { return candidates; }
 }
