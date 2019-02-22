@@ -108,10 +108,9 @@ public class KDTree extends AbstractCollection {
             } else { // not full, add it to the list
                 this.nodes.add(node);
             }
-
         } else { // only in one or none
             PointInterface btmLeft = node.getBottomLeft();
-            double rangeDimension,  splitterDimension; // dimensions to check for node and the splitter
+            double rangeDimension, splitterDimension; // dimensions to check for node and the splitter
 
             if (this.depth % 2 == 0) { // vertical check
                 /* left and right is inverted in Y axis */
@@ -211,7 +210,7 @@ public class KDTree extends AbstractCollection {
                 }
             }
             /* add nearest neighbour s.t. not in neighbours already */
-            neighbours.add(nearest(dist, node, cd, cn, neighbours)); 
+            neighbours.add(nearest(this, dist, node, cd, cn, neighbours)); 
         } 
         return neighbours;
     }
@@ -225,7 +224,8 @@ public class KDTree extends AbstractCollection {
      * @param ignorables nodes to ingore during the search
      * @author juris
      */
-    private GeometryInterface nearest(AbstractDistance dist, GeometryInterface node, double cd, GeometryInterface cn, Set<GeometryInterface> ignorables) {
+    private GeometryInterface nearest(KDTree t, AbstractDistance dist, GeometryInterface node, double cd, GeometryInterface cn, Set<GeometryInterface> ignorables) {
+
         return cn; 
     }
 
@@ -233,12 +233,13 @@ public class KDTree extends AbstractCollection {
      * Calculates distance to the splitter line
      */
     private double distanceToSplitter(GeometryInterface node, AbstractDistance dist) { 
+        PointInterface projection;
         if (this.depth % 2 == 0) {
-
+            projection = new Point(node.getX(), this.splitter.getY());
         } else {
-
+            projection = new Point(this.splitter.getX(), node.getY());
         }
-        return 0.0d;
+        return dist.calculate(projection, node.getBottomLeft());
     }
 
     @Override
