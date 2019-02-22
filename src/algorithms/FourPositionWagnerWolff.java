@@ -5,15 +5,17 @@ import interfaces.models.LabelInterface;
 import interfaces.models.SquareInterface;
 import models.*;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Queue;
 
 import static models.DirectionEnum.*;
 
 public class FourPositionWagnerWolff extends AbstractFourPosition {
 
     // phase 2 queue
-    private ArrayList<FourPositionPoint> pointsQueue = new ArrayList<>();
+    private Queue<FourPositionPoint> pointsQueue = new ArrayDeque<>();
 
     // conflict graph
     private ArrayList<FourPositionLabel> labelsWithConflicts = new ArrayList<>();
@@ -98,6 +100,10 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
 
     @Override
     boolean eliminateImpossibleCandidates() {
+        while (!pointsQueue.isEmpty()) {
+            FourPositionPoint point = pointsQueue.poll(); // also removes element frmo queue
+            
+        }
         return false;
     }
 
