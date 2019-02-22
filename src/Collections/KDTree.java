@@ -1,5 +1,6 @@
 package Collections;
 
+import distance.AbstractDistance;
 import interfaces.models.GeometryInterface;
 import interfaces.models.PointInterface;
 import models.Rectangle;
@@ -176,24 +177,15 @@ public class KDTree extends AbstractCollection {
     }
 
     /**
+     * Gives a set of elements in the tree such that they are n nearest neighbours according to
+     * the distance function
+     *
+     * @param dist distance function for calculating nearby points
      * @param n amount of neighbours to return
      * @param node node too look for the neighbours around for
      * @return set of SquareInterface s.t. closest n neighbours
      */
-    public Set<GeometryInterface> nearestNeighbours(int n, GeometryInterface node){
-        PointInterface cntr = node.getCenter();
-        Set<GeometryInterface> neighbours = new HashSet<>();
-        Set<GeometryInterface> anchors = new HashSet<>();
-        for (int i = 0 ; i < n ; i ++) { // repeat nearest neighbour search n times
-            int minDist = Integer.MAX_VALUE;
-            // compute dist with splitter
-            // select min distance
-            // check if this.data has anyone smaller
-            // check children
-            // if child dist(child.splitter, node) >= then disregard that child
-            // repeat until leaf
-            // add the closest node to set
-        } 
+    public Set<GeometryInterface> nearestNeighbours(AbstractDistance dist, int n, GeometryInterface node){
         return null;
     }
 
