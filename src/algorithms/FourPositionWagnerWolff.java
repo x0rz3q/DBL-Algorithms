@@ -113,9 +113,9 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
             if (noCandidates(point)) {
                 return false;
             } else if (hasCandidateWithoutIntersections(point)) {
-
+                continue;
             } else if (oneCandidate(point)) {
-
+                continue;
             } else if (candidateIntersectsAllRemaining(point)) {
 
             }
