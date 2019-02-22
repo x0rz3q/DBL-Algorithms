@@ -42,7 +42,7 @@ public class Rectangle implements GeometryInterface {
         double x = (this.getXMax() - this.getXMin()) / 2;
         double y = (this.getYMax() - this.getYMin()) / 2;
 
-        return new Point(x, y);
+        return new Point(this.getXMax() - x, this.getYMax() - y);
     }
 
     @Override

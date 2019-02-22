@@ -42,6 +42,10 @@ public class PositionLabel extends AbstractLabel {
         this.setDirection(this.direction);
     }
 
+    public void setWidth(double width) {
+        this.height = width / this.aspectRation;
+    }
+
     @Override
     public String getPlacement() {
         return this.direction.toString();
