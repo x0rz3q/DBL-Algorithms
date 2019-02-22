@@ -78,17 +78,17 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
      *
      * @param record       {@link DataRecord}
      * @param sortedLabels a List containing all labels sorted by this.comparator
-     * @param width        double denoting the width assigned to each label
+     * @param height        double denoting the height assigned to each label
      * @return whether there exists a solution
      * @pre sortedLabels is sorted by using this.comparator
      * @modifies record
      * @post if there is a solution record.collection contains it, else record.collection holds an invalid solution
      */
-    private boolean solve(DataRecord record, List<SliderLabel> sortedLabels, double width) {
+    private boolean solve(DataRecord record, List<SliderLabel> sortedLabels, double height) {
         for (SliderLabel label : sortedLabels) {
-            if (!setLabel(record, label, width)) {
+            if (!setLabel(record, label, height)) {
                 for (SliderLabel l : sortedLabels) {
-                    l.setEdgeLength(0, 1);
+                    l.setWidth(0);
                 }
                 return false;
             }
@@ -101,22 +101,25 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
      *
      * @param record {@link DataRecord}
      * @param label  {@link SliderLabel}
-     * @param width  double denoting the width assigned to label
+     * @param height  double denoting the height assigned to label
      * @return whether it is possible to have label be placeable in collection with given width
      */
-    private boolean setLabel(DataRecord record, SliderLabel label, double width) {
-        Rectangle queryArea = new Rectangle(new Point(label.getPOI().getX()-width, label.getPOI().getY()), new Point(label.getPOI().getX(), label.getPOI().getY() + width));
+    private boolean setLabel(DataRecord record, SliderLabel label, double height) {
+        Rectangle queryArea = new Rectangle(new Point(label.getPOI().getX()-height, label.getPOI().getY()), new Point(label.getPOI().getX(), label.getPOI().getY() + height));
         Collection<GeometryInterface> queryResult = record.collection.query2D(queryArea);
 
-        double xMax = label.getPOI().getX() - width;
+        double xMax = label.getPOI().getX() - height;
         for (GeometryInterface entry : queryResult) {
             if (entry != label) xMax = Math.max(xMax, entry.getXMax());
         }
 
         if (xMax > label.getPOI().getX()) return false;
 
-        double shift = (xMax - label.getPOI().getX()) / width + 1;
+        double shift = (xMax - label.getPOI().getX()) / height + 1;
         label.setShift(shift);
+        label.setHeight(height);
+
+
         //TODO: Jeroen please check how to adjust this to the new interface
 //        label.setEdgeLength(width, Math.min(Math.max(0, shift), 1));
 
