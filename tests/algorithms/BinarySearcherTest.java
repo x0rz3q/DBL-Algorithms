@@ -2,11 +2,8 @@ package algorithms;
 
 import Parser.DataRecord;
 import interfaces.models.LabelInterface;
-import interfaces.models.SquareInterface;
-import models.Anchor;
 import models.DirectionEnum;
 import models.PositionLabel;
-import models.Square;
 
 import org.junit.jupiter.api.Test;
 
@@ -32,15 +29,15 @@ class BinarySearchTest {
                 assertTrue(Math.abs(height - maxHeight) < 0.1, "expected: " + maxHeight + " actual: " + height + " ratio: " + aspectRatio);
             }
         };
+
         DataRecord record = new DataRecord();
         record.aspectRatio = aspectRatio;
-        record.points = new ArrayList<LabelInterface>();
+        record.labels = new ArrayList<LabelInterface>();
         for (int i = 0; i < 10000; i++) {
-            record.points.add(new PositionLabel(i, i, 1, DirectionEnum.NE, 0));
-
+            record.labels.add(new PositionLabel(i, i, 1.0, aspectRatio, i, DirectionEnum.NE));
         }
-        searcher.solve(record);
 
+        searcher.solve(record);
     }
 
     @Test
