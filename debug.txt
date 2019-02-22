@@ -1,0 +1,9 @@
+placement model: 2pos
+aspect ratio: 2
+number of points: 6
+3 2
+2 4
+10 2
+7 5
+4 3
+9 3

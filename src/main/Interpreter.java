@@ -11,7 +11,7 @@ import java.util.Collection;
 
 public class Interpreter {
 
-    static double getScore (DataRecord record) {
+    static double getScore(DataRecord record) {
         if (isValid(record)) return record.height;
         return 0;
     }
