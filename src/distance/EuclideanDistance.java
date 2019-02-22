@@ -1,5 +1,4 @@
 package distance;
 
-public class EuclideanDistance implements DistanceInterface{
-
+public class EuclideanDistance extends AbstractDistance {
 }

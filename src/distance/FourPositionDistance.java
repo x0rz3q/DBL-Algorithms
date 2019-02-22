@@ -1,4 +1,4 @@
 package distance;
 
-public class FourPositionDistance implements DistanceInterface{
+public class FourPositionDistance extends AbstractDistance {
 }
