@@ -1,10 +1,9 @@
 package algorithms;
 
 import Parser.DataRecord;
-import interfaces.AbstractAlgorithmInterface;
 import models.FourPositionLabel;
 
-public abstract class AbstractFourPosition implements AbstractAlgorithmInterface {
+public abstract class AbstractFourPosition extends BinarySearcher {
 
     /**
      * Calculates all conflict sizes for given DataRecord. It is sufficient for the

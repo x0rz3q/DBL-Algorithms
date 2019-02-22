@@ -79,8 +79,6 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
      * @param conflictingLabels
      */
     private void preprocessingLabel(FourPositionLabel label, Collection<GeometryInterface> conflictingLabels) {
-        // TODO: Discuss wether labelsWithConflicts should only contain labels with conflicts or it should consits all labels at start
-
         // If new label intersects with existing labels, add it to labelsWithConflicts
         if (conflictingLabels.size() > 0) labelsWithConflicts.add(label);
 
@@ -194,7 +192,7 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
             labelsWithConflicts.remove(conflict);
             conflict.getPoI().removeCandidate(conflict);
         }
-        // remove selected label from conflict graph TODO: determine whether required
+        // remove selected label from conflict graph
         labelsWithConflicts.remove(selected);
         pointsQueue.remove(point);
         return true;
@@ -261,7 +259,7 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
      * @modifies selectedLabels
      * @post all points have at most two candidates
      */
-    void numberOfConflictsHeuristic(){
+    private void numberOfConflictsHeuristic(){
         // select points
         Set<FourPositionPoint> conflictPoints = new HashSet<>();
         for (FourPositionLabel candidate : labelsWithConflicts) {
@@ -312,22 +310,24 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
 
 
     @Override
-    void doTwoSat() {
+    void doTwoSat() { }
 
+    @Override
+    double[] getSolutionSpace(DataRecord record) {
+        return findConflictSizes(record);
     }
 
     @Override
-    public void solve(DataRecord record) {
-        double[] conflictSizes = findConflictSizes(record);
+    boolean isSolvable(DataRecord record, double height) {
+        preprocessing(record, height);
+        boolean solvable = eliminateImpossibleCandidates();
+        if (!solvable) return false;
+        doTwoSat();
+        return true;
+    }
 
-
-        // binary search over conflictSizes
-        // for conflict size do:
-
-            // initialize labels for conflictSize
-            // preprocessing(record, conflictSizes[i]);
-            // boolean solvable = eliminatImpossibleCandidates(record);
-            // if (!solvable) continue;
-            // doTwoSat(record)
+    @Override
+    void getSolution(DataRecord record, double height) {
+        // TODO: implement
     }
 }
