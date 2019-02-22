@@ -145,7 +145,7 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
         for (FourPositionLabel candidate : point.getCandidates()) {
             if (candidate.getConflicts().isEmpty()) {
                 selected = candidate;
-                continue;
+                break;
             }
         }
 
@@ -168,7 +168,7 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
         }
         // remove selected label from conflict graph TODO: determine whether required
         labelsWithConflicts.remove(selected);
-        pointsQueue.remove(selected.getPoI());
+        pointsQueue.remove(point);
         return true;
     }
 
@@ -189,13 +189,14 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
 
         // remove conflicting labels
         for (FourPositionLabel conflict : selected.getConflicts()) {
+            pointsQueue.remove(conflict.getPoI());
             pointsQueue.addFirst(conflict.getPoI());
             labelsWithConflicts.remove(conflict);
             conflict.getPoI().removeCandidate(conflict);
         }
         // remove selected label from conflict graph TODO: determine whether required
         labelsWithConflicts.remove(selected);
-        pointsQueue.remove(selected.getPoI());
+        pointsQueue.remove(point);
         return true;
     }
 
@@ -217,7 +218,7 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
                 havingLabelsIntersecting.add(intersection.getPoI());
             }
 
-            boolean canExist = true; // wether candidate can exist in solution
+            boolean canExist = true; // whether candidate can exist in solution
 
             fullPointIntersect: for (FourPositionPoint intersectPoint : havingLabelsIntersecting) {
                 for (FourPositionLabel intersectPointLabel : intersectPoint.getCandidates()) {
@@ -233,7 +234,7 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
             }
         }
 
-        if (labelsThatCantExist.size() != 0) {
+        if (!labelsThatCantExist.isEmpty()) {
             for (FourPositionLabel candidate : labelsThatCantExist) {
                 point.removeCandidate(candidate);
                 labelsWithConflicts.remove(candidate);
