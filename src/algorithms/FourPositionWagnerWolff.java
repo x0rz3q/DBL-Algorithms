@@ -73,26 +73,23 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
     }
 
     /**
-     * Subtask from the preprocessing function.
+     * Subtask of the preprocessing function. If new label p_i intersects with existing labels, add it to labelsWithConflicts.
+     * For all labels q_i that intersect p_i; Add q_i to conflict list of p_i; Add p_i to conflict list of q_i;
+     * Add q_i to labelsWithConflicts if it is not in there already.
+     * Also add p_i to the datarecord for further preprocessing
      *
      * @param label
      * @param conflictingLabels
      */
     private void preprocessingLabel(FourPositionLabel label, Collection<GeometryInterface> conflictingLabels) {
-        // If new label intersects with existing labels, add it to labelsWithConflicts
         if (conflictingLabels.size() > 0) labelsWithConflicts.add(label);
 
-        // for all squares that intersect the new label:
-        //      add square to conflict list of the new label
-        //      add new label to the conflicts list of the square
-        //      add square to labelsWithConflicts lists if its not in there yet
         for (GeometryInterface square : conflictingLabels) {
             label.addConflict((FourPositionLabel) square);
             ((FourPositionLabel) square).addConflict(label);
             if (!labelsWithConflicts.contains(square)) { labelsWithConflicts.add((FourPositionLabel) square); }
         }
 
-        // add new label to DataRecord for future queing
         labels.collection.insert(label);
     }
 
@@ -164,7 +161,7 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
                 candidate.getPoI().removeCandidate(candidate);
             }
         }
-        // remove selected label from conflict graph TODO: determine whether required
+        // remove selected label from conflict graph
         labelsWithConflicts.remove(selected);
         pointsQueue.remove(point);
         return true;
