@@ -7,9 +7,7 @@ import models.FourPositionLabel;
 import models.FourPositionPoint;
 import models.Rectangle;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 
 import static models.DirectionEnum.*;
 
@@ -117,10 +115,10 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
             } else if (oneCandidate(point)) {
                 continue;
             } else if (candidateIntersectsAllRemaining(point)) {
-
+                continue;
             }
         }
-        return false;
+        return true;
     }
 
     /**
@@ -201,8 +199,50 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
         return true;
     }
 
+    /**
+     * Checks wether a candidate p_i of a given point p intersects all remaining candidates of a different point q.
+     * If so, p_i is removed.
+     * If candidates of p were removed then p is put back in the queue
+     *
+     * @param point the given point
+     * @return wether point had candidates that intersected all remaining candidates of another point
+     */
     private boolean candidateIntersectsAllRemaining(FourPositionPoint point) {
-        return false;
+        List<FourPositionLabel> labelsThatCantExist = new ArrayList<>();
+        for (FourPositionLabel candidate : point.getCandidates()) {
+            Set<FourPositionPoint> havingLabelsIntersecting = new HashSet<>();
+
+            // get points of the labels that conflict with candidate
+            for (FourPositionLabel intersection : candidate.getConflicts()) {
+                havingLabelsIntersecting.add(intersection.getPoI());
+            }
+
+            boolean canExist = true; // wether candidate can exist in solution
+
+            fullPointIntersect: for (FourPositionPoint intersectPoint : havingLabelsIntersecting) {
+                for (FourPositionLabel intersectPointLabel : intersectPoint.getCandidates()) {
+                    if (!intersectPointLabel.getConflicts().contains(candidate)) {
+                        continue fullPointIntersect;
+                    }
+                }
+                canExist = false;
+            }
+
+            if (!canExist) {
+                labelsThatCantExist.add(candidate);
+            }
+        }
+
+        if (labelsThatCantExist.size() != 0) {
+            for (FourPositionLabel candidate : labelsThatCantExist) {
+                point.removeCandidate(candidate);
+                labelsWithConflicts.remove(candidate);
+            }
+            pointsQueue.addFirst(point);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
