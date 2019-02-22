@@ -8,14 +8,13 @@ import models.*;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Queue;
 
 import static models.DirectionEnum.*;
 
 public class FourPositionWagnerWolff extends AbstractFourPosition {
 
     // phase 2 queue
-    private Queue<FourPositionPoint> pointsQueue = new ArrayDeque<>();
+    private ArrayDeque<FourPositionPoint> pointsQueue = new ArrayDeque<>();
 
     // conflict graph
     private ArrayList<FourPositionLabel> labelsWithConflicts = new ArrayList<>();
@@ -101,9 +100,33 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
     @Override
     boolean eliminateImpossibleCandidates() {
         while (!pointsQueue.isEmpty()) {
-            FourPositionPoint point = pointsQueue.poll(); // also removes element frmo queue
-            
+            FourPositionPoint point = pointsQueue.pollFirst(); // also removes element from queue
+            if (noCandidates(point)) {
+
+            } else if (hasCandidateWithoutIntersections(point)) {
+
+            } else if (oneCandidates(point)) {
+
+            } else if (candidateIntersectsAllRemaining(point)) {
+
+            }
         }
+        return false;
+    }
+
+    private boolean noCandidates(FourPositionPoint point) {
+        return false;
+    }
+
+    private boolean hasCandidateWithoutIntersections(FourPositionPoint point) {
+        return false;
+    }
+
+    private boolean oneCandidates(FourPositionPoint point) {
+        return false;
+    }
+
+    private boolean candidateIntersectsAllRemaining(FourPositionPoint point) {
         return false;
     }
 
