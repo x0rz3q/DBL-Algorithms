@@ -27,12 +27,9 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 public class AlgorithmTester {
 
     private void runTest(DataRecord record, String fileName, double optHeight, AbstractAlgorithmInterface algorithms) {
-
         algorithms.solve(record);
-
         assertEquals(optHeight, record.height, "the height found is not correct in file: " + fileName);
         assertTrue(Interpreter.isValid(record), "the solution found is not valid in file: " + fileName);
-
     }
 
 
@@ -49,13 +46,11 @@ public class AlgorithmTester {
                     final int index = i;
                     tests.add(dynamicTest("test of " + algorithm.getClass() + " on file: " + listOfFiles[i].getName(),
                             () -> runTest(input.getKey(), listOfFiles[index].getName(), input.getValue(), algorithm)));
-
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
