@@ -3,8 +3,8 @@ package algorithms;
 import Collections.QuadTree;
 import Parser.DataRecord;
 import Parser.Parser;
+import Parser.Pair;
 import interfaces.AbstractAlgorithmInterface;
-import javafx.util.Pair;
 import main.Interpreter;
 import org.junit.jupiter.api.Test;
 
