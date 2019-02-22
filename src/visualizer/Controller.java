@@ -1,21 +1,13 @@
 package visualizer;
 
 
-import interfaces.models.LabelInterface;
-import interfaces.models.SquareInterface;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
-import models.PositionLabel;
-import org.w3c.dom.css.Rect;
+import models.Rectangle;
 
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 public class Controller {
@@ -29,23 +21,31 @@ public class Controller {
     }
 
     public void setTitle(Stage stage) {
-        stage.setTitle("Placed " + this.record.actualPointCount + "/" + this.record.pointCount);
+        stage.setTitle("Placed " + this.record.actualPointCount + "/" + this.record.pointCount + " intersected " + this.record.intersections);
     }
 
     public void redraw() {
         this.mainPanel.getChildren().clear();
-        double scaleFactor = (this.mainPanel.getHeight()) / this.record.extent;
+        double scaleFactor = (Math.min(this.mainPanel.getHeight(), this.mainPanel.getWidth())) / this.record.extent;
 
-        for (Map.Entry<LabelInterface, Collection<SquareInterface>> value : this.record.intersects.entrySet()) {
-            LabelInterface label = value.getKey();
-            Rectangle rectangle = new Rectangle();
-            rectangle.setLayoutX(label.getXMin() * scaleFactor);
-            rectangle.setLayoutY((this.mainPanel.getHeight() - label.getYMin() * scaleFactor) - this.record.height * scaleFactor);
-            rectangle.setHeight(this.record.height * scaleFactor);
-            rectangle.setWidth(this.record.height * scaleFactor * this.record.aspectRatio);
+        for (Map.Entry<Rectangle, Boolean> entry : this.record.rectangles.entrySet()) {
+            Rectangle rectangle = entry.getKey();
 
-            mainPanel.getChildren().add(rectangle);
-            rectangle.setStroke(Color.WHITE);
+            javafx.scene.shape.Rectangle shape = new javafx.scene.shape.Rectangle();
+            shape.setLayoutY(this.mainPanel.getHeight() - (rectangle.getYMin() + Math.abs(this.record.shiftY) + rectangle.getHeight()) * scaleFactor);
+            shape.setLayoutX(rectangle.getXMin() * scaleFactor);
+            shape.setWidth(rectangle.getWidth() * scaleFactor);
+            shape.setHeight(rectangle.getHeight() * scaleFactor);
+
+            if(entry.getValue()) {
+                shape.setStroke(Color.RED);
+            } else {
+                shape.setStroke(Color.WHITE);
+            }
+
+            shape.setFill(Color.TRANSPARENT);
+
+            this.mainPanel.getChildren().add(shape);
         }
     }
 }
