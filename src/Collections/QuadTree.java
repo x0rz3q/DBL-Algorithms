@@ -113,12 +113,12 @@ public class QuadTree extends AbstractCollection {
         return data;
     }
 
-    public Boolean intersects(GeometryInterface square) {
+    public boolean intersects(GeometryInterface square) {
         return this.boundary.intersects(square);
     }
 
     @Override
-    public Boolean intersects(Rectangle node) {
+    public boolean intersects(Rectangle node) {
         return this.boundary.intersects(node);
     }
 

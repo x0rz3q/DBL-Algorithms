@@ -14,7 +14,7 @@ public interface AbstractCollectionInterface {
      * @post {@code this.intersects(node)}
      * @throws NullPointerException if {@code node == null}
      */
-    Boolean insert(GeometryInterface node) throws NullPointerException;
+    boolean insert(GeometryInterface node) throws NullPointerException;
 
     /**
      * Remove node from collection.
@@ -41,14 +41,15 @@ public interface AbstractCollectionInterface {
      * @param node {@link GeometryInterface}
      * @return Boolean
      */
-    Boolean intersects(GeometryInterface node);
+    boolean intersects(GeometryInterface node);
 
     /**
      * Check if an item intersects with given node
      * @param node {@link Rectangle}
      * @return Boolean
      */
-    Boolean intersects(Rectangle node);
+    boolean intersects(Rectangle node);
+
     /**
      * Get the size of the collection.
      *

@@ -7,7 +7,7 @@ import java.util.Collection;
 
 public class KDTree extends AbstractCollection{
     @Override
-    public Boolean insert(GeometryInterface node) throws NullPointerException {
+    public boolean insert(GeometryInterface node) throws NullPointerException {
         return false;
     }
 
@@ -22,12 +22,12 @@ public class KDTree extends AbstractCollection{
     }
 
     @Override
-    public Boolean intersects(GeometryInterface node) {
+    public boolean intersects(GeometryInterface node) {
         return null;
     }
 
     @Override
-    public Boolean intersects(Rectangle node) {
+    public boolean intersects(Rectangle node) {
         return null;
     }
 
