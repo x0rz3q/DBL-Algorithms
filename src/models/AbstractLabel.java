@@ -22,7 +22,7 @@ public abstract class AbstractLabel implements LabelInterface {
         return this.poi;
     }
 
-    public Boolean equals(LabelInterface square) {
+    public boolean equals(LabelInterface square) {
         return super.equals(square) && this.getPOI().equals(square.getPOI());
     }
 

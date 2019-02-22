@@ -23,12 +23,12 @@ public class KDTree extends AbstractCollection{
 
     @Override
     public boolean intersects(GeometryInterface node) {
-        return null;
+        return false;
     }
 
     @Override
     public boolean intersects(Rectangle node) {
-        return null;
+        return false;
     }
 
     @Override

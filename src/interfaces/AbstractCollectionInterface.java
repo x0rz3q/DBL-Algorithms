@@ -39,14 +39,14 @@ public interface AbstractCollectionInterface {
      * Check if an item intersects with given node.
      *
      * @param node {@link GeometryInterface}
-     * @return Boolean
+     * @return boolean
      */
     boolean intersects(GeometryInterface node);
 
     /**
      * Check if an item intersects with given node
      * @param node {@link Rectangle}
-     * @return Boolean
+     * @return boolean
      */
     boolean intersects(Rectangle node);
 
