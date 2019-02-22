@@ -40,14 +40,15 @@ public class AlgorithmTester {
 
             Parser parser = new Parser();
             Collection<DynamicTest> tests = new ArrayList<>();
-            for (int i = 0; i < listOfFiles.length; i++) {
-                if (listOfFiles[i].isFile()) {
-                    Pair<DataRecord, Double> input = parser.inputTestMode(new FileInputStream(listOfFiles[i]), QuadTree.class);
-                    final int index = i;
-                    tests.add(dynamicTest("test of " + algorithm.getClass() + " on file: " + listOfFiles[i].getName(),
-                            () -> runTest(input.getKey(), listOfFiles[index].getName(), input.getValue(), algorithm)));
+            for (File file : listOfFiles) {
+                if (file.isFile()) {
+                    Pair<DataRecord, Double> input = parser.inputTestMode(new FileInputStream(file), QuadTree.class);
+                    tests.add(dynamicTest("test of " + algorithm.getClass() + " on file: " + file.getName(),
+                            () -> runTest(input.getKey(), file.getName(), input.getValue(), algorithm)));
                 }
             }
+            return tests;
+            
         } catch (IOException e) {
             e.printStackTrace();
         }
