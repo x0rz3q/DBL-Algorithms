@@ -55,6 +55,14 @@ public abstract class AbstractFourPosition implements AbstractAlgorithmInterface
     abstract boolean eliminateImpossibleCandidates();
 
     /**
+     * Eliminates candidates in conflict graph until point has at most two candidates left.
+     *
+     * @modifies conflictGraph dataStructure
+     * @post PoI in conflictGraph have at most 2 candidates
+     */
+    abstract void applyHeuristic();
+
+    /**
      * Try to solve if record does not have an obvious solution.
      * For those points which still have two or more candidates left, choose exactly two (heuristic),
      * and check, whether this remaining problem is solvable with 2-SAT (like 2 position)
