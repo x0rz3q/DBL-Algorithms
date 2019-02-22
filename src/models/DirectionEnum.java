@@ -4,6 +4,7 @@ public enum DirectionEnum {
     NW("NW"), NE("NE"), SW("SW"), SE("SE");
 
     private String direction;
+
     DirectionEnum(String direction) {
         this.direction = direction;
     }

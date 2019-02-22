@@ -1,16 +1,9 @@
 placement model: 2pos
-
-aspect ratio: 4.0
-
+aspect ratio: 2912
 number of points: 5
-
 0 0
-
 0 1
-
 0 2
-
 0 3
-
 0 4
-label height: 2.00
+label height: 2.0

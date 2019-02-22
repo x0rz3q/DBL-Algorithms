@@ -1,11 +1,11 @@
 package algorithms;
 
-import interfaces.AbstractAlgorithmInterface;
 import Parser.DataRecord;
+import interfaces.AbstractAlgorithmInterface;
 
 public abstract class BinarySearcher implements AbstractAlgorithmInterface {
-
     /**
+     *
      * uses binary search to find the optimal height for the rectangles
      *
      * @param record {@link DataRecord}
