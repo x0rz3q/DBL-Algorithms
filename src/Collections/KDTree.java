@@ -17,7 +17,7 @@ public class KDTree extends AbstractCollection {
     /**
      * depth of the root/leaf of the KDTree
      **/
-    int depth; // depth == 0 for root.
+    private int depth; // depth == 0 for root.
     /**
      * children of this tree
      **/
@@ -26,7 +26,7 @@ public class KDTree extends AbstractCollection {
     /**
      * SquareInterfaces anchor on which the split happens
      **/
-    PointInterface splitter;
+    private PointInterface splitter;
     /**
      * comparators for sorting collections of SquareInterface
      **/
@@ -104,7 +104,6 @@ public class KDTree extends AbstractCollection {
      */
     private static GeometryInterface nearest(KDTree t, AbstractDistance dist, GeometryInterface node,
                                              Double cd, GeometryInterface cn, Set<GeometryInterface> ignorables) {
-        // else
         /* check for closer stuff in t */
         for (GeometryInterface o : t.nodes) {
             if (!ignorables.contains(o) && !o.equals(node)) { // if not a neighbour already
@@ -290,7 +289,7 @@ public class KDTree extends AbstractCollection {
      *
      * @return true if {@code this} is a leaf
      */
-    public boolean isLeaf() {
+    private boolean isLeaf() {
         return this.splitter == null;
     }
 
