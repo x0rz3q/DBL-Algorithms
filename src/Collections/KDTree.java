@@ -1,8 +1,10 @@
 package Collections;
 
+import distance.AbstractDistance;
 import interfaces.models.GeometryInterface;
 import interfaces.models.PointInterface;
 import models.Rectangle;
+import models.Point;
 
 import java.util.*;
 
@@ -62,14 +64,14 @@ public class KDTree extends AbstractCollection {
             this.depth = depth;
         } else {
             if (depth % 2 == 0) { // even depth
-               // split vertically
-               java.util.Collections.sort(nodes, verticalC);
+                // split vertically
+                java.util.Collections.sort(nodes, verticalC);
             } else { // odd depth
 
                 // split horizontally
                 java.util.Collections.sort(nodes, horizontalC);
             }
-            int medianIndex = (int) Math.floor(nodes.size() / 2);
+            int medianIndex = (int) Math.floor(nodes.size() / 2.0);
             splitter = nodes.get(medianIndex).getBottomLeft();
             left = new KDTree(nodes.subList(0, medianIndex), depth + 1, this.dataLimit);
             right = new KDTree(nodes.subList(medianIndex, nodes.size()), depth + 1, this.dataLimit);
@@ -82,7 +84,7 @@ public class KDTree extends AbstractCollection {
     private static Comparator<GeometryInterface> verticalComparator(){
         return new Comparator<GeometryInterface>() {
             public int compare(GeometryInterface s1, GeometryInterface s2) {
-                return Double.compare(s1.getBottomLeft().getY(), s2.getBottomLeft().getY());
+                return -1 * Double.compare(s1.getBottomLeft().getY(), s2.getBottomLeft().getY());
             }
         };
     }
@@ -113,14 +115,14 @@ public class KDTree extends AbstractCollection {
             } else { // not full, add it to the list
                 this.nodes.add(node);
             }
-
         } else { // only in one or none
             PointInterface btmLeft = node.getBottomLeft();
-            double rangeDimension,  splitterDimension; // dimensions to check for node and the splitter
+            double rangeDimension, splitterDimension; // dimensions to check for node and the splitter
 
             if (this.depth % 2 == 0) { // vertical check
-                rangeDimension = btmLeft.getY();
-                splitterDimension = this.splitter.getY();
+                /* left and right is inverted in Y axis */
+                rangeDimension = -1 * Math.abs(btmLeft.getY());
+                splitterDimension = -1 * Math.abs(this.splitter.getY());
             } else { // horizontal check
                 rangeDimension = btmLeft.getX();
                 splitterDimension = this.splitter.getX();
@@ -144,7 +146,7 @@ public class KDTree extends AbstractCollection {
      * Search for elements in some range
      * @param subTree subtree on which query is done
      * @param range range in which to search for elements
-     * @return Collection of SquareInterfaces such that range.intersects(element)
+     * @return collection of SquareInterfaces such that range.intersects(element)
      */
     private Collection<GeometryInterface> query2D(KDTree subTree, Rectangle range) {
         Collection<GeometryInterface> leavesInRange = new ArrayList<>();
@@ -182,12 +184,94 @@ public class KDTree extends AbstractCollection {
     }
 
     /**
+     * Gives a set of elements in the tree such that they are n nearest neighbours according to
+     * the distance function
+     * @throws IllegalArgumentException if n >= this.size()
+     * @param dist distance function for calculating nearby points
      * @param n amount of neighbours to return
      * @param node node too look for the neighbours around for
      * @return set of SquareInterface s.t. closest n neighbours
+     * @author juris
      */
-    public Set<GeometryInterface> nearestNeighbours(int n, GeometryInterface node){
-        return null;
+    public Set<GeometryInterface> nearestNeighbours(AbstractDistance dist, int n, GeometryInterface node) throws IllegalArgumentException {
+        if (n >= this.size()) {
+            throw new IllegalArgumentException("KDTree.nearestNeighbours asked for "+ n + " neighbours for tree of size " + size() + ".");
+        }
+        /* closest n neighbours of node */
+        Set<GeometryInterface> neighbours = new HashSet<GeometryInterface>();
+        /* closest distance */
+        Double cd;
+        /* closest node with distance cd */
+        GeometryInterface cn;
+        for (int i = 0; i < n; i++) { // do nearest neighbour n times, ignoring the ones in the set
+            cd = Double.MAX_VALUE; // default values
+            cn = null;
+            /* add nearest neighbour s.t. not in neighbours already */
+            neighbours.add(nearest(this, dist, node, cd, cn, neighbours));
+        }
+        return neighbours;
+    }
+
+    /**
+     * Finds nearest neighbour of node n
+     * @param dist distance function
+     * @param t tree in which to search
+     * @param node object to look for nearest neighbour
+     * @param cd current closest distance
+     * @param cn current closest node
+     * @param ignorables nodes to ingore during the search
+     * @author juris
+     */
+    private static GeometryInterface nearest(KDTree t, AbstractDistance dist, GeometryInterface node, Double cd, GeometryInterface cn, Set<GeometryInterface> ignorables) {
+        /* if not leaf and current search radius doesnt intersect KDTree boundry */
+        if (t.splitter != null && t.nodes.isEmpty() && t.distanceToSplitter(node, dist) > cd) return cn;
+        // else
+        /* check for closer stuff in t */
+        for (GeometryInterface o : t.nodes) {
+            if (!ignorables.contains(o) && !o.equals(node)) { // if not a neighbour already
+                double newDist = dist.calculate(node.getBottomLeft(), o.getBottomLeft()); // calc distance
+                if (newDist < cd) { // if better, update
+                    cd = newDist;
+                    cn = o;
+                }
+            }
+        }
+        if (t.splitter == null) { // at leaf, have inspected nodes already, so return cur best
+            return cn;
+        } // not at leaf
+        // go down deeper
+        double rangeDimension, splitterDimension;
+        if (t.depth % 2 == 0) { // vertical check
+            /* left and right is inverted in Y axis */
+            rangeDimension = -1 * Math.abs(node.getBottomLeft().getY());
+            splitterDimension = -1 * Math.abs(t.splitter.getY());
+        } else { // horizontal check
+            rangeDimension = node.getBottomLeft().getX();
+            splitterDimension = t.splitter.getX();
+        }
+        if (rangeDimension < splitterDimension) { // node in left
+            // search left first
+            cn = nearest(t.left, dist, node, cd, cn, ignorables);
+            cn = nearest(t.right, dist, node, cd, cn, ignorables);
+        } else { // node in right
+            // search right first
+            cn = nearest(t.right, dist, node, cd, cn, ignorables);
+            cn = nearest(t.left, dist, node, cd, cn, ignorables);
+        }
+        return cn;
+    }
+
+    /**
+     * Calculates distance to the splitter line
+     */
+    private double distanceToSplitter(GeometryInterface node, AbstractDistance dist) {
+        PointInterface projection;
+        if (this.depth % 2 == 0) {
+            projection = new Point(node.getBottomLeft().getX(), this.splitter.getY());
+        } else {
+            projection = new Point(this.splitter.getX(), node.getBottomLeft().getY());
+        }
+        return dist.calculate(projection, node.getBottomLeft());
     }
 
     @Override
@@ -212,4 +296,5 @@ public class KDTree extends AbstractCollection {
     public int size() {
         return super.getSize();
     }
+}
 }
