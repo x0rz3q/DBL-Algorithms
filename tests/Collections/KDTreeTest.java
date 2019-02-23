@@ -169,7 +169,6 @@ public class KDTreeTest extends AbstractCollectionTest {
         assertFalse(neighbours.contains(p7));
     }
 
-    //
     @Test
     void kNN3(){
         points = new ArrayList<>();

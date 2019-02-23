@@ -185,19 +185,7 @@ public class KDTree extends AbstractCollection {
                 this.nodes.add(node);
             }
         } else { // only in one or none
-            PointInterface btmLeft = node.getBottomLeft();
-            double rangeDimension, splitterDimension; // dimensions to check for node and the splitter
-
-            if (this.depth % 2 == 0) { // vertical check
-                /* left and right is inverted in Y axis */
-                rangeDimension = -1 * Math.abs(btmLeft.getY());
-                splitterDimension = -1 * Math.abs(this.splitter.getY());
-            } else { // horizontal check
-                rangeDimension = btmLeft.getX();
-                splitterDimension = this.splitter.getX();
-            }
-
-            if (rangeDimension < splitterDimension) { // insert in left
+            if (inLeft(node)) { // insert in left
                 this.left.insert(node);
             } else { // insert in right subtree
                 this.right.insert(node);
