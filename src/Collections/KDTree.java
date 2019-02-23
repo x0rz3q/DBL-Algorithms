@@ -163,18 +163,7 @@ public class KDTree extends AbstractCollection {
             leavesInRange.addAll(query2D(subTree.left, range));
             leavesInRange.addAll(query2D(subTree.right, range));
         } else { // otherwise only on one side check which to query
-            PointInterface btmLeft = range.getBottomLeft();
-            double rangeDimension, splitterDimension;
-
-            if (subTree.depth % 2 == 0) { // vertical check
-                rangeDimension = btmLeft.getY();
-                splitterDimension = subTree.splitter.getY();
-            } else { // horizontal check
-                rangeDimension = btmLeft.getX();
-                splitterDimension = subTree.splitter.getX();
-            }
-            // query according to the location of the range box
-            if (rangeDimension < splitterDimension) {
+            if (subTree.goLeft(range)) {
                 leavesInRange.addAll(query2D(subTree.left, range));
             } else {
                 leavesInRange.addAll(query2D(subTree.right, range));
@@ -240,16 +229,7 @@ public class KDTree extends AbstractCollection {
             return cn;
         } // not at leaf
         // go down deeper
-        double rangeDimension, splitterDimension;
-        if (t.depth % 2 == 0) { // vertical check
-            /* left and right is inverted in Y axis */
-            rangeDimension = -1 * Math.abs(node.getBottomLeft().getY());
-            splitterDimension = -1 * Math.abs(t.splitter.getY());
-        } else { // horizontal check
-            rangeDimension = node.getBottomLeft().getX();
-            splitterDimension = t.splitter.getX();
-        }
-        if (rangeDimension < splitterDimension) { // node in left
+        if (t.goLeft(node)) { // node in left
             // search left first
             cn = nearest(t.left, dist, node, cd, cn, ignorables);
             cn = nearest(t.right, dist, node, cd, cn, ignorables);
@@ -259,6 +239,20 @@ public class KDTree extends AbstractCollection {
             cn = nearest(t.left, dist, node, cd, cn, ignorables);
         }
         return cn;
+    }
+
+    private boolean goLeft(GeometryInterface node) {
+        double rangeDimension, splitterDimension;
+        if (this.depth % 2 == 0) {
+            /* left and right is inverted in Y axis */
+            rangeDimension = -1 * Math.abs(node.getBottomLeft().getY());
+            splitterDimension = -1 * Math.abs(this.splitter.getY());
+        } else { // horizontal check
+            rangeDimension = node.getBottomLeft().getX();
+            splitterDimension = this.splitter.getX();
+        }
+
+        return rangeDimension < splitterDimension;
     }
 
     /**
