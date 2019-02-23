@@ -297,4 +297,4 @@ public class KDTree extends AbstractCollection {
         return super.getSize();
     }
 }
-}
+
