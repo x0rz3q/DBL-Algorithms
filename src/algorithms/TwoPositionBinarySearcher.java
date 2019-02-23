@@ -54,12 +54,14 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
         }
 
 
+
         double[] solutionSpace = new double[solutions.size()];
         int counter = 0;
         for (Double d : solutions) {
             solutionSpace[counter] = d;
             counter++;
         }
+
 
 
         return solutionSpace;
@@ -70,13 +72,6 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
         int noInputs = record.labels.size();
 
         createGraph(record, height, noInputs);
-
-
-//        for (int i = 0; i < adj.length; i++) {
-//            for (int j : adj[i]) {
-//                System.out.println(i + " " + j);
-//            }
-//        }
 
         // check if label and its inverse are in the same component
         for (int i = 0; i < noInputs; i++) {
@@ -134,10 +129,8 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
 
             // label NE of point intersects with NE lables
             Collection<GeometryInterface> collection = record.collection.query2D(new Rectangle(x - width, y - height, x + width, y + height));
-            // System.out.println((x - width) + " " + (y - height) + " " + (x + width) + " " + (y + height));
             if (collection != null) {
                 for (GeometryInterface square : collection) {
-                    // System.out.println("ids: " + ((LabelInterface) square).getID());
                     addEdgeAndInverse(point.getID(), ((LabelInterface) square).getID() + noPoints, noPoints);
                 }
             }
@@ -147,7 +140,6 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
             // System.out.println((x) + " " + (y - height) + " " + (x + 2 * width) + " " + (y + height));
             if (collection != null) {
                 for (GeometryInterface square : collection) {
-                    // System.out.println("ids: " + ((LabelInterface) square).getID());
                     addEdgeAndInverse(point.getID(), ((LabelInterface) square).getID(), noPoints);
                 }
             }
