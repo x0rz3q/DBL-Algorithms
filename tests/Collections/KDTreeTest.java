@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 public class KDTreeTest extends AbstractCollectionTest {
     List<GeometryInterface> points;
 
@@ -75,7 +76,7 @@ public class KDTreeTest extends AbstractCollectionTest {
         int count = 0;
         for (int x = 0; x < 100; x += 10) {
             for (int y = 0; y < 500; y += 20) {
-                Rectangle square = new Rectangle(x, y, x + 10, y+10);
+                Rectangle square = new Rectangle(x, y, x + 10, y + 10);
                 instance.insert(square);
                 count++;
             }
@@ -100,6 +101,7 @@ public class KDTreeTest extends AbstractCollectionTest {
         assertTrue(points.contains(point1));
         assertTrue(points.contains(point2));
     }
+
     @Test
     void query2D3() {
         PointInterface point1 = new Point(5000, 5000);
@@ -116,16 +118,17 @@ public class KDTreeTest extends AbstractCollectionTest {
         Collection<GeometryInterface> points = this.instance.query2D(queryRange);
         assertTrue(points.isEmpty());
     }
+
     @Test
-    void kNN1(){
+    void kNN1() {
         points = new ArrayList<>();
-        PointInterface p1 = new Point(1500,6000);
-        PointInterface p2 = new Point(5000,5000);
-        PointInterface p3 = new Point(3500,2500);
-        PointInterface p4 = new Point(5000,1000);
-        PointInterface p5 = new Point(7000,6500);
-        PointInterface p6 = new Point(8000,4500);
-        PointInterface p7 = new Point(7000,2000);
+        PointInterface p1 = new Point(1500, 6000);
+        PointInterface p2 = new Point(5000, 5000);
+        PointInterface p3 = new Point(3500, 2500);
+        PointInterface p4 = new Point(5000, 1000);
+        PointInterface p5 = new Point(7000, 6500);
+        PointInterface p6 = new Point(8000, 4500);
+        PointInterface p7 = new Point(7000, 2000);
         points.add(p1);
         points.add(p2);
         points.add(p3);
@@ -135,7 +138,7 @@ public class KDTreeTest extends AbstractCollectionTest {
         points.add(p7);
         instance = new KDTree(points, 1);
         assertEquals(points.size(), instance.size());
-        Set<GeometryInterface> neighbours = ((KDTree)instance).nearestNeighbours(new EuclideanDistance(),2, p6);
+        Set<GeometryInterface> neighbours = ((KDTree) instance).nearestNeighbours(new EuclideanDistance(), 2, p6);
         assertEquals(neighbours.size(), 2);
         assertFalse(neighbours.contains(p6));
         assertTrue(neighbours.contains(p5));
@@ -143,16 +146,16 @@ public class KDTreeTest extends AbstractCollectionTest {
     }
 
     @Test
-    void kNN2(){
+    void kNN2() {
         points = new ArrayList<>();
         int neighbourAmount = 1;
-        PointInterface p1 = new Point(1500,6000);
-        PointInterface p2 = new Point(5000,5000);
-        PointInterface p3 = new Point(3500,2500);
-        PointInterface p4 = new Point(5000,1000);
-        PointInterface p5 = new Point(7000,6500);
-        PointInterface p6 = new Point(8000,4500);
-        PointInterface p7 = new Point(7000,2000);
+        PointInterface p1 = new Point(1500, 6000);
+        PointInterface p2 = new Point(5000, 5000);
+        PointInterface p3 = new Point(3500, 2500);
+        PointInterface p4 = new Point(5000, 1000);
+        PointInterface p5 = new Point(7000, 6500);
+        PointInterface p6 = new Point(8000, 4500);
+        PointInterface p7 = new Point(7000, 2000);
         points.add(p1);
         points.add(p2);
         points.add(p3);
@@ -162,7 +165,7 @@ public class KDTreeTest extends AbstractCollectionTest {
         points.add(p7);
         instance = new KDTree(points, 1);
         assertEquals(points.size(), instance.size());
-        Set<GeometryInterface> neighbours = ((KDTree)instance).nearestNeighbours(new EuclideanDistance(),neighbourAmount, p6);
+        Set<GeometryInterface> neighbours = ((KDTree) instance).nearestNeighbours(new EuclideanDistance(), neighbourAmount, p6);
         assertEquals(neighbours.size(), neighbourAmount);
         assertFalse(neighbours.contains(p6));
         assertTrue(neighbours.contains(p5));
@@ -170,13 +173,32 @@ public class KDTreeTest extends AbstractCollectionTest {
     }
 
     @Test
-    void kNN3(){
+    void kNN3() {
         points = new ArrayList<>();
-//        PointInterface p1 = new Point();
-//        PointInterface p2 = new Point();
-//        PointInterface p3 = new Point();
-//        PointInterface p4 = new Point();
-//        PointInterface p5 = new Point();
+        int neighbourAmount = 6;
+        PointInterface p1 = new Point(1500, 6000);
+        PointInterface p2 = new Point(5000, 5000);
+        PointInterface p3 = new Point(3500, 2500);
+        PointInterface p4 = new Point(5000, 1000);
+        PointInterface p5 = new Point(7000, 6500);
+        PointInterface p6 = new Point(8000, 4500);
+        PointInterface p7 = new Point(7000, 2000);
+        points.add(p1);
+        points.add(p2);
+        points.add(p3);
+        points.add(p4);
+        points.add(p5);
+        points.add(p6);
+        points.add(p7);
         instance = new KDTree(points, 1);
+        Set<GeometryInterface> neighbours = ((KDTree) instance).nearestNeighbours(new EuclideanDistance(), neighbourAmount, p2);
+        assertEquals(neighbours.size(), neighbourAmount);
+        assertFalse(neighbours.contains(p2));
+        for (GeometryInterface p : points) {
+            if (!p.equals(p2)) {
+                assertTrue(neighbours.contains(p));
+            }
+        }
+
     }
 }
