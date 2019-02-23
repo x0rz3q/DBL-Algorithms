@@ -274,10 +274,11 @@ public class KDTree extends AbstractCollection {
 
     /**
      * Checks if node is in left subtree
-     * @throws IllegalArgumentException if this.intersects(node)
+     *
      * @param node the element to search for
-     * @pre !this.intersects(node)
      * @return whether the node is located in this.left subtree
+     * @throws IllegalArgumentException if this.intersects(node)
+     * @pre !this.intersects(node)
      */
     private boolean inLeft(GeometryInterface node) throws IllegalArgumentException {
         if (this.intersects(node)) throw new IllegalArgumentException("KDTree.inLeft called " +
@@ -298,6 +299,7 @@ public class KDTree extends AbstractCollection {
 
     /**
      * Checks whether this tree is a leaf
+     *
      * @return true if {@code this} is a leaf
      */
     public boolean isLeaf() {
