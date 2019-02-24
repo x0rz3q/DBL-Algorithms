@@ -2,11 +2,14 @@ package Collections;
 
 import distance.AbstractDistance;
 import interfaces.models.GeometryInterface;
+import interfaces.models.LabelInterface;
 import interfaces.models.PointInterface;
 import models.Point;
 import models.Rectangle;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * Implementation of KDTree with only 2 Dimensions
@@ -74,7 +77,7 @@ public class KDTree extends AbstractCollection {
     private static Comparator<GeometryInterface> verticalComparator() {
         return new Comparator<GeometryInterface>() {
             public int compare(GeometryInterface s1, GeometryInterface s2) {
-                return -1 * Double.compare(s1.getBottomLeft().getY(), s2.getBottomLeft().getY());
+                return -1 * Double.compare(getReferencePoint(s1).getY(), getReferencePoint(s2).getY());
             }
         };
     }
@@ -87,7 +90,7 @@ public class KDTree extends AbstractCollection {
     private static Comparator<GeometryInterface> horizontalComparator() {
         return new Comparator<GeometryInterface>() {
             public int compare(GeometryInterface s1, GeometryInterface s2) {
-                return Double.compare(s1.getBottomLeft().getX(), s2.getBottomLeft().getX());
+                return Double.compare(getReferencePoint(s1).getX(), getReferencePoint(s2).getX());
             }
         };
     }
@@ -107,7 +110,7 @@ public class KDTree extends AbstractCollection {
         /* check for closer stuff in t */
         for (GeometryInterface o : t.nodes) {
             if (!ignorables.contains(o) && !o.equals(node)) { // if not a neighbour already
-                Double newDist = dist.calculate(node.getBottomLeft(), o.getBottomLeft()); // calc distance
+                Double newDist = dist.calculate(getReferencePoint(node), getReferencePoint(o));
                 if (newDist < cd) { // if better, update
                     cd = newDist;
                     cn = o;
@@ -122,9 +125,9 @@ public class KDTree extends AbstractCollection {
             // search left first
             cn = nearest(t.left, dist, node, cd, cn, ignorables);
             // update cd
-            if (cn != null) cd = dist.calculate(cn.getBottomLeft(), node.getBottomLeft());
+            if (cn != null) cd = dist.calculate(getReferencePoint(cn), getReferencePoint(node));
             /* if node is a splitter of this tree or not (a leaf and no data stored and bounding box further away than current smallest dist) */
-            if (node.getBottomLeft().equals(t.splitter) ||
+            if (getReferencePoint(node).equals(t.splitter) ||
                     !(t.right.isLeaf() && t.right.nodes.isEmpty() && t.right.distanceToSplitter(node, dist) > cd)) {
                 cn = nearest(t.right, dist, node, cd, cn, ignorables);
             }
@@ -132,9 +135,9 @@ public class KDTree extends AbstractCollection {
             // search right first
             cn = nearest(t.right, dist, node, cd, cn, ignorables);
             // update cd
-            if (cn != null) cd = dist.calculate(cn.getBottomLeft(), node.getBottomLeft());
+            if (cn != null) cd = dist.calculate(getReferencePoint(cn), getReferencePoint(node));
             /* if node is a splitter of this tree or not (a leaf and no data stored and bounding box further away than current smallest dist) */
-            if (node.getBottomLeft().equals(t.splitter) ||
+            if (getReferencePoint(node).equals(t.splitter) ||
                     !(t.left.isLeaf() && t.left.nodes.isEmpty() && t.left.distanceToSplitter(node, dist) > cd)) {
                 cn = nearest(t.left, dist, node, cd, cn, ignorables);
             }
@@ -162,7 +165,7 @@ public class KDTree extends AbstractCollection {
                 java.util.Collections.sort(nodes, horizontalC);
             }
             int medianIndex = (int) Math.floor(nodes.size() / 2.0);
-            splitter = nodes.get(medianIndex).getBottomLeft();
+            splitter = getReferencePoint(nodes.get(medianIndex));
             left = new KDTree(nodes.subList(0, medianIndex), depth + 1, this.dataLimit);
             right = new KDTree(nodes.subList(medianIndex, nodes.size()), depth + 1, this.dataLimit);
         }
@@ -271,13 +274,16 @@ public class KDTree extends AbstractCollection {
         if (this.intersects(node)) throw new IllegalArgumentException("KDTree.inLeft called " +
                 "on node which is in both subtrees");
         if (this.isLeaf()) return false;
+
         double rangeDimension, splitterDimension;
+        PointInterface nodeReference = getReferencePoint(node);
+
         if (this.depth % 2 == 0) {
             /* left and right is inverted in Y axis */
-            rangeDimension = -1 * Math.abs(node.getBottomLeft().getY());
+            rangeDimension = -1 * Math.abs(nodeReference.getY());
             splitterDimension = -1 * Math.abs(this.splitter.getY());
         } else { // horizontal check
-            rangeDimension = node.getBottomLeft().getX();
+            rangeDimension = nodeReference.getX();
             splitterDimension = this.splitter.getX();
         }
 
@@ -298,12 +304,21 @@ public class KDTree extends AbstractCollection {
      */
     private double distanceToSplitter(GeometryInterface node, AbstractDistance dist) {
         PointInterface projection;
+        PointInterface nodeReference = getReferencePoint(node);
         if (this.depth % 2 == 0) {
-            projection = new Point(node.getBottomLeft().getX(), this.splitter.getY());
+            projection = new Point(nodeReference.getX(), this.splitter.getY());
         } else {
-            projection = new Point(this.splitter.getX(), node.getBottomLeft().getY());
+            projection = new Point(this.splitter.getX(), nodeReference.getY());
         }
-        return dist.calculate(projection, node.getBottomLeft());
+        return dist.calculate(projection, nodeReference);
+    }
+
+    private static PointInterface getReferencePoint(GeometryInterface node) {
+        if (node instanceof LabelInterface) {
+            return ((LabelInterface) node).getPOI();
+        } else {
+            return node.getCenter();
+        }
     }
 
     @Override
