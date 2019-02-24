@@ -120,7 +120,6 @@ class FourPositionWagnerWolffTest {
         double sigma = 30;
         algo.preprocessing(record, sigma);
         assertTrue(algo.eliminateImpossibleCandidates());
-        assertTrue(algo.getLabels().collection.size() == 1);
         assertTrue(algo.getPointsQueue().size() == 0);
         assertTrue(algo.getLabelsWithConflicts().size() == 0);
         assertTrue(algo.getSelectedLabels().size() == 1);
