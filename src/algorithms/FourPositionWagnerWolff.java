@@ -166,6 +166,7 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
                     conflict.removeConflict(candidate);
                 }
                 labelsWithConflicts.remove(candidate);
+                // TODO: ConcurrentModification if you remove a candidate from the for loop while iterating over it
                 candidate.getPoI().removeCandidate(candidate);
             }
         }
