@@ -77,7 +77,34 @@ class FourPositionWagnerWolffTest {
     }
 
     @Test
-    void eliminateImpossibleCandidates() {
+    void eliminateImpossibleCandidates1() {
+        DataRecord record = new DataRecord();
+        record.aspectRatio = 1;
+        record.collection = new KDTree();
+        record.labels = new ArrayList<>();
+        FourPositionPoint point1 = new FourPositionPoint(new Point(100, 100));
+        FourPositionPoint point2 = new FourPositionPoint(new Point(90, 90));
+        FourPositionPoint point3 = new FourPositionPoint(new Point(110, 110));
+        FourPositionPoint point4 = new FourPositionPoint(new Point(110, 90));
+        FourPositionPoint point5 = new FourPositionPoint(new Point(90, 110));
+        LabelInterface label1 = new FourPositionLabel(100, 100, 0, record.aspectRatio, 0, point1, DirectionEnum.NE);
+        LabelInterface label2 = new FourPositionLabel(90, 90, 0, record.aspectRatio, 0, point2, DirectionEnum.NE);
+        LabelInterface label3 = new FourPositionLabel(110, 110, 0, record.aspectRatio, 0, point3, DirectionEnum.NE);
+        LabelInterface label4 = new FourPositionLabel(110, 90, 0, record.aspectRatio, 0, point4, DirectionEnum.NE);
+        LabelInterface label5 = new FourPositionLabel(90, 110, 0, record.aspectRatio, 0, point5, DirectionEnum.NE);
+        record.collection.insert(point1);
+        record.collection.insert(point2);
+        record.collection.insert(point3);
+        record.collection.insert(point4);
+        record.collection.insert(point5);
+        record.labels.add(label1);
+        record.labels.add(label2);
+        record.labels.add(label3);
+        record.labels.add(label4);
+        record.labels.add(label5);
+        double sigma = 30;
+        algo.preprocessing(record, sigma);
+        assertFalse(algo.eliminateImpossibleCandidates());
     }
 
     @Test
