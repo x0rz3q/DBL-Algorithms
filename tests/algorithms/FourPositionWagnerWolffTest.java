@@ -2,9 +2,15 @@ package algorithms;
 
 import Collections.KDTree;
 import Parser.DataRecord;
+import interfaces.models.LabelInterface;
+import models.DirectionEnum;
+import models.FourPositionLabel;
+import models.FourPositionPoint;
 import models.Point;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,10 +32,15 @@ class FourPositionWagnerWolffTest {
         DataRecord record = new DataRecord();
         record.aspectRatio = 1;
         record.collection = new KDTree();
-        Point point1 = new Point(100, 100);
-        Point point2 = new Point(120, 120);
+        record.labels = new ArrayList<>();
+        FourPositionPoint point1 = new FourPositionPoint(new Point(100, 100));
+        FourPositionPoint point2 = new FourPositionPoint(new Point(120, 120));
         record.collection.insert(point1);
         record.collection.insert(point2);
+        LabelInterface label1 = new FourPositionLabel(100, 100, 0, record.aspectRatio, 0, point1, DirectionEnum.NE);
+        LabelInterface label2 = new FourPositionLabel(120, 120, 0, record.aspectRatio, 0, point1, DirectionEnum.NE);
+        record.labels.add(label1);
+        record.labels.add(label2);
         double sigma = 30;
         algo.preprocessing(record, sigma);
         assertTrue(algo.getPointsQueue().size() == 2);

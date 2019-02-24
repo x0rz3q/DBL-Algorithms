@@ -1,5 +1,7 @@
 package models;
 
+import interfaces.models.PointInterface;
+
 import java.util.ArrayList;
 
 public class FourPositionLabel extends PositionLabel {
@@ -27,5 +29,33 @@ public class FourPositionLabel extends PositionLabel {
 
     public void removeConflict(FourPositionLabel label) {
         conflicts.remove(label);
+    }
+
+    @Override
+    public void setDirection(DirectionEnum direction) throws IllegalArgumentException {
+        PointInterface point = this.PoI;
+
+        switch (direction) {
+            case NE:
+                this.rectangle = new Rectangle(point.getX(), point.getY(),
+                        point.getX() + this.height * this.aspectRation, point.getY() + this.height);
+                break;
+            case NW:
+                this.rectangle = new Rectangle(point.getX() - this.height * this.aspectRation,
+                        point.getY(),
+                        point.getX(),
+                        point.getY() + this.height
+                );
+                break;
+            case SE:
+                this.rectangle = new Rectangle(point.getX(), point.getY() - this.height,
+                        point.getX() + this.height * this.aspectRation, point.getY());
+                break;
+            case SW:
+                this.rectangle = new Rectangle(point.getX() - this.height * this.aspectRation, point.getY() - this.height,
+                        point.getX(), point.getY());
+                break;
+            default: throw new IllegalArgumentException("Not a valid direction: " + direction.toString());
+        }
     }
 }

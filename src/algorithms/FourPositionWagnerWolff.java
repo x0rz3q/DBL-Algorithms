@@ -2,10 +2,11 @@ package algorithms;
 
 import Parser.DataRecord;
 import interfaces.models.GeometryInterface;
+import interfaces.models.LabelInterface;
 import models.FourPositionLabel;
 import models.FourPositionPoint;
 import models.Rectangle;
-
+import Collections.KDTree;
 import java.util.*;
 
 import static models.DirectionEnum.*;
@@ -34,13 +35,11 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
         labels.collection = new KDTree();
         labels.aspectRatio = record.aspectRatio;
 
-
         double ratio = record.aspectRatio;
         double height = sigma;
         double width = sigma*ratio;
 
-        Collection<GeometryInterface> collection = record.collection.query2D(new Rectangle(0, 0, 10000, 10000));
-        for (GeometryInterface p : collection) {
+        for (LabelInterface p : record.labels) {
             double pX = p.getXMax();
             double pY = p.getYMax();
 
