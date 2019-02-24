@@ -2,7 +2,6 @@ package algorithms;
 
 import Parser.DataRecord;
 import interfaces.models.GeometryInterface;
-import interfaces.models.LabelInterface;
 import models.FourPositionLabel;
 import models.FourPositionPoint;
 import models.Rectangle;
@@ -23,7 +22,7 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
     private ArrayList<FourPositionLabel> selectedLabels = new ArrayList<>();
 
     // DataRecord containing all labels of the current sigma
-    private DataRecord labels;
+    private DataRecord labels = new DataRecord();
 
     @Override
     double[] findConflictSizes(DataRecord record) {
@@ -32,12 +31,16 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
 
     @Override
     void preprocessing(DataRecord record, Double sigma) {
-        labels = new DataRecord();
+        labels.collection = new KDTree();
+        labels.aspectRatio = record.aspectRatio;
+
+
         double ratio = record.aspectRatio;
         double height = sigma;
         double width = sigma*ratio;
 
-        for (LabelInterface p : record.labels) {
+        Collection<GeometryInterface> collection = record.collection.query2D(new Rectangle(0, 0, 10000, 10000));
+        for (GeometryInterface p : collection) {
             double pX = p.getXMax();
             double pY = p.getYMax();
 
@@ -304,8 +307,6 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
         }
     }
 
-
-
     @Override
     void doTwoSat() { }
 
@@ -326,5 +327,23 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
     @Override
     void getSolution(DataRecord record, double height) {
         // TODO: implement
+    }
+
+
+    // USED FOR TESTING!
+    public ArrayDeque<FourPositionPoint> getPointsQueue() {
+        return pointsQueue;
+    }
+
+    public ArrayList<FourPositionLabel> getLabelsWithConflicts() {
+        return labelsWithConflicts;
+    }
+
+    public ArrayList<FourPositionLabel> getSelectedLabels() {
+        return selectedLabels;
+    }
+
+    public DataRecord getLabels() {
+        return labels;
     }
 }
