@@ -48,6 +48,9 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
             conflicts[i++] = size;
         }
 
+        // Optionally sort conflicts before passing them to general binary searcher TODO determine whether required
+        Arrays.sort(conflicts);
+
         return conflicts;
     }
 
