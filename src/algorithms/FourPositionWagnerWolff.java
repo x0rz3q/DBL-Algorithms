@@ -242,6 +242,7 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
 
         if (!labelsThatCantExist.isEmpty()) {
             for (FourPositionLabel candidate : labelsThatCantExist) {
+                
                 point.removeCandidate(candidate);
                 labelsWithConflicts.remove(candidate);
             }

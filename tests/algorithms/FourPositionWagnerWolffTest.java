@@ -153,6 +153,47 @@ class FourPositionWagnerWolffTest {
     }
 
     @Test
+    void eliminateImpossibleCandidates4() {
+        FourPositionPoint point = new FourPositionPoint(new Point(100, 100));
+        FourPositionLabel label = new FourPositionLabel(100, 100, 30, 1, 0, point, DirectionEnum.NE);
+        point.addCandidate(label);
+
+        FourPositionPoint point2 = new FourPositionPoint(new Point(90, 110));
+        FourPositionLabel label2 = new FourPositionLabel(90, 110, 30, 1, 0, point2, DirectionEnum.NE);
+        FourPositionLabel label3 = new FourPositionLabel(90,110, 30, 1, 0, point2, DirectionEnum.NW);
+        point2.addCandidate(label2);
+        point2.addCandidate(label3);
+
+        FourPositionPoint point3 = new FourPositionPoint(new Point(80, 150));
+        FourPositionLabel label4 = new FourPositionLabel(80, 150, 30,1, 0, point3, DirectionEnum.SW);
+        FourPositionLabel label5 = new FourPositionLabel(80, 150, 30, 1, 0, point3, DirectionEnum.NW);
+        point3.addCandidate(label4);
+        point3.addCandidate(label5);
+
+
+        label2.addConflict(label);
+        label.addConflict(label2);
+        label3.addConflict(label4);
+        label4.addConflict(label3);
+        algo.getLabelsWithConflicts().add(label);
+        algo.getLabelsWithConflicts().add(label2);
+        algo.getLabelsWithConflicts().add(label3);
+        algo.getLabelsWithConflicts().add(label4);
+
+        algo.getPointsQueue().addFirst(point2);
+        algo.getPointsQueue().addLast(point);
+        algo.getPointsQueue().addLast(point3);
+
+        assertTrue(algo.eliminateImpossibleCandidates());
+        assertEquals(0, algo.getPointsQueue().size());
+        assertEquals(3, algo.getSelectedLabels().size());
+        assertTrue(algo.getSelectedLabels().contains(label));
+        assertTrue(algo.getSelectedLabels().contains(label3));
+        assertTrue(algo.getSelectedLabels().contains(label5));
+        assertEquals(0, algo.getLabelsWithConflicts().size());
+    }
+
+    @Test
     void applyHeuristic() {
     }
 
