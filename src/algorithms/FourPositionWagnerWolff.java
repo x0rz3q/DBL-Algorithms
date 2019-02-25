@@ -235,7 +235,7 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
      * If candidates of p were removed then p is put back in the queue
      *
      * @param point the given point
-     * @return wether point had candidates that intersected all remaining candidates of another point
+     * @return whether point had candidates that intersected all remaining candidates of another point
      */
     private boolean candidateIntersectsAllRemaining(FourPositionPoint point) {
         List<FourPositionLabel> labelsThatCantExist = new ArrayList<>();
@@ -265,6 +265,9 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
 
         if (!labelsThatCantExist.isEmpty()) {
             for (FourPositionLabel candidate : labelsThatCantExist) {
+                for (FourPositionLabel conflict : candidate.getConflicts()) {
+                    conflict.removeConflict(candidate);
+                }
                 point.removeCandidate(candidate);
                 labelsWithConflicts.remove(candidate);
             }
