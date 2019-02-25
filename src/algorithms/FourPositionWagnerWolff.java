@@ -305,44 +305,34 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
         // remove highest conflict candidate for points with 4 candidates
         for (FourPositionPoint conflictPoint : conflictPoints) {
             if (conflictPoint.getCandidates().size() == 4) {
-                // select highest conflict candidate
-                FourPositionLabel maxConflictCandidate = conflictPoint.getCandidates().get(0);
-                for (FourPositionLabel candidate : conflictPoint.getCandidates()) {
-                    if (candidate.getConflicts().size() > maxConflictCandidate.getConflicts().size()) {
-                        maxConflictCandidate = candidate;
-                    }
-                }
-
-                // remove highest conflict candidate
-                for (FourPositionLabel conflict : maxConflictCandidate.getConflicts()) {
-                    conflict.removeConflict(maxConflictCandidate);
-                    if (conflict.getConflicts().size() == 0) labelsWithConflicts.remove(conflict);
-                }
-                maxConflictCandidate.getPoI().removeCandidate(maxConflictCandidate);
-                labelsWithConflicts.remove(maxConflictCandidate);
+                chooseLabelsNumberOfConflictsHeuristic(conflictPoint);
             }
         }
 
-        // remove highest conflict candidate for points with 4 candidates
+        // remove highest conflict candidate for points with 3 candidates
         for (FourPositionPoint conflictPoint : conflictPoints) {
             if (conflictPoint.getCandidates().size() == 3) {
-                // select highest conflict candidate
-                FourPositionLabel maxConflictCandidate = conflictPoint.getCandidates().get(0);
-                for (FourPositionLabel candidate : conflictPoint.getCandidates()) {
-                    if (candidate.getConflicts().size() > maxConflictCandidate.getConflicts().size()) {
-                        maxConflictCandidate = candidate;
-                    }
-                }
-
-                // remove highest conflict candidate
-                for (FourPositionLabel conflict : maxConflictCandidate.getConflicts()) {
-                    conflict.removeConflict(maxConflictCandidate);
-                    if (conflict.getConflicts().size() == 0) labelsWithConflicts.remove(conflict);
-                }
-                maxConflictCandidate.getPoI().removeCandidate(maxConflictCandidate);
-                labelsWithConflicts.remove(maxConflictCandidate);
+                chooseLabelsNumberOfConflictsHeuristic(conflictPoint);
             }
         }
+    }
+
+    private void chooseLabelsNumberOfConflictsHeuristic(FourPositionPoint conflictPoint) {
+        // select highest conflict candidate
+        FourPositionLabel maxConflictCandidate = conflictPoint.getCandidates().get(0);
+        for (FourPositionLabel candidate : conflictPoint.getCandidates()) {
+            if (candidate.getConflicts().size() > maxConflictCandidate.getConflicts().size()) {
+                maxConflictCandidate = candidate;
+            }
+        }
+
+        // remove highest conflict candidate
+        for (FourPositionLabel conflict : maxConflictCandidate.getConflicts()) {
+            conflict.removeConflict(maxConflictCandidate);
+            if (conflict.getConflicts().size() == 0) labelsWithConflicts.remove(conflict);
+        }
+        maxConflictCandidate.getPoI().removeCandidate(maxConflictCandidate);
+        labelsWithConflicts.remove(maxConflictCandidate);
     }
 
     @Override
