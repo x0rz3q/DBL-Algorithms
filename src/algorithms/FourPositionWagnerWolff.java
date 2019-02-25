@@ -189,6 +189,7 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
             if (candidate != selected) {
                 for (FourPositionLabel conflict : candidate.getConflicts()) {
                     conflict.removeConflict(candidate);
+                    if (conflict.getConflicts().size() == 0) labelsWithConflicts.remove(conflict);
                 }
                 labelsWithConflicts.remove(candidate);
                 toBeRemoved.add(candidate);
@@ -267,6 +268,7 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
             for (FourPositionLabel candidate : labelsThatCantExist) {
                 for (FourPositionLabel conflict : candidate.getConflicts()) {
                     conflict.removeConflict(candidate);
+                    if (conflict.getConflicts().size() == 0) labelsWithConflicts.remove(conflict);
                 }
                 point.removeCandidate(candidate);
                 labelsWithConflicts.remove(candidate);
@@ -312,8 +314,9 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
                 }
 
                 // remove highest conflict candidate
-                for (FourPositionLabel conflicts : maxConflictCandidate.getConflicts()) {
-                    conflicts.removeConflict(maxConflictCandidate);
+                for (FourPositionLabel conflict : maxConflictCandidate.getConflicts()) {
+                    conflict.removeConflict(maxConflictCandidate);
+                    if (conflict.getConflicts().size() == 0) labelsWithConflicts.remove(conflict);
                 }
                 maxConflictCandidate.getPoI().removeCandidate(maxConflictCandidate);
                 labelsWithConflicts.remove(maxConflictCandidate);
@@ -332,8 +335,9 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
                 }
 
                 // remove highest conflict candidate
-                for (FourPositionLabel conflicts : maxConflictCandidate.getConflicts()) {
-                    conflicts.removeConflict(maxConflictCandidate);
+                for (FourPositionLabel conflict : maxConflictCandidate.getConflicts()) {
+                    conflict.removeConflict(maxConflictCandidate);
+                    if (conflict.getConflicts().size() == 0) labelsWithConflicts.remove(conflict);
                 }
                 maxConflictCandidate.getPoI().removeCandidate(maxConflictCandidate);
                 labelsWithConflicts.remove(maxConflictCandidate);

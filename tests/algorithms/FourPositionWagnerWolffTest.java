@@ -194,6 +194,36 @@ class FourPositionWagnerWolffTest {
     }
 
     @Test
+    void eliminateImpossibleCandidates() {
+        DataRecord record = new DataRecord();
+        record.aspectRatio = 1;
+        record.collection = new KDTree();
+        record.labels = new ArrayList<>();
+        Point point = new Point(100, 100);
+        Point point2 = new Point(115, 115);
+        Point point3 = new Point(95, 120);
+        Point point4 = new Point(110, 95);
+        LabelInterface label = new PositionLabel(100, 100, 0, record.aspectRatio, 0, DirectionEnum.NE);
+        LabelInterface label2 = new PositionLabel(115, 115, 0, record.aspectRatio, 0, DirectionEnum.NE);
+        LabelInterface label3 = new PositionLabel(95, 120, 0, record.aspectRatio, 0, DirectionEnum.NE);
+        LabelInterface label4 = new PositionLabel(110, 95, 0, record.aspectRatio, 0, DirectionEnum.NE);
+        record.collection.insert(point);
+        record.collection.insert(point2);
+        record.collection.insert(point3);
+        record.collection.insert(point4);
+        record.labels.add(label);
+        record.labels.add(label2);
+        record.labels.add(label3);
+        record.labels.add(label4);
+        double sigma = 30;
+        algo.preprocessing(record, sigma);
+        assertTrue(algo.eliminateImpossibleCandidates());
+        assertEquals(4, algo.getSelectedLabels().size());
+        assertEquals(0, algo.getPointsQueue().size());
+        assertEquals(0, algo.getLabelsWithConflicts().size());
+    }
+
+    @Test
     void applyHeuristic() {
     }
 
