@@ -8,15 +8,22 @@ import java.util.ArrayList;
 public class Rectangle implements GeometryInterface {
     private PointInterface bottomLeft;
     private PointInterface topRight;
+    private PointInterface PoI;
 
-    public Rectangle(double xMin, double yMin, double xMax, double yMax) {
+    public Rectangle(double xMin, double yMin, double xMax, double yMax, PointInterface point) {
         this.bottomLeft = new Point(xMin, yMin);
         this.topRight = new Point(xMax, yMax);
+        this.PoI = point;
     }
 
-    public Rectangle(PointInterface bottomLeft, PointInterface topRight) {
+    public Rectangle(PointInterface bottomLeft, PointInterface topRight, PointInterface pointOfInterest) {
         this.bottomLeft = bottomLeft;
         this.topRight = topRight;
+        this.PoI = pointOfInterest;
+    }
+
+    public PointInterface getPoI() {
+        return this.PoI;
     }
 
     @Override

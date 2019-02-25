@@ -1,6 +1,7 @@
 package Collections;
 
 import interfaces.models.GeometryInterface;
+import models.Point;
 import models.Rectangle;
 
 import java.util.ArrayList;
@@ -34,24 +35,28 @@ public class QuadTree extends AbstractCollection {
                 this.boundary.getBottomLeft().getX(),
                 this.boundary.getCenter().getY(),
                 this.boundary.getCenter().getX(),
-                this.boundary.getTopRight().getY()
+                this.boundary.getTopRight().getY(),
+                new Point(0, 0)
         ));
 
         this.NE = new QuadTree(new Rectangle(
                 this.boundary.getCenter(),
-                this.boundary.getTopRight()
+                this.boundary.getTopRight(),
+                new Point(0, 0)
         ));
 
         this.SW = new QuadTree(new Rectangle(
                 this.boundary.getBottomLeft(),
-                this.boundary.getCenter()
+                this.boundary.getCenter(),
+                new Point(0, 0)
         ));
 
         this.SE = new QuadTree(new Rectangle(
                 this.boundary.getCenter().getX(),
                 this.boundary.getBottomLeft().getY(),
                 this.boundary.getBottomRight().getX(),
-                this.boundary.getCenter().getY()
+                this.boundary.getCenter().getY(),
+                new Point(0, 0)
         ));
     }
 

@@ -1,3 +1,4 @@
+import Collections.QuadTree;
 import models.Point;
 import models.Rectangle;
 
@@ -16,6 +17,12 @@ class Strategy2pos extends GenerationStrategy {
         }
         int counter = 0;
         double width = data.result * data.ratio;
+
+        QuadTree tree = new QuadTree(new Rectangle(0, 0, 100000, 100000, new Point(0, 0)));
+        for (Rectangle r : rectangles) {
+            tree.insert(r);
+        }
+
         while (rectangles.size() < data.n && counter < data.n * 100000) {
             counter++;
 
@@ -23,58 +30,39 @@ class Strategy2pos extends GenerationStrategy {
             boolean useLeft = rand.nextBoolean();
             if (useLeft) {
                 // Check left
-                Rectangle candidateRectangle = new Rectangle(new Point(candidate.x - width, candidate.y), new Point(candidate.x, candidate.y + data.result), candidate);
-                boolean collision = false;
-                for (Rectangle r : rectangles) {
-                    if (candidateRectangle.checkCollision(r)) {
-                        collision = true;
-                        break;
-                    }
-                }
-                if (!collision) {
+                Rectangle candidateRectangle = new Rectangle(new Point(candidate.getX() - width, candidate.getY()), new Point(candidate.getX(), candidate.getY() + data.result), candidate);
+
+                if (tree.query2D(candidateRectangle).size() == 0) {
                     rectangles.add(candidateRectangle);
+                    tree.insert(candidateRectangle);
                     continue;
                 }
 
                 // Then right
-                candidateRectangle = new Rectangle(candidate, new Point(candidate.x + width, candidate.y + data.result), candidate);
-                collision = false;
-                for (Rectangle r : rectangles) {
-                    if (candidateRectangle.checkCollision(r)) {
-                        collision = true;
-                        break;
-                    }
-                }
-                if (!collision) {
+                candidateRectangle = new Rectangle(candidate, new Point(candidate.getX() + width, candidate.getY() + data.result), candidate);
+
+                if (tree.query2D(candidateRectangle).size() == 0) {
                     rectangles.add(candidateRectangle);
+                    tree.insert(candidateRectangle);
                     continue;
                 }
+
             } else {
                 // Check right
-                Rectangle candidateRectangle = new Rectangle(candidate, new Point(candidate.x + width, candidate.y + data.result), candidate);
-                boolean collision = false;
-                for (Rectangle r : rectangles) {
-                    if (candidateRectangle.checkCollision(r)) {
-                        collision = true;
-                        break;
-                    }
-                }
-                if (!collision) {
+                Rectangle candidateRectangle = new Rectangle(candidate, new Point(candidate.getX() + width, candidate.getY() + data.result), candidate);
+
+                if (tree.query2D(candidateRectangle).size() == 0) {
                     rectangles.add(candidateRectangle);
+                    tree.insert(candidateRectangle);
                     continue;
                 }
 
                 // Then left
-                candidateRectangle = new Rectangle(new Point(candidate.x - width, candidate.y), new Point(candidate.x, candidate.y + data.result), candidate);
-                collision = false;
-                for (Rectangle r : rectangles) {
-                    if (candidateRectangle.checkCollision(r)) {
-                        collision = true;
-                        break;
-                    }
-                }
-                if (!collision) {
+                candidateRectangle = new Rectangle(new Point(candidate.getX() - width, candidate.getY()), new Point(candidate.getX(), candidate.getY() + data.result), candidate);
+
+                if (tree.query2D(candidateRectangle).size() == 0) {
                     rectangles.add(candidateRectangle);
+                    tree.insert(candidateRectangle);
                     continue;
                 }
             }
@@ -82,7 +70,7 @@ class Strategy2pos extends GenerationStrategy {
 
         Point[] associatedPoints = new Point[rectangles.size()];
         for (int i = 0; i < rectangles.size(); i++) {
-            associatedPoints[i] = rectangles.get(i).associated;
+            associatedPoints[i] = (Point) rectangles.get(i).getPoI();
         }
 
         return associatedPoints;
@@ -99,8 +87,8 @@ class Strategy2pos extends GenerationStrategy {
         // initial point
         Point startPoint = new Point(data.xGenerator.sample(), data.yGenerator.sample());
         // Possible labels for initial point
-        Rectangle leftRectangle = new Rectangle(new Point(startPoint.x - width, startPoint.y), new Point(startPoint.x, startPoint.y + data.result), startPoint);
-        Rectangle rightRectangle = new Rectangle(new Point(startPoint.x, startPoint.y), new Point(startPoint.x + width, startPoint.y + data.result), startPoint);
+        Rectangle leftRectangle = new Rectangle(new Point(startPoint.getX() - width, startPoint.getY()), new Point(startPoint.getX(), startPoint.getY() + data.result), startPoint);
+        Rectangle rightRectangle = new Rectangle(new Point(startPoint.getX(), startPoint.getY()), new Point(startPoint.getX() + width, startPoint.getY() + data.result), startPoint);
 
         boolean useLeft = rand.nextBoolean();
         if (useLeft) {
@@ -110,36 +98,36 @@ class Strategy2pos extends GenerationStrategy {
             Point[] internalRight = rightRectangle.getInternal();
             int randIndex = rand.nextInt(internalRight.length);
             Point invalidator = internalRight[randIndex];
-            rectangles.add(new Rectangle(invalidator, new Point(invalidator.x + width, invalidator.y + data.result), invalidator));
+            rectangles.add(new Rectangle(invalidator, new Point(invalidator.getX() + width, invalidator.getY() + data.result), invalidator));
 
             // Constructing rectangle limiting size of starting rectangle
             Point[] boundaryLeft = leftRectangle.getBoundary(true,false, false, true);
             if (boundaryLeft.length == 0) {
                 // must lock in with two rectangles
-                Point lockPoint = new Point(startPoint.x - 2 * width, startPoint.y);
-                rectangles.add(new Rectangle(lockPoint, new Point(startPoint.x - width, startPoint.y + data.result), lockPoint));
+                Point lockPoint = new Point(startPoint.getX() - 2 * width, startPoint.getY());
+                rectangles.add(new Rectangle(lockPoint, new Point(startPoint.getX() - width, startPoint.getY() + data.result), lockPoint));
 
                 // Construct final blocker
-                Point[] finalBlockerOptions = (new Rectangle(new Point(lockPoint.x - width, lockPoint.y), new Point(lockPoint.x, lockPoint.y + data.result), lockPoint)).getInternal();
+                Point[] finalBlockerOptions = (new Rectangle(new Point(lockPoint.getX() - width, lockPoint.getY()), new Point(lockPoint.getX(), lockPoint.getY() + data.result), lockPoint)).getInternal();
                 randIndex = rand.nextInt(finalBlockerOptions.length);
                 Point finalBlocker = finalBlockerOptions[randIndex];
-                rectangles.add(new Rectangle(new Point(finalBlocker.x - width, finalBlocker.y), new Point(finalBlocker.x, finalBlocker.y + data.result), finalBlocker));
+                rectangles.add(new Rectangle(new Point(finalBlocker.getX() - width, finalBlocker.getY()), new Point(finalBlocker.getX(), finalBlocker.getY() + data.result), finalBlocker));
             } else {
                 randIndex = rand.nextInt(boundaryLeft.length);
                 Point blocker = boundaryLeft[randIndex];
-                while (blocker.x == startPoint.x) {
+                while (blocker.getX() == startPoint.getX()) {
                     randIndex = rand.nextInt(boundaryLeft.length);
                     blocker = boundaryLeft[randIndex];
                 }
 
-                if (blocker.y < leftRectangle.ne.y) {
-                    rectangles.add(new Rectangle(new Point(blocker.x - width, blocker.y), new Point(blocker.x, blocker.y + data.result), blocker));
+                if (blocker.getY() < leftRectangle.getTopRight().getY()) {
+                    rectangles.add(new Rectangle(new Point(blocker.getX() - width, blocker.getY()), new Point(blocker.getX(), blocker.getY() + data.result), blocker));
                 } else {
                     useLeft = rand.nextBoolean();
                     if (useLeft) {
-                        rectangles.add(new Rectangle(new Point(blocker.x - width, blocker.y), new Point(blocker.x, blocker.y + data.result), blocker));
+                        rectangles.add(new Rectangle(new Point(blocker.getX() - width, blocker.getY()), new Point(blocker.getX(), blocker.getY() + data.result), blocker));
                     } else {
-                        rectangles.add(new Rectangle(new Point(blocker.x, blocker.y), new Point(blocker.x + width, blocker.y + data.result), blocker));
+                        rectangles.add(new Rectangle(new Point(blocker.getX(), blocker.getY()), new Point(blocker.getX() + width, blocker.getY() + data.result), blocker));
                     }
                 }
             }
@@ -150,36 +138,36 @@ class Strategy2pos extends GenerationStrategy {
             Point[] internalLeft = leftRectangle.getInternal();
             int randIndex = rand.nextInt(internalLeft.length);
             Point invalidator = internalLeft[randIndex];
-            rectangles.add(new Rectangle(new Point(invalidator.x -width, invalidator.y), new Point(invalidator.x, invalidator.y + data.result), invalidator));
+            rectangles.add(new Rectangle(new Point(invalidator.getX() -width, invalidator.getY()), new Point(invalidator.getX(), invalidator.getY() + data.result), invalidator));
 
             // Constructing rectangle limiting size of starting rectangle
             Point[] boundaryRight = rightRectangle.getBoundary(true,true, false, false);
             if (boundaryRight.length == 0) {
                 // must lock in with two rectangles
-                Point lockPoint = new Point(startPoint.x + 2 * width, startPoint.y);
-                rectangles.add(new Rectangle(new Point(startPoint.x + width, startPoint.y), new Point(startPoint.x + 2 * width, startPoint.y + data.result), lockPoint));
+                Point lockPoint = new Point(startPoint.getX() + 2 * width, startPoint.getY());
+                rectangles.add(new Rectangle(new Point(startPoint.getX() + width, startPoint.getY()), new Point(startPoint.getX() + 2 * width, startPoint.getY() + data.result), lockPoint));
 
                 // Construct final blocker
-                Point[] finalBlockerOptions = (new Rectangle(lockPoint, new Point(lockPoint.x + width, lockPoint.y + data.result), lockPoint)).getInternal();
+                Point[] finalBlockerOptions = (new Rectangle(lockPoint, new Point(lockPoint.getX() + width, lockPoint.getY() + data.result), lockPoint)).getInternal();
                 randIndex = rand.nextInt(finalBlockerOptions.length);
                 Point finalBlocker = finalBlockerOptions[randIndex];
-                rectangles.add(new Rectangle(finalBlocker, new Point(finalBlocker.x + width, finalBlocker.y + data.result), finalBlocker));
+                rectangles.add(new Rectangle(finalBlocker, new Point(finalBlocker.getX() + width, finalBlocker.getY() + data.result), finalBlocker));
             } else {
                 randIndex = rand.nextInt(boundaryRight.length);
                 Point blocker = boundaryRight[randIndex];
-                while (blocker.x == startPoint.x) {
+                while (blocker.getX() == startPoint.getX()) {
                     randIndex = rand.nextInt(boundaryRight.length);
                     blocker = boundaryRight[randIndex];
                 }
 
-                if (blocker.y < leftRectangle.ne.y) {
-                    rectangles.add(new Rectangle(blocker, new Point(blocker.x + width, blocker.y + data.result), blocker));
+                if (blocker.getY() < leftRectangle.getTopRight().getY()) {
+                    rectangles.add(new Rectangle(blocker, new Point(blocker.getX() + width, blocker.getY() + data.result), blocker));
                 } else {
                     useLeft = rand.nextBoolean();
                     if (useLeft) {
-                        rectangles.add(new Rectangle(new Point(blocker.x - width, blocker.y), new Point(blocker.x, blocker.y + data.result), blocker));
+                        rectangles.add(new Rectangle(new Point(blocker.getX() - width, blocker.getY()), new Point(blocker.getX(), blocker.getY() + data.result), blocker));
                     } else {
-                        rectangles.add(new Rectangle(new Point(blocker.x, blocker.y), new Point(blocker.x + width, blocker.y + data.result), blocker));
+                        rectangles.add(new Rectangle(new Point(blocker.getX(), blocker.getY()), new Point(blocker.getX() + width, blocker.getY() + data.result), blocker));
                     }
                 }
             }
