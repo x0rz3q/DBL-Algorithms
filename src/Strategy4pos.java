@@ -1,3 +1,6 @@
+import models.Point;
+import models.Rectangle;
+
 // Concrete generation strategy for 4pos
 class Strategy4pos extends GenerationStrategy {
     @Override

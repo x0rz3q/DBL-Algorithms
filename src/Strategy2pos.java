@@ -1,3 +1,6 @@
+import models.Point;
+import models.Rectangle;
+
 import java.util.ArrayList;
 
 // Concrete generation strategy for 2pos

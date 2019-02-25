@@ -1,3 +1,6 @@
+import models.Point;
+import models.Rectangle;
+
 // Concrete generation strategy for 1slider
 class Strategy1slider extends GenerationStrategy {
     @Override

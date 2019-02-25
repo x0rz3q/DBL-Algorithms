@@ -1,3 +1,5 @@
+import models.Point;
+
 import java.io.File;
 import java.io.IOException;
 

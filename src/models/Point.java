@@ -22,6 +22,9 @@ public class Point implements PointInterface {
         return this.y;
     }
 
+    public int getIntX() { return (int) this.x; }
+    public int getIntY() { return (int) this.y; }
+
     @Override
     public double getDistanceTo(PointInterface point) {
         return this.getDistanceTo(point.getX(), point.getY());

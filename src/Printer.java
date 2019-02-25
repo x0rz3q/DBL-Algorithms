@@ -1,3 +1,5 @@
+import models.Point;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -29,7 +31,7 @@ class Printer {
     void printPoints(Point[] points) {
         Collections.shuffle(Arrays.asList(points));
         for (Point p : points) {
-            printWriter.println((int)p.x + " " + (int)p.y);
+            printWriter.println(p.getIntX() + " " + p.getIntY());
         }
     }
 
