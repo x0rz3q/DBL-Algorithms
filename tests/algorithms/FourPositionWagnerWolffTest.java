@@ -44,10 +44,10 @@ class FourPositionWagnerWolffTest {
         record.labels.add(label2);
         double sigma = 30;
         algo.preprocessing(record, sigma);
-        assertTrue(algo.getPointsQueue().size() == 2);
-        assertTrue(algo.getLabelsWithConflicts().size() == 4);
-        assertTrue(algo.getSelectedLabels().size() == 0);
-        assertTrue(algo.getLabels().collection.size() == 6);
+        assertEquals(2, algo.getPointsQueue().size());
+        assertEquals(4, algo.getLabelsWithConflicts().size());
+        assertEquals(0, algo.getSelectedLabels().size());
+        assertEquals(6, algo.getLabels().collection.size());
     }
 
     @Test
@@ -66,10 +66,10 @@ class FourPositionWagnerWolffTest {
         record.labels.add(label2);
         double sigma = 30;
         algo.preprocessing(record, sigma);
-        assertTrue(algo.getPointsQueue().size() == 2);
-        assertTrue(algo.getLabelsWithConflicts().size() == 2);
-        assertTrue(algo.getSelectedLabels().size() == 0);
-        assertTrue(algo.getLabels().collection.size() == 8);
+        assertEquals(2, algo.getPointsQueue().size());
+        assertEquals(2, algo.getLabelsWithConflicts().size());
+        assertEquals(0, algo.getSelectedLabels().size());
+        assertEquals(8, algo.getLabels().collection.size());
     }
 
     @Test
@@ -120,9 +120,36 @@ class FourPositionWagnerWolffTest {
         double sigma = 30;
         algo.preprocessing(record, sigma);
         assertTrue(algo.eliminateImpossibleCandidates());
-        assertTrue(algo.getPointsQueue().size() == 0);
-        assertTrue(algo.getLabelsWithConflicts().size() == 0);
-        assertTrue(algo.getSelectedLabels().size() == 1);
+        assertEquals(0, algo.getPointsQueue().size());
+        assertEquals(0, algo.getLabelsWithConflicts().size());
+        assertEquals(1, algo.getSelectedLabels().size());
+    }
+
+    @Test
+    void eliminateImpossibleCandidates3() {
+        FourPositionPoint point = new FourPositionPoint(new Point(100, 100));
+        algo.getPointsQueue().add(point);
+        FourPositionLabel label = new FourPositionLabel(100, 100, 30, 1, 0, point, DirectionEnum.NE);
+        point.addCandidate(label);
+
+        FourPositionPoint point2 = new FourPositionPoint(new Point(110, 110));
+        algo.getPointsQueue().addLast(point2);
+        FourPositionLabel label2 = new FourPositionLabel(90, 110, 30, 1, 0, point2, DirectionEnum.NE);
+        FourPositionLabel label3 = new FourPositionLabel(90,110, 30, 1, 0, point2, DirectionEnum.NW);
+        point2.addCandidate(label2);
+        point2.addCandidate(label3);
+
+        label2.addConflict(label);
+        label.addConflict(label2);
+        algo.getLabelsWithConflicts().add(label);
+        algo.getLabelsWithConflicts().add(label2);
+
+        assertTrue(algo.eliminateImpossibleCandidates());
+        assertEquals(0, algo.getPointsQueue().size());
+        assertEquals(0, algo.getLabelsWithConflicts().size());
+        assertTrue(algo.getSelectedLabels().contains(label));
+        assertTrue(algo.getSelectedLabels().contains(label3));
+        assertEquals(2, algo.getSelectedLabels().size());
     }
 
     @Test

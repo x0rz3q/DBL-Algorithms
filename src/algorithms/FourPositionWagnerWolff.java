@@ -24,6 +24,7 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
     private ArrayList<FourPositionLabel> selectedLabels = new ArrayList<>();
 
     // DataRecord containing all labels of the current sigma
+    // Only used in preprocessing
     private DataRecord labels = new DataRecord();
 
     @Override
