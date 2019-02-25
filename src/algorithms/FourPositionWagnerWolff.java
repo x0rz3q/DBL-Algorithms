@@ -6,7 +6,8 @@ import interfaces.models.LabelInterface;
 import models.FourPositionLabel;
 import models.FourPositionPoint;
 import models.Rectangle;
-
+import Collections.KDTree;
+import Collections.QuadTree;
 import java.util.*;
 
 import static models.DirectionEnum.*;
@@ -23,7 +24,7 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
     private ArrayList<FourPositionLabel> selectedLabels = new ArrayList<>();
 
     // DataRecord containing all labels of the current sigma
-    private DataRecord labels;
+    private DataRecord labels = new DataRecord();
 
     @Override
     double[] findConflictSizes(DataRecord record) {
@@ -32,7 +33,10 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
 
     @Override
     void preprocessing(DataRecord record, Double sigma) {
-        labels = new DataRecord();
+        //labels.collection = new QuadTree(new Rectangle(0,0,10000,10000));
+        labels.collection = new KDTree(); // is bugged
+        labels.aspectRatio = record.aspectRatio;
+
         double ratio = record.aspectRatio;
         double height = sigma;
         double width = sigma*ratio;
@@ -48,24 +52,28 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
             // add NE square
             if (record.collection.query2D(new Rectangle(pX, pY, pX+width, pY+height)).size() == 0) {
                 FourPositionLabel northEastLabel = new FourPositionLabel(pX, pY, height, ratio, 0, point, NE);
+                point.addCandidate(northEastLabel);
                 Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX, pY, pX+width, pY+height));
                 preprocessingLabel(northEastLabel, conflictingLabels);
             }
             // add NW
             if (record.collection.query2D(new Rectangle(pX-width, pY, pX, pY+height)).size() == 0) {
                 FourPositionLabel northWestLabel = new FourPositionLabel(pX, pY, height, ratio, 0, point, NW);
+                point.addCandidate(northWestLabel);
                 Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX-width, pY, pX, pY+height));
                 preprocessingLabel(northWestLabel, conflictingLabels);
             }
             // add SE
             if (record.collection.query2D(new Rectangle(pX, pY-height, pX+width, pY)).size() == 0) {
                 FourPositionLabel southEastLabel = new FourPositionLabel(pX, pY, height, ratio, 0, point, SE);
+                point.addCandidate(southEastLabel);
                 Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX, pY-height, pX+width, pY));
                 preprocessingLabel(southEastLabel, conflictingLabels);
             }
             // add SW
             if (record.collection.query2D(new Rectangle(pX-width, pY-height, pX, pY)).size() == 0) {
                 FourPositionLabel southWestLabel = new FourPositionLabel(pX, pY, height, ratio, 0, point, SW);
+                point.addCandidate(southWestLabel);
                 Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX-width, pY-height, pX, pY));
                 preprocessingLabel(southWestLabel, conflictingLabels);
             }
@@ -73,28 +81,23 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
     }
 
     /**
-     * Subtask from the preprocessing function.
+     * Subtask of the preprocessing function. If new label p_i intersects with existing labels, add it to labelsWithConflicts.
+     * For all labels q_i that intersect p_i; Add q_i to conflict list of p_i; Add p_i to conflict list of q_i;
+     * Add q_i to labelsWithConflicts if it is not in there already.
+     * Also add p_i to the datarecord for further preprocessing
      *
      * @param label
      * @param conflictingLabels
      */
     private void preprocessingLabel(FourPositionLabel label, Collection<GeometryInterface> conflictingLabels) {
-        // TODO: Discuss wether labelsWithConflicts should only contain labels with conflicts or it should consits all labels at start
-
-        // If new label intersects with existing labels, add it to labelsWithConflicts
         if (conflictingLabels.size() > 0) labelsWithConflicts.add(label);
 
-        // for all squares that intersect the new label:
-        //      add square to conflict list of the new label
-        //      add new label to the conflicts list of the square
-        //      add square to labelsWithConflicts lists if its not in there yet
         for (GeometryInterface square : conflictingLabels) {
             label.addConflict((FourPositionLabel) square);
             ((FourPositionLabel) square).addConflict(label);
             if (!labelsWithConflicts.contains(square)) { labelsWithConflicts.add((FourPositionLabel) square); }
         }
 
-        // add new label to DataRecord for future queing
         labels.collection.insert(label);
     }
 
@@ -157,16 +160,18 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
         selectedLabels.add(selected);
 
         // remove other labels
+        Collection<FourPositionLabel> toBeRemoved = new ArrayList<>();
         for (FourPositionLabel candidate : point.getCandidates()) {
             if (candidate != selected) {
                 for (FourPositionLabel conflict : candidate.getConflicts()) {
                     conflict.removeConflict(candidate);
                 }
                 labelsWithConflicts.remove(candidate);
-                candidate.getPoI().removeCandidate(candidate);
+                toBeRemoved.add(candidate);
             }
         }
-        // remove selected label from conflict graph TODO: determine whether required
+        for (FourPositionLabel candidate : toBeRemoved) { candidate.getPoI().removeCandidate(candidate); }
+        // remove selected label from conflict graph
         labelsWithConflicts.remove(selected);
         pointsQueue.remove(point);
         return true;
@@ -194,7 +199,7 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
             labelsWithConflicts.remove(conflict);
             conflict.getPoI().removeCandidate(conflict);
         }
-        // remove selected label from conflict graph TODO: determine whether required
+        // remove selected label from conflict graph
         labelsWithConflicts.remove(selected);
         pointsQueue.remove(point);
         return true;
@@ -261,7 +266,7 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
      * @modifies selectedLabels
      * @post all points have at most two candidates
      */
-    void numberOfConflictsHeuristic(){
+    private void numberOfConflictsHeuristic(){
         // select points
         Set<FourPositionPoint> conflictPoints = new HashSet<>();
         for (FourPositionLabel candidate : labelsWithConflicts) {
@@ -309,25 +314,43 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
         }
     }
 
-
+    @Override
+    void doTwoSat() { }
 
     @Override
-    void doTwoSat() {
-
+    double[] getSolutionSpace(DataRecord record) {
+        return findConflictSizes(record);
     }
 
     @Override
-    public void solve(DataRecord record) {
-        double[] conflictSizes = findConflictSizes(record);
+    boolean isSolvable(DataRecord record, double height) {
+        preprocessing(record, height);
+        boolean solvable = eliminateImpossibleCandidates();
+        if (!solvable) return false;
+        doTwoSat();
+        return true;
+    }
+
+    @Override
+    void getSolution(DataRecord record, double height) {
+        // TODO: implement
+    }
 
 
-        // binary search over conflictSizes
-        // for conflict size do:
+    // USED FOR TESTING!
+    public ArrayDeque<FourPositionPoint> getPointsQueue() {
+        return pointsQueue;
+    }
 
-            // initialize labels for conflictSize
-            // preprocessing(record, conflictSizes[i]);
-            // boolean solvable = eliminatImpossibleCandidates(record);
-            // if (!solvable) continue;
-            // doTwoSat(record)
+    public ArrayList<FourPositionLabel> getLabelsWithConflicts() {
+        return labelsWithConflicts;
+    }
+
+    public ArrayList<FourPositionLabel> getSelectedLabels() {
+        return selectedLabels;
+    }
+
+    public DataRecord getLabels() {
+        return labels;
     }
 }
