@@ -1,8 +1,10 @@
 package algorithms;
 
 import Parser.DataRecord;
+import distance.FourPositionDistance;
 import interfaces.models.GeometryInterface;
 import interfaces.models.LabelInterface;
+import interfaces.models.PointInterface;
 import models.FourPositionLabel;
 import models.FourPositionPoint;
 import models.Rectangle;
@@ -28,7 +30,25 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
 
     @Override
     double[] findConflictSizes(DataRecord record) {
-        return new double[0];
+        FourPositionDistance distanceFunction = new FourPositionDistance();
+        distanceFunction.setAspectRatio(record.aspectRatio);
+
+        Set<Double> conflictSizes = new HashSet<>();
+        for (LabelInterface label : record.labels) {
+            PointInterface point = label.getPOI();
+            Set<GeometryInterface> nearestNeighbours = ((KDTree) record.collection).nearestNeighbours(distanceFunction, 8, point);
+            for (GeometryInterface target : nearestNeighbours) {
+                conflictSizes.add(distanceFunction.calculate(point, (PointInterface) target));
+            }
+        }
+
+        double conflicts[] = new double[conflictSizes.size()];
+        int i = 0;
+        for (double size : conflictSizes) {
+            conflicts[i++] = size;
+        }
+
+        return conflicts;
     }
 
     @Override
