@@ -33,11 +33,13 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
     double[] findConflictSizes(DataRecord record) {
         FourPositionDistance distanceFunction = new FourPositionDistance();
         distanceFunction.setAspectRatio(record.aspectRatio);
-
+        int k = 8; // number of nearest neighbours to search for
+        if (record.labels.size() < 9) k = record.labels.size() - 1;
         Set<Double> conflictSizes = new HashSet<>();
         for (LabelInterface label : record.labels) {
             PointInterface point = label.getPOI();
-            Set<GeometryInterface> nearestNeighbours = ((KDTree) record.collection).nearestNeighbours(distanceFunction, 8, point);
+            Set<GeometryInterface> nearestNeighbours = ((KDTree) record.collection).nearestNeighbours(distanceFunction, k, point);
+
             for (GeometryInterface target : nearestNeighbours) {
                 conflictSizes.add(distanceFunction.calculate(point, (PointInterface) target));
             }
