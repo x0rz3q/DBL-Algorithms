@@ -31,7 +31,7 @@ class FourPositionWagnerWolffTest {
         record.collection.insert(point1);
         record.collection.insert(point2);
         LabelInterface label1 = new FourPositionLabel(100, 100, 0, record.aspectRatio, 0, point1, DirectionEnum.NE);
-        LabelInterface label2 = new FourPositionLabel(100, 160, 0, record.aspectRatio, 0, point2, DirectionEnum.NE);
+        LabelInterface label2 = new FourPositionLabel(120, 160, 0, record.aspectRatio, 0, point2, DirectionEnum.NE);
         record.labels.add(label1);
         record.labels.add(label2);
         double[] conflictSizes = algo.findConflictSizes(record);
