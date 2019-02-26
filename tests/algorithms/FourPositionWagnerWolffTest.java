@@ -1,23 +1,19 @@
 package algorithms;
 
 import Collections.KDTree;
-import Collections.QuadTree;
 import Parser.DataRecord;
 import interfaces.models.LabelInterface;
 import models.*;
-import models.Point;
-import models.Rectangle;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class FourPositionWagnerWolffTest {
 
-    FourPositionWagnerWolff algo;
+    private FourPositionWagnerWolff algo;
 
     @BeforeEach
     void setup() {

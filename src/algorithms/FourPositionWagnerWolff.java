@@ -43,7 +43,7 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
             }
         }
 
-        double conflicts[] = new double[conflictSizes.size()];
+        double[] conflicts = new double[conflictSizes.size()];
         int i = 0;
         for (double size : conflictSizes) {
             conflicts[i++] = size;
@@ -110,8 +110,8 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
      * Add q_i to labelsWithConflicts if it is not in there already.
      * Also add p_i to the datarecord for further preprocessing
      *
-     * @param label
-     * @param conflictingLabels
+     * @param label to operate on
+     * @param conflictingLabels all labels that conflict with the label to operate on
      */
     private void preprocessingLabel(FourPositionLabel label, Collection<GeometryInterface> conflictingLabels) {
         if (conflictingLabels.size() > 0) labelsWithConflicts.add(label);
@@ -151,7 +151,7 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
     /**
      * returns whether a point has no alive candidates left.
      *
-     * @param point
+     * @param point to check
      * @return whether point has candidates alive
      */
     private boolean noCandidates(FourPositionPoint point) {
@@ -162,7 +162,7 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
     /**
      * Checks whether the point has a candidate which is free of intersections with other labels, and selects such a
      * label if found.
-     * @param point
+     * @param point to check
      * @return whether a candidate was chosen
      */
     private boolean hasCandidateWithoutIntersections(FourPositionPoint point) {
@@ -359,15 +359,15 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
 
 
     // USED FOR TESTING!
-    public ArrayDeque<FourPositionPoint> getPointsQueue() {
+    ArrayDeque<FourPositionPoint> getPointsQueue() {
         return pointsQueue;
     }
 
-    public ArrayList<FourPositionLabel> getLabelsWithConflicts() {
+    ArrayList<FourPositionLabel> getLabelsWithConflicts() {
         return labelsWithConflicts;
     }
 
-    public ArrayList<FourPositionLabel> getSelectedLabels() {
+    ArrayList<FourPositionLabel> getSelectedLabels() {
         return selectedLabels;
     }
 
