@@ -222,4 +222,23 @@ public class KDTreeTest extends AbstractCollectionTest {
         }
 
     }
+    @Test
+    void query2D5() {
+        FourPositionPoint point1 = new FourPositionPoint(new Point(100, 100));
+        FourPositionPoint point2 = new FourPositionPoint(new Point(120, 120));
+        instance = new KDTree();
+        LabelInterface label1a = new FourPositionLabel(100, 100, 30, 1, 0, point1, DirectionEnum.NW);
+        LabelInterface label1b = new FourPositionLabel(100, 100, 30, 1, 0, point1, DirectionEnum.SE);
+        LabelInterface label1c = new FourPositionLabel(100, 100, 30, 1, 0, point1, DirectionEnum.SW);
+        LabelInterface label2a = new FourPositionLabel(120, 120, 30, 1, 0, point2, DirectionEnum.NE);
+        LabelInterface label2b = new FourPositionLabel(120, 120, 30, 1, 0, point2, DirectionEnum.NW);
+        LabelInterface label2c = new FourPositionLabel(120, 120, 30, 1, 0, point2, DirectionEnum.SE);
+        instance.insert(label1a);
+        instance.insert(label1b);
+        instance.insert(label1c);
+        instance.insert(label2a);
+        instance.insert(label2b);
+        Collection<GeometryInterface> labels = this.instance.query2D(label2c.getRectangle());
+        assertTrue(labels.contains(label1b));
+    }
 }
