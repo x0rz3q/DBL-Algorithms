@@ -7,6 +7,7 @@ import interfaces.models.LabelInterface;
 import interfaces.models.PointInterface;
 import models.FourPositionLabel;
 import models.FourPositionPoint;
+import models.Point;
 import models.Rectangle;
 import Collections.KDTree;
 import Collections.QuadTree;
@@ -41,7 +42,9 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
             Set<GeometryInterface> nearestNeighbours = ((KDTree) record.collection).nearestNeighbours(distanceFunction, k, point);
 
             for (GeometryInterface target : nearestNeighbours) {
-                conflictSizes.add(distanceFunction.calculate(point, (PointInterface) target));
+                double conflictSize = distanceFunction.calculate(point, (PointInterface) target);
+                conflictSizes.add(conflictSize);
+                conflictSizes.add(conflictSize/2);
             }
         }
 

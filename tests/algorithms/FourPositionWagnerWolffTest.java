@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,7 +36,7 @@ class FourPositionWagnerWolffTest {
         record.labels.add(label1);
         record.labels.add(label2);
         double[] conflictSizes = algo.findConflictSizes(record);
-        assertEquals(1, conflictSizes.length);
+        assertEquals(2, conflictSizes.length);
     }
 
     @Test
