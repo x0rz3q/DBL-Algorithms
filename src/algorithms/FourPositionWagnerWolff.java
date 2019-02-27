@@ -391,6 +391,11 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
         ArrayList[] invAdj = new ArrayList[2 * nPoints];
 
         for (FourPositionPoint point : intersectingPoints) {
+            adj[point.getId()] = new ArrayList<Integer>();
+            adj[point.getId() + nPoints] = new ArrayList<Integer>();
+            invAdj[point.getId()] = new ArrayList<Integer>();
+            invAdj[point.getId() + nPoints] = new ArrayList<Integer>();
+
             for (FourPositionLabel label : point.getCandidates()) {
                 for (FourPositionLabel conflictLabel : label.getConflicts()) {
                     adj[point.getId() + nPoints * label.getID()].add(conflictLabel.getPoI().getId() + nPoints * (1 - conflictLabel.getID()));
