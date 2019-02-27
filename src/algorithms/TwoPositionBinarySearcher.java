@@ -11,29 +11,21 @@ import java.util.*;
 
 public class TwoPositionBinarySearcher extends BinarySearcher {
 
-    // variable for dfs to keep track of visited nodes
-    private boolean[] visited;
-    private boolean[] visitedInv;
-    private Stack<Integer> s;
+
+
 
     // edges of implication graph and its inverse
     private List<Integer>[] adj;
     private List<Integer>[] adjInv;
 
 
-    // stores for each node the component it is in
-    private int[] scc;
-    private List<Integer> componentsInReverseTopOrder;
-
-    // keep track of current component
-    private int counter;
+    ImplicationGraphSolver solver;
 
 
-    // keeps track of the rect height of last created graph
+    public TwoPositionBinarySearcher() {
+        solver = new ImplicationGraphSolver();
+    }
 
-
-    // keeps track of which rectangles have been set in getSolution()
-    private boolean[] isSet;
 
 
     @Override
@@ -63,7 +55,6 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
         }
 
 
-
         return solutionSpace;
     }
 
@@ -71,39 +62,32 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
     boolean isSolvable(DataRecord record, double height) {
         int noInputs = record.labels.size();
 
-        createGraph(record, height, noInputs);
+        initializeGraph(record, height, noInputs);
 
-        // check if label and its inverse are in the same component
-        for (int i = 0; i < noInputs; i++) {
-            if (scc[i] == scc[i + noInputs]) {
-                return false;
-            }
-        }
-        return true;
+
+        return solver.isSolvable(adj, adjInv);
 
     }
 
     @Override
     void getSolution(DataRecord record, double height) {
         int noPoints = record.labels.size();
-        createGraph(record, height, noPoints);
+        initializeGraph(record, height, noPoints);
 
         // set height
         record.height = height;
 
+        boolean[] solution = solver.getSolution(adj, adjInv);
 
-        // assign labels to each point in reverse topological order
-        isSet = new boolean[noPoints];
-        for (Integer i : componentsInReverseTopOrder) {
-            if (!isSet[i % noPoints]) {
-                assignTrue(record, i, noPoints);
+
+        for (int i = 0; i < solution.length; i++) {
+            if (solution[i]) {
+                ((PositionLabel) record.labels.get(i)).setDirection(DirectionEnum.NE);
+            } else {
+                ((PositionLabel) record.labels.get(i)).setDirection(DirectionEnum.NW);
             }
         }
-    }
 
-    private void createGraph(DataRecord record, double height, int noPoints) {
-        initializeGraph(record, height, noPoints);
-        createComponents(noPoints);
     }
 
     private void initializeGraph(DataRecord record, double height, int noPoints) {
@@ -160,36 +144,8 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
                 }
             }
         }
-
     }
 
-    private void createComponents(int noPoints) {
-        // initialize variables
-        visited = new boolean[noPoints * 2];
-        visitedInv = new boolean[noPoints * 2];
-        s = new Stack<>();
-        scc = new int[noPoints * 2];
-        counter = 0;
-        componentsInReverseTopOrder = new ArrayList<>();
-
-        // Step 1: dfs on original graph
-        for (int i = 0; i < noPoints * 2; i++) {
-            if (!visited[i]) {
-                dfsFirst(i);
-            }
-        }
-
-        // Step 2: traverse inverse graph based on s
-        while (!s.empty()) {
-            int n = s.pop();
-            if (!visitedInv[n]) {
-                componentsInReverseTopOrder.add(0, n);
-                dfsSecond(n);
-                counter++;
-
-            }
-        }
-    }
 
 
     private void addEdgeAndInverse(int a, int b, int noNodes) {
@@ -198,47 +154,5 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
         }
         adj[a].add(b);
         adjInv[b].add(a);
-    }
-
-    private void dfsFirst(int start) {
-        if (visited[start]) {
-            return;
-        }
-
-        visited[start] = true;
-
-        for (int i : adj[start]) {
-            dfsFirst(i);
-        }
-
-        s.push(start);
-    }
-
-    private void dfsSecond(int start) {
-        if (visitedInv[start]) {
-            return;
-        }
-        visitedInv[start] = true;
-
-        for (int i : adjInv[start]) {
-            dfsSecond(i);
-        }
-
-        scc[start] = counter;
-    }
-
-    private void assignTrue(DataRecord record, int node, int noPoints) {
-        if (node < noPoints) {
-            isSet[node] = true;
-            ((PositionLabel) record.labels.get(node)).setDirection(DirectionEnum.NE);
-        } else {
-            isSet[node - noPoints] = true;
-            ((PositionLabel) record.labels.get(node % noPoints)).setDirection(DirectionEnum.NW);
-        }
-        for (int i : adj[node]) {
-            if (!isSet[i % noPoints] && scc[i] == scc[node]) {
-                assignTrue(record, i, noPoints);
-            }
-        }
     }
 }
