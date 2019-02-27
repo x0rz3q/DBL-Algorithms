@@ -3,10 +3,10 @@ package models;
 public class FieldExtendedSliderLabel extends SliderLabel {
 
     // the x coordinate of the first point in the sequence of connecting labels
-    private int a;
+    private int sequenceStartX;
 
     // the place in the sequence of connecting labels, 0 is the first label
-    private int b;
+    private int sequenceIndex;
 
     // indicates whether the point is defined by field extended coordinates
     private boolean isExtended = false;
@@ -22,15 +22,15 @@ public class FieldExtendedSliderLabel extends SliderLabel {
     /**
      * returns the x coordinate of the first point in the sequence of connecting labels
      */
-    public int getA () {
-        return a;
+    public int getSequenceStartX () {
+        return sequenceStartX;
     }
 
     /**
      * returns the index of the label in the sequence of connecting labels
      */
-    public int getB () {
-        return b;
+    public int getSequenceIndex () {
+        return sequenceIndex;
     }
 
     @Override
@@ -38,7 +38,7 @@ public class FieldExtendedSliderLabel extends SliderLabel {
         if (!isExtended) {
             return super.getXMax();
         } else {
-            return a + b * width;
+            return sequenceStartX + sequenceIndex * width;
         }
     }
 
@@ -69,40 +69,40 @@ public class FieldExtendedSliderLabel extends SliderLabel {
     }
 
     /**
-     * set the label by definition of a sequence to which it belongs
+     * set the label by definition of sequenceStartX sequence to which it belongs
      *
-     * @param a the x coordinate of the first point in the sequence of connecting labels
-     * @param b the index of the label in the sequence of connecting labels
+     * @param sequenceStartX the x coordinate of the first point in the sequence of connecting labels
+     * @param sequenceIndex the index of the label in the sequence of connecting labels
      * @param width the width of all labels in the sequence of connecting labels
-     * @post label is set by {@code (a + (b-1) * width, poi.x) and (a + b * width, poi.height)}
+     * @post label is set by {@code (sequenceStartX + (sequenceIndex-1) * width, poi.x) and (sequenceStartX + sequenceIndex * width, poi.height)}
      * @throws IllegalArgumentException when label is not located on top of Poi
      */
-    public void setFieldExtended(int a, int b, double width) {
-        if (a < 0 || b < 0 || width < 0) {
+    public void setFieldExtended(int sequenceStartX, int sequenceIndex, double width) {
+        if (sequenceStartX < 0 || sequenceIndex < 0 || width < 0) {
             throw new IllegalArgumentException("FieldExtendedSliderLabel.setRectangle parameters negative");
         }
 
-        if (a + (b-1) * width > poi.getX() || a + b * width < poi.getX()) {
+        if (sequenceStartX + (sequenceIndex-1) * width > poi.getX() || sequenceStartX + sequenceIndex * width < poi.getX()) {
             throw new IllegalArgumentException("FieldExtendedSliderLabel.setRectangle rectangle not above Poi");
         }
 
         this.rectangle = new Rectangle(
-                a + (b - 1) * width,
+                sequenceStartX + (sequenceIndex - 1) * width,
                 this.poi.getY(),
-                a + b * width,
+                sequenceStartX + sequenceIndex * width,
                 this.poi.getY() + width / aspectRatio
         );
 
-        this.a = a;
-        this.b = b;
+        this.sequenceStartX = sequenceStartX;
+        this.sequenceIndex = sequenceIndex;
         this.width = width;
         this.height = width / aspectRatio;
         this.isExtended = true;
 
-        if (b == 0) {
+        if (sequenceIndex == 0) {
             this.shift = 0;
         } else {
-            this.shift = (a - this.getXMax()) / width + b;
+            this.shift = (sequenceStartX - this.getXMax()) / width + sequenceIndex;
         }
     }
 }
