@@ -377,8 +377,34 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
         return true;
     }
 
+    /**
+     * Creates the implication graph as requested by the {@Link ImplicationGraphSolver} based on the given points
+     * @pre (\forall FourPositionPoint p; intersectingPoints.contains(p); p.getCandidates().size() == 2)
+     *      AND ID's of points in intersectingPoints consecutive
+     *      AND ID's of p.getCandidates() == (1, 2), for all p in intersectingPoints
+     * @param intersectingPoints
+     * @return ArrayList containing the implication graph and the inverse implication graph represented
+     * as specified by {@link ImplicationGraphSolver}
+     */
     private ArrayList<List<Integer>[]> createImplicationGraph(Set<FourPositionPoint> intersectingPoints) {
-        return null;
+        int nPoints = intersectingPoints.size();
+        List<Integer>[] adj = new ArrayList[2 * nPoints];
+        List<Integer>[] invAdj = new ArrayList[2 * nPoints];
+
+        for (FourPositionPoint point : intersectingPoints) {
+            for (FourPositionLabel label : point.getCandidates()) {
+                for (FourPositionLabel conflictLabel : label.getConflicts()) {
+                    adj[point.getId() + nPoints * label.getID()].add(conflictLabel.getPoI().getId() + nPoints * (1 - conflictLabel.getID()));
+                    invAdj[conflictLabel.getPoI().getId() + nPoints * (1 - conflictLabel.getID())].add(point.getId() + nPoints * label.getID());
+                }
+            }
+        }
+
+        ArrayList<List<Integer>[]> returnSet = new ArrayList<>();
+        returnSet.add(adj);
+        returnSet.add(invAdj);
+
+        return returnSet;
     }
 
     @Override
