@@ -55,12 +55,7 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
         double high = Double.MAX_VALUE;
         while (true) {
             double mid = (low + high) / 2;
-            System.out.println("\nmid = " + mid);
             if (solve(record, sortedLabels, mid)) {
-                if (!main.Interpreter.isValid(record)) {
-                    System.err.println("invalid datarecord found valid");
-                    return;
-                }
                 low = mid;
             } else {
                 high = mid;
@@ -127,7 +122,7 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
         if (xMax == label.getPOI().getX() - width) {
             label.setFieldExtended((int) label.getPOI().getX(), 0, width);
         } else {
-            label.setFieldExtended(maxLabel.a, maxLabel.b + 1, width);
+            label.setFieldExtended(maxLabel.getA(), maxLabel.getB() + 1, width);
         }
 
         return true;
