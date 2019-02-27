@@ -332,7 +332,7 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
     }
 
     @Override
-    boolean doTwoSat(DataRecord record, boolean returnSolution) {
+    boolean doTwoSat(DataRecord record, final boolean returnSolution) {
         // Get Points from labels
         Set<FourPositionPoint> intersectingPoints = new HashSet<>();
         for (FourPositionLabel conflictingLabel : labelsWithConflicts) {
