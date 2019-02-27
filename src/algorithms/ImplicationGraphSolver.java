@@ -24,6 +24,9 @@ public class ImplicationGraphSolver {
     private List<Integer>[] adjInv;
 
 
+    private int noPoints;
+
+
 
     // keeps track of which rectangles have been set in getSolution()
     private boolean[] isSet;
@@ -36,11 +39,26 @@ public class ImplicationGraphSolver {
      * @return \return == true iff the implication graph has a valid solution
      */
     public boolean isSolvable(List<Integer>[] adj, List<Integer>[] adjInv) {
-        int noPoints = adj.length / 2;
+        noPoints = adj.length / 2;
+
+        createComponents(adj, adjInv);
+
+        for (int i = 0; i < noPoints; i++) {
+            if (scc[i] == scc[i + noPoints]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
+
+    private void createComponents(List<Integer>[] adj, List<Integer>[] adjInv) {
+        noPoints = adj.length / 2;
 
         this.adj = adj;
         this.adjInv = adjInv;
-
 
         // initialize variables
         visited = new boolean[noPoints * 2];
@@ -66,14 +84,6 @@ public class ImplicationGraphSolver {
                 counter++;
             }
         }
-
-        for (int i = 0; i < noPoints; i++) {
-            if (scc[i] == scc[i + noPoints]) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     /**
@@ -83,11 +93,11 @@ public class ImplicationGraphSolver {
      * @return \forall(i, 0 <= i < adj.length/2, \return[i] == true iff the implication graph has a valid solution
      */
     public boolean[] getSolution(List<Integer>[] adj, List<Integer>[] adjInv) {
-        int noPoints = adj.length / 2;
+        noPoints = adj.length / 2;
 
         boolean[] solution = new boolean[noPoints];
 
-        isSolvable(adj, adjInv);
+        createComponents(adj, adjInv);
 
 
         // assign labels to each point in reverse topological order

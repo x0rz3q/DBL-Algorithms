@@ -49,18 +49,18 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
 
     @Override
     boolean isSolvable(DataRecord record, double height) {
-        int noInputs = record.labels.size();
-        initializeGraph(record, height, noInputs);
+        initializeGraph(record, height);
         return solver.isSolvable(adj, adjInv);
-
     }
 
     @Override
     void getSolution(DataRecord record, double height) {
-        int noPoints = record.labels.size();
-        initializeGraph(record, height, noPoints);
-        record.height = height;
+        initializeGraph(record, height);
+
         boolean[] solution = solver.getSolution(adj, adjInv);
+
+        // set solution
+        record.height = height;
         for (int i = 0; i < solution.length; i++) {
             if (solution[i]) {
                 ((PositionLabel) record.labels.get(i)).setDirection(DirectionEnum.NE);
@@ -70,7 +70,9 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
         }
     }
 
-    private void initializeGraph(DataRecord record, double height, int noPoints) {
+    private void initializeGraph(DataRecord record, double height) {
+        int noPoints = record.labels.size();
+
         // ------------ initialize variables ------------
         adj = new ArrayList[noPoints * 2];
         adjInv = new ArrayList[noPoints * 2];
