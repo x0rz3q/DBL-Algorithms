@@ -51,22 +51,4 @@ public class SliderLabel extends AbstractLabel {
     public void setWidth(double width) {
         this.setHeight(width / this.aspectRatio);
     }
-
-    public void setRectangle(Rectangle rec) {
-        if (rec.getYMin() != this.poi.getY() || rec.getXMin() > this.poi.getX() || rec.getXMax() < this.poi.getX()) {
-            throw new IllegalArgumentException("SliderLabel.setRectangle rectangle bottom does not touch poi");
-        }
-
-        if (rec.getWidth() / rec.getHeight() + 0.0001 > this.aspectRatio && rec.getWidth() / rec.getHeight() + 0.0001 < this.aspectRatio) {
-            System.out.println(rec.getWidth());
-            System.out.println(rec.getHeight());
-            System.out.println(rec.getWidth() / rec.getHeight());
-            System.out.println(this.aspectRatio);
-            throw new IllegalArgumentException("SliderLabel.setRectangle wrong aspect ratio");
-        }
-
-        this.rectangle = rec;
-        this.height = rec.getHeight();
-        this.shift = 1 - (this.poi.getX() - rec.getXMin()) / rec.getWidth();
-    }
 }
