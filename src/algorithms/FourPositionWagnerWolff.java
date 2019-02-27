@@ -77,28 +77,28 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
             // adding new labels (All id's are 0 for now)
             // add NE square
             if (record.collection.query2D(new Rectangle(pX, pY, pX+width, pY+height)).size() == 0) {
-                FourPositionLabel northEastLabel = new FourPositionLabel(pX, pY, height, ratio, 0, point, NE);
+                FourPositionLabel northEastLabel = new FourPositionLabel(height, ratio, 0, point, NE);
                 point.addCandidate(northEastLabel);
                 Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX, pY, pX+width, pY+height));
                 preprocessingLabel(northEastLabel, conflictingLabels);
             }
             // add NW
             if (record.collection.query2D(new Rectangle(pX-width, pY, pX, pY+height)).size() == 0) {
-                FourPositionLabel northWestLabel = new FourPositionLabel(pX, pY, height, ratio, 0, point, NW);
+                FourPositionLabel northWestLabel = new FourPositionLabel(height, ratio, 0, point, NW);
                 point.addCandidate(northWestLabel);
                 Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX-width, pY, pX, pY+height));
                 preprocessingLabel(northWestLabel, conflictingLabels);
             }
             // add SE
             if (record.collection.query2D(new Rectangle(pX, pY-height, pX+width, pY)).size() == 0) {
-                FourPositionLabel southEastLabel = new FourPositionLabel(pX, pY, height, ratio, 0, point, SE);
+                FourPositionLabel southEastLabel = new FourPositionLabel(height, ratio, 0, point, SE);
                 point.addCandidate(southEastLabel);
                 Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX, pY-height, pX+width, pY));
                 preprocessingLabel(southEastLabel, conflictingLabels);
             }
             // add SW
             if (record.collection.query2D(new Rectangle(pX-width, pY-height, pX, pY)).size() == 0) {
-                FourPositionLabel southWestLabel = new FourPositionLabel(pX, pY, height, ratio, 0, point, SW);
+                FourPositionLabel southWestLabel = new FourPositionLabel(height, ratio, 0, point, SW);
                 point.addCandidate(southWestLabel);
                 Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX-width, pY-height, pX, pY));
                 preprocessingLabel(southWestLabel, conflictingLabels);
@@ -418,8 +418,7 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
         boolean solvable = eliminateImpossibleCandidates();
         if (!solvable) return false;
         solvable = doTwoSat(record, false);
-        if (!solvable) return false;
-        return true;
+        return solvable;
     }
 
     @Override

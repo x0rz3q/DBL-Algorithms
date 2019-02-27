@@ -18,6 +18,10 @@ public class FourPositionPoint extends Point {
         originalRecordLabel = label;
     }
 
+    public FourPositionPoint(PointInterface point) {
+        super(point.getX(), point.getY());
+    }
+
     public void addCandidate(FourPositionLabel label) {
         candidates.add(label);
     }

@@ -11,8 +11,8 @@ public class FourPositionLabel extends AbstractLabel {
 
     private ArrayList<FourPositionLabel> conflicts = new ArrayList<>();
 
-    public FourPositionLabel(double x, double y, double height, double aspectRatio, int ID, FourPositionPoint point, DirectionEnum direction) {
-        super(x, y, height, aspectRatio, ID);
+    public FourPositionLabel(double height, double aspectRatio, int ID, FourPositionPoint point, DirectionEnum direction) {
+        super(point.getX(), point.getY(), height, aspectRatio, ID);
         this.direction = direction;
         PoI = point;
         this.setHeight(height);
@@ -40,10 +40,10 @@ public class FourPositionLabel extends AbstractLabel {
         switch (direction) {
             case NE:
                 this.rectangle = new Rectangle(point.getX(), point.getY(),
-                        point.getX() + this.height * this.aspectRation, point.getY() + this.height);
+                        point.getX() + this.height * this.aspectRatio, point.getY() + this.height);
                 break;
             case NW:
-                this.rectangle = new Rectangle(point.getX() - this.height * this.aspectRation,
+                this.rectangle = new Rectangle(point.getX() - this.height * this.aspectRatio,
                         point.getY(),
                         point.getX(),
                         point.getY() + this.height
@@ -51,10 +51,10 @@ public class FourPositionLabel extends AbstractLabel {
                 break;
             case SE:
                 this.rectangle = new Rectangle(point.getX(), point.getY() - this.height,
-                        point.getX() + this.height * this.aspectRation, point.getY());
+                        point.getX() + this.height * this.aspectRatio, point.getY());
                 break;
             case SW:
-                this.rectangle = new Rectangle(point.getX() - this.height * this.aspectRation, point.getY() - this.height,
+                this.rectangle = new Rectangle(point.getX() - this.height * this.aspectRatio, point.getY() - this.height,
                         point.getX(), point.getY());
                 break;
             default: throw new IllegalArgumentException("Not a valid direction: " + direction.toString());
