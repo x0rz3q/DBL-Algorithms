@@ -3,7 +3,10 @@ package main;/*
  */
 
 import Parser.DataRecord;
+import interfaces.models.GeometryInterface;
 import interfaces.models.LabelInterface;
+
+import java.util.Collection;
 
 public class Interpreter {
 
@@ -13,14 +16,22 @@ public class Interpreter {
     }
 
 
-    public static boolean isValid(DataRecord record) {
+    public static boolean isValid (DataRecord record) {
         if (record.labels == null || record.placementModel == null) return false;
 
+        boolean valid = true;
         for (LabelInterface label : record.labels) {
-            if (record.collection.query2D(label.getRectangle()).size() > 1) return false;
+            Collection<GeometryInterface> labels = record.collection.query2D(label.getRectangle());
+            if (labels.size() > 1) {
+                System.out.println();
+                for (GeometryInterface l : labels) {
+                    System.out.println("X = ["+l.getXMin()+","+l.getXMax()+"], y = ["+l.getYMin()+","+l.getYMax()+"]");
+                }
+//                valid = false;
+            }
         }
 
-        return true;
+        return valid;
     }
 
 }

@@ -85,6 +85,21 @@ public class QuadTree extends AbstractCollection {
         return true;
     }
 
+    @Override
+    public boolean remove(GeometryInterface node) throws NullPointerException {
+        if (!this.intersects(node)) { // if node in subtree
+            return false;
+        }
+
+        if (this.data.contains(node)) {
+            this.data.remove(node);
+            return true;
+        }
+        if (this.NE == null) return false; // doesnt contain
+        /* not in this node, look in children */
+        return this.NE.remove(node) || this.NW.remove(node) || this.SE.remove(node) || this.SW.remove(node);
+    }
+
     public Collection<GeometryInterface> query2D(Rectangle range) {
         Collection<GeometryInterface> data = new ArrayList<>();
 

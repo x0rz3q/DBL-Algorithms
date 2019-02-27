@@ -8,6 +8,7 @@ import Parser.DataRecord;
 import interfaces.AbstractAlgorithmInterface;
 import interfaces.models.GeometryInterface;
 import interfaces.models.LabelInterface;
+import models.FieldExtendedSliderLabel;
 import models.Point;
 import models.Rectangle;
 import models.SliderLabel;
@@ -40,18 +41,18 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
     @Override
     public void solve(DataRecord record) {
 
-        List<SliderLabel> sortedLabels = new ArrayList<>();
+        // casts labels to sliderlabels in an new sorted List
+        List<FieldExtendedSliderLabel> sortedLabels = new ArrayList<>();
         for (LabelInterface label : record.labels) {
-            if (label.getClass() != SliderLabel.class)
+            if (label.getClass() != FieldExtendedSliderLabel.class)
                 throw new IllegalArgumentException("GreedySliderAlgorithm.solve() input record does not provide SliderLabels");
-            else sortedLabels.add((SliderLabel) label);
+            else sortedLabels.add((FieldExtendedSliderLabel) label);
         }
         sortedLabels.sort(comparator);
 
-        //@TODO write a better binary search algorithm, currently is simple structure as placeholder
-        double epsilon = 0.5;
+        double epsilon = 0.000000000000001;
         double low = 0;
-        double high = Double.MAX_VALUE / 10;
+        double high = Double.MAX_VALUE;
         while (true) {
             double mid = (low + high) / 2;
             if (solve(record, sortedLabels, mid)) {
@@ -79,9 +80,14 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
      * @modifies record
      * @post if there is a solution record.collection contains it, else record.collection holds an invalid solution
      */
-    private boolean solve(DataRecord record, List<SliderLabel> sortedLabels, double width) {
-        for (SliderLabel label : sortedLabels) {
-            if (!setLabel(record, label, width)) return false;
+    private boolean solve(DataRecord record, List<FieldExtendedSliderLabel> sortedLabels, double width) {
+        for (FieldExtendedSliderLabel label : sortedLabels) {
+            if (!setLabel(record, label, width)) {
+                for (SliderLabel l : sortedLabels) {
+                    l.setHeight(0);
+                }
+                return false;
+            }
         }
         return true;
     }
@@ -94,22 +100,30 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
      * @param width  double denoting the width assigned to label
      * @return whether it is possible to have label be placeable in collection with given width
      */
-    private boolean setLabel(DataRecord record, SliderLabel label, double width) {
-        Rectangle queryArea = new Rectangle(new Point(label.getPOI().getX() - width, label.getPOI().getY() - width), label.getPOI());
+    private boolean setLabel(DataRecord record, FieldExtendedSliderLabel label, double width) {
+        Rectangle queryArea = new Rectangle(
+                label.getPOI().getX() - width,
+                label.getPOI().getY(),
+                label.getPOI().getX(),
+                label.getPOI().getY() + width / record.aspectRatio);
         Collection<GeometryInterface> queryResult = record.collection.query2D(queryArea);
 
         double xMax = label.getPOI().getX() - width;
+        FieldExtendedSliderLabel maxLabel = label;
         for (GeometryInterface entry : queryResult) {
-            if (entry != label) xMax = Math.max(xMax, entry.getXMax());
+            if (entry != label) {
+                maxLabel = (FieldExtendedSliderLabel) entry;
+                xMax = Math.max(xMax, entry.getXMax());
+            }
         }
 
         if (xMax > label.getPOI().getX()) return false;
 
-        // @TODO work around rounding errors in a better way
-        double shift = (xMax - label.getPOI().getX()) / width + 1;
-        label.setShift(shift);
-        //TODO: Jeroen please check how to adjust this to the new interface
-//        label.setEdgeLength(width, Math.min(Math.max(0, shift), 1));
+        if (xMax == label.getPOI().getX() - width) {
+            label.setFieldExtended((int) label.getPOI().getX(), 0, width);
+        } else {
+            label.setFieldExtended(maxLabel.getSequenceStartX(), maxLabel.getSequenceIndex() + 1, width);
+        }
 
         return true;
     }
