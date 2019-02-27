@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Stack;
 
 public class ImplicationGraphSolver {
-
     // variable for dfs to keep track of visited nodes
     private boolean[] visited;
     private boolean[] visitedInv;
@@ -18,19 +17,14 @@ public class ImplicationGraphSolver {
     // keep track of current component
     private int counter;
 
-
     // edges of implication graph and its inverse
     private List<Integer>[] adj;
     private List<Integer>[] adjInv;
 
-
     private int noPoints;
-
-
 
     // keeps track of which rectangles have been set in getSolution()
     private boolean[] isSet;
-
 
     /**
      *
@@ -52,15 +46,13 @@ public class ImplicationGraphSolver {
         return true;
     }
 
-
-
     private void createComponents(List<Integer>[] adj, List<Integer>[] adjInv) {
-        noPoints = adj.length / 2;
-
+        //get parameters
         this.adj = adj;
         this.adjInv = adjInv;
 
         // initialize variables
+        noPoints = adj.length / 2;
         visited = new boolean[noPoints * 2];
         visitedInv = new boolean[noPoints * 2];
         s = new Stack<>();
@@ -94,11 +86,9 @@ public class ImplicationGraphSolver {
      */
     public boolean[] getSolution(List<Integer>[] adj, List<Integer>[] adjInv) {
         noPoints = adj.length / 2;
-
         boolean[] solution = new boolean[noPoints];
 
         createComponents(adj, adjInv);
-
 
         // assign labels to each point in reverse topological order
         isSet = new boolean[noPoints];
@@ -107,9 +97,9 @@ public class ImplicationGraphSolver {
                 assignTrue(solution, i, adj);
             }
         }
+
         return solution;
     }
-
 
     private void dfsFirst(int start) {
         if (visited[start]) {
@@ -149,6 +139,7 @@ public class ImplicationGraphSolver {
             isSet[node - noPoints] = true;
             solution[node % noPoints] = false;
         }
+
         for (int i : adj[node]) {
             if (!isSet[i % noPoints] && scc[i] == scc[node]) {
                 assignTrue(solution, i, adj);
