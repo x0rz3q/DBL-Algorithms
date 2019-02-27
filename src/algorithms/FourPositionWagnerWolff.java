@@ -351,11 +351,11 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
         // Get solution from
         // call is boolean solvable (adj of length 2n, invadj of length 2n)
         if (!returnSolution) {
-            boolean isSolvable = (new TwoPositionBinarySearcher()).isSolvable(input.get(0), input.get(1));
+            boolean isSolvable = (new ImplicationGraphSolver()).isSolvable(input.get(0), input.get(1));
             if (!isSolvable) return false;
         }
         // call getSolution(adj, inadj) assumes is solvable returns boolean array of length n
-        boolean labels[] = (new TwoPositionBinarySearcher()).getSolution(input.get(0), input.get(1));
+        boolean labels[] = (new ImplicationGraphSolver()).getSolution(input.get(0), input.get(1));
 
         // translate back to labels
         if (returnSolution) {
