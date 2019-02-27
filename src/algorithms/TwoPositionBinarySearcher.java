@@ -10,23 +10,15 @@ import models.Rectangle;
 import java.util.*;
 
 public class TwoPositionBinarySearcher extends BinarySearcher {
-
-
-
-
     // edges of implication graph and its inverse
     private List<Integer>[] adj;
     private List<Integer>[] adjInv;
 
-
     ImplicationGraphSolver solver;
-
 
     public TwoPositionBinarySearcher() {
         solver = new ImplicationGraphSolver();
     }
-
-
 
     @Override
     double[] getSolutionSpace(DataRecord record) {
@@ -46,25 +38,19 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
         }
 
 
-
         double[] solutionSpace = new double[solutions.size()];
         int counter = 0;
         for (Double d : solutions) {
             solutionSpace[counter] = d;
             counter++;
         }
-
-
         return solutionSpace;
     }
 
     @Override
     boolean isSolvable(DataRecord record, double height) {
         int noInputs = record.labels.size();
-
         initializeGraph(record, height, noInputs);
-
-
         return solver.isSolvable(adj, adjInv);
 
     }
@@ -73,13 +59,8 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
     void getSolution(DataRecord record, double height) {
         int noPoints = record.labels.size();
         initializeGraph(record, height, noPoints);
-
-        // set height
         record.height = height;
-
         boolean[] solution = solver.getSolution(adj, adjInv);
-
-
         for (int i = 0; i < solution.length; i++) {
             if (solution[i]) {
                 ((PositionLabel) record.labels.get(i)).setDirection(DirectionEnum.NE);
@@ -87,7 +68,6 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
                 ((PositionLabel) record.labels.get(i)).setDirection(DirectionEnum.NW);
             }
         }
-
     }
 
     private void initializeGraph(DataRecord record, double height, int noPoints) {

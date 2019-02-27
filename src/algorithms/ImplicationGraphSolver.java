@@ -1,9 +1,5 @@
 package algorithms;
 
-import Parser.DataRecord;
-import models.DirectionEnum;
-import models.PositionLabel;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -33,13 +29,20 @@ public class ImplicationGraphSolver {
     private boolean[] isSet;
 
 
-    
+    /**
+     *
+     * @param adj List<Integer>[] implication graph
+     * @param adjInv List<Integer>[] inverse of implication graph
+     * @return \return == true iff the implication graph has a valid solution
+     */
     public boolean isSolvable(List<Integer>[] adj, List<Integer>[] adjInv) {
         int noPoints = adj.length / 2;
 
         this.adj = adj;
         this.adjInv = adjInv;
 
+
+        // initialize variables
         visited = new boolean[noPoints * 2];
         visitedInv = new boolean[noPoints * 2];
         s = new Stack<>();
@@ -73,7 +76,12 @@ public class ImplicationGraphSolver {
         return true;
     }
 
-
+    /**
+     *
+     * @param adj List<Integer>[] implication graph
+     * @param adjInv List<Integer>[] inverse of implication graph
+     * @return \forall(i, 0 <= i < adj.length/2, \return[i] == true iff the implication graph has a valid solution
+     */
     public boolean[] getSolution(List<Integer>[] adj, List<Integer>[] adjInv) {
         int noPoints = adj.length / 2;
 
