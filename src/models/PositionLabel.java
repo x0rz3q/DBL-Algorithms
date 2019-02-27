@@ -21,10 +21,10 @@ public class PositionLabel extends AbstractLabel {
         switch (direction) {
             case NE:
                 this.rectangle = new Rectangle(point.getX(), point.getY(),
-                        point.getX() + this.height * this.aspectRation, point.getY() + this.height);
+                        point.getX() + this.height * this.aspectRatio, point.getY() + this.height);
                 break;
             case NW:
-                this.rectangle = new Rectangle(point.getX() - this.height * this.aspectRation,
+                this.rectangle = new Rectangle(point.getX() - this.height * this.aspectRatio,
                         point.getY(),
                         point.getX(),
                         point.getY() + this.height
@@ -43,7 +43,7 @@ public class PositionLabel extends AbstractLabel {
     }
 
     public void setWidth(double width) {
-        this.height = width / this.aspectRation;
+        this.height = width / this.aspectRatio;
     }
 
     @Override

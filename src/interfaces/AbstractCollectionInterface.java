@@ -17,6 +17,15 @@ public interface AbstractCollectionInterface {
     boolean insert(GeometryInterface node) throws NullPointerException;
 
     /**
+     * Remove a node from collection
+     *
+     * @param node {@link GeometryInterface} to remove
+     * @throws NullPointerException if node == null
+     * @return whether removal was successful
+     */
+    boolean remove(GeometryInterface node) throws NullPointerException;
+
+    /**
      * Get all items that intersect with a given range.
      *
      * @param range {@link Rectangle}

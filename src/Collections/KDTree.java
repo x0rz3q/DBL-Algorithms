@@ -197,6 +197,11 @@ public class KDTree extends AbstractCollection {
     }
 
     @Override
+    public boolean remove(GeometryInterface node) throws NullPointerException {
+        throw new UnsupportedOperationException("KDTree.remove not supported");
+    }
+
+    @Override
     public Collection<GeometryInterface> query2D(Rectangle range) {
         return query2D(this, range);
     }
@@ -305,6 +310,7 @@ public class KDTree extends AbstractCollection {
     private double distanceToSplitter(GeometryInterface node, AbstractDistance dist) {
         PointInterface projection;
         PointInterface nodeReference = getReferencePoint(node);
+
         if (this.depth % 2 == 0) {
             projection = new Point(nodeReference.getX(), this.splitter.getY());
         } else {

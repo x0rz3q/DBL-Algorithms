@@ -76,7 +76,8 @@ public class Parser implements ParserInterface {
                         label = new PositionLabel(x, y, 0, rec.aspectRatio, i, DirectionEnum.NE);
                         break;
                     case ONE_SLIDER:
-                        label = new SliderLabel(x, y, 0, rec.aspectRatio, 0, i);
+                        label = new FieldExtendedSliderLabel(x, y, 0, rec.aspectRatio, 0, i);
+//                        label = new SliderLabel(x, y, 0, rec.aspectRatio, 0, i);
                         break;
                 }
 
