@@ -30,15 +30,6 @@ public abstract class AbstractFourPosition extends BinarySearcher {
     abstract void preprocessing(DataRecord record, Double sigma);
 
     /**
-     * Creates the conflict graph of label candidates, where a conflict (and thus edge) is defined as an intersection.
-     * Conflicting candidates are stored in the labels themselves.
-     *
-     * @pre global DataRecord with labels set
-     * @return array of FourPositionLabels defining the conflict graph
-     */
-    abstract FourPositionLabel[] createConflictGraph();
-
-    /**
      * Eliminates all impossible candidates from the record for a given label size.
      * This function checks for the following four requirements: 1) if all candidates of
      * a point p have been eliminated, we return false since there is no solution; 2) If point p
@@ -66,8 +57,6 @@ public abstract class AbstractFourPosition extends BinarySearcher {
      * For those points which still have two or more candidates left, choose exactly two (heuristic),
      * and check, whether this remaining problem is solvable with 2-SAT (like 2 position)
      *
-     * @modifies record
-     * @post record is solved
      */
-    abstract void doTwoSat();
+    abstract boolean doTwoSat(boolean returnSolution);
 }

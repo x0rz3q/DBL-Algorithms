@@ -131,12 +131,6 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
     }
 
     @Override
-    FourPositionLabel[] createConflictGraph() {
-        return new FourPositionLabel[0];
-    }
-
-
-    @Override
     boolean eliminateImpossibleCandidates() {
         while (!pointsQueue.isEmpty()) {
             FourPositionPoint point = pointsQueue.pollFirst(); // also removes element from queue
@@ -341,7 +335,26 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
     }
 
     @Override
-    void doTwoSat() { }
+    boolean doTwoSat(boolean returnSolution) {
+        // Get Points from labels
+        Set<FourPositionPoint> intersectingPoints = new HashSet<>();
+
+        // Create input array from points
+        ArrayList<List<Integer>[]> input = createImplicationGraph(intersectingPoints);
+
+        // Get solution from
+        // call is boolean solvable (adj of length 2n, invadj of length 2n)
+        boolean isSolvable = (new TwoPositionBinarySearcher()).isSolvable(input[0], input[1]);
+        // call getSolution(adj, inadj) assumes is solvable returns boolean array of length n
+        boolean labels[] = (new TwoPositionBinarySearcher()).getSolution(input[0], input[1]);
+
+        // translate back to labels
+
+    }
+
+    private ArrayList<List<Integer>[]> createImplicationGraph(Set<FourPositionPoint> intersectingPoints) {
+        return null;
+    }
 
     @Override
     double[] getSolutionSpace(DataRecord record) {
@@ -353,7 +366,8 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
         preprocessing(record, height);
         boolean solvable = eliminateImpossibleCandidates();
         if (!solvable) return false;
-        doTwoSat();
+        solvable = doTwoSat(false);
+        if (!solvable) return false;
         return true;
     }
 
