@@ -28,12 +28,13 @@ public class ImplicationGraphSolver {
 
     /**
      * we assume that we have a 2pos problem with n nodes
-     * @param adj List<Integer>[] implication graph: an array of List<Integer> of length 2n where the first
-     *            n values correspond to the first label of each node (value i corresponds to first label of node i)
-     *            and the next n values correspond to the second label of each node (value. i + n corresponds to second label of node i)
-     *            with 0 <= i < n.
-     *            Each value at index i contains a List<Integers> where all the values j in that list represent one implication of the
-     *            graph where having label i implies also having label j for all j in \adj[i]
+     *
+     * @param adj    List<Integer>[] implication graph: an array of List<Integer> of length 2n where the first
+     *               n values correspond to the first label of each node (value i corresponds to first label of node i)
+     *               and the next n values correspond to the second label of each node (value. i + n corresponds to second label of node i)
+     *               with 0 <= i < n.
+     *               Each value at index i contains a List<Integers> where all the values j in that list represent one implication of the
+     *               graph where having label i implies also having label j for all j in \adj[i]
      * @param adjInv List<Integer>[] inverse of implication graph:
      *               \forall(i; adj.has(i); \forall(j; adj[i].has(j); adjInv[j].contains(i)))
      *               \forall(i; adjInv.has(i); \forall(j; adjInv[i].has(j); adj[j].contains(i)))
@@ -86,10 +87,19 @@ public class ImplicationGraphSolver {
     }
 
     /**
-     *
-     * @param adj List<Integer>[] implication graph
-     * @param adjInv List<Integer>[] inverse of implication graph
-     * @return \forall(i, 0 <= i < adj.length/2, \return[i] == true iff the implication graph has a valid solution
+     * we assume that we have a 2pos problem with n nodes
+     * @param adj    List<Integer>[] implication graph: an array of List<Integer> of length 2n where the first
+     *               n values correspond to the first label of each node (value i corresponds to first label of node i)
+     *               and the next n values correspond to the second label of each node (value. i + n corresponds to second label of node i)
+     *               with 0 <= i < n.
+     *               Each value at index i contains a List<Integers> where all the values j in that list represent one implication of the
+     *               graph where having label i implies also having label j for all j in \adj[i]
+     * @param adjInv List<Integer>[] inverse of implication graph:
+     *               \forall(i; adj.has(i); \forall(j; adj[i].has(j); adjInv[j].contains(i)))
+     *               \forall(i; adjInv.has(i); \forall(j; adjInv[i].has(j); adj[j].contains(i)))
+     * @pre isSolvable(adj, adjInv)
+     * @return \return represents a possible solution to adj. Where we have \result.length = n and \result[i] represents the label of node i
+     *          where node i has the first label, if \result[i] is true and otherwise node i needs to have the second label
      */
     public boolean[] getSolution(List<Integer>[] adj, List<Integer>[] adjInv) {
         noPoints = adj.length / 2;
