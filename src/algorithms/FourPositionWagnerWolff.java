@@ -7,7 +7,6 @@ import interfaces.models.LabelInterface;
 import interfaces.models.PointInterface;
 import models.*;
 import Collections.KDTree;
-import Collections.QuadTree;
 import java.util.*;
 
 import static models.DirectionEnum.*;
@@ -355,7 +354,7 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
             if (!isSolvable) return false;
         }
         // call getSolution(adj, inadj) assumes is solvable returns boolean array of length n
-        boolean labels[] = (new ImplicationGraphSolver()).getSolution(input.get(0), input.get(1));
+        boolean[] labels = (new ImplicationGraphSolver()).getSolution(input.get(0), input.get(1));
 
         // translate back to labels
         if (returnSolution) {
@@ -388,8 +387,8 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
      */
     private ArrayList<List<Integer>[]> createImplicationGraph(Set<FourPositionPoint> intersectingPoints) {
         int nPoints = intersectingPoints.size();
-        List<Integer>[] adj = new ArrayList[2 * nPoints];
-        List<Integer>[] invAdj = new ArrayList[2 * nPoints];
+        ArrayList[] adj = new ArrayList[2 * nPoints];
+        ArrayList[] invAdj = new ArrayList[2 * nPoints];
 
         for (FourPositionPoint point : intersectingPoints) {
             for (FourPositionLabel label : point.getCandidates()) {
