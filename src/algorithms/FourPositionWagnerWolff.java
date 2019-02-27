@@ -5,10 +5,7 @@ import distance.FourPositionDistance;
 import interfaces.models.GeometryInterface;
 import interfaces.models.LabelInterface;
 import interfaces.models.PointInterface;
-import models.FourPositionLabel;
-import models.FourPositionPoint;
-import models.Point;
-import models.Rectangle;
+import models.*;
 import Collections.KDTree;
 import Collections.QuadTree;
 import java.util.*;
@@ -74,7 +71,7 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
             double pX = p.getXMax();
             double pY = p.getYMax();
 
-            FourPositionPoint point = new FourPositionPoint(p.getBottomLeft());
+            FourPositionPoint point = new FourPositionPoint((FourPositionLabel) p);
             pointsQueue.add(point);
 
             // adding new labels (All id's are 0 for now)
@@ -343,7 +340,9 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
         }
         int count = 0;
         for (FourPositionPoint point : intersectingPoints) {
-            point.
+            point.setId(count++);
+            point.getCandidates().get(0).setID(0);
+            point.getCandidates().get(1).setID(1);
         }
 
         // Create input array from points
@@ -352,23 +351,27 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
         // Get solution from
         // call is boolean solvable (adj of length 2n, invadj of length 2n)
         if (!returnSolution) {
-            boolean isSolvable = (new TwoPositionBinarySearcher()).isSolvable(input[0], input[1]);
+            boolean isSolvable = (new TwoPositionBinarySearcher()).isSolvable(input.get(0), input.get(1));
             if (!isSolvable) return false;
         }
         // call getSolution(adj, inadj) assumes is solvable returns boolean array of length n
-        boolean labels[] = (new TwoPositionBinarySearcher()).getSolution(input[0], input[1]);
+        boolean labels[] = (new TwoPositionBinarySearcher()).getSolution(input.get(0), input.get(1));
 
         // translate back to labels
         if (returnSolution) {
-            int n = labels.length;
-            int count = 0;
+            count = 0;
             for (FourPositionPoint point : intersectingPoints) {
+                DirectionEnum direction;
                 if (labels[count]) {
-                    record.
+                    direction = point.getCandidates().get(0).getDirection();
+                } else {
+                    direction = point.getCandidates().get(1).getDirection();
                 }
-
-
+                point.getOriginalRecordLabel().setDirection(direction);
                 count++;
+            }
+            for (FourPositionLabel label : selectedLabels) {
+                label.getPoI().getOriginalRecordLabel().setDirection(label.getDirection());
             }
         }
         return true;
@@ -397,7 +400,8 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
     void getSolution(DataRecord record, double height) {
         preprocessing(record, height);
         boolean solvable = eliminateImpossibleCandidates();
-        solvable = doTwoSat(true);
+        record.height = height;
+        solvable = doTwoSat(record, true);
     }
 
 

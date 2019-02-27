@@ -71,8 +71,23 @@ public class FourPositionLabel extends AbstractLabel {
         return this.direction.toString();
     }
 
+    public DirectionEnum getDirection() {
+        String direction = this.getPlacement();
+        switch (direction) {
+            case "NE": return DirectionEnum.NE;
+            case "NW": return DirectionEnum.NW;
+            case "SE": return DirectionEnum.SE;
+            case "SW": return DirectionEnum.SW;
+        }
+        throw new IllegalStateException("Has no direction for some fckin reason");
+    }
+
     @Override
     public Rectangle getRectangle() {
         return this.rectangle;
+    }
+
+    public void setID(int id) {
+        this.ID = id;
     }
 }
