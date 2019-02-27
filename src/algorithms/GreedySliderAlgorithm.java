@@ -122,7 +122,7 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
         if (xMax == label.getPOI().getX() - width) {
             label.setFieldExtended((int) label.getPOI().getX(), 0, width);
         } else {
-            label.setFieldExtended(maxLabel.getA(), maxLabel.getB() + 1, width);
+            label.setFieldExtended(maxLabel.getSequenceStartX(), maxLabel.getSequenceIndex() + 1, width);
         }
 
         return true;
