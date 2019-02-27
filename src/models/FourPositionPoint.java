@@ -6,6 +6,8 @@ import java.util.ArrayList;
 
 public class FourPositionPoint extends Point {
 
+    private int id;
+
     private ArrayList<FourPositionLabel> candidates = new ArrayList<>();
 
     public FourPositionPoint(PointInterface point) {
@@ -21,4 +23,12 @@ public class FourPositionPoint extends Point {
     }
 
     public ArrayList<FourPositionLabel> getCandidates() { return candidates; }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return this.id;
+    }
 }

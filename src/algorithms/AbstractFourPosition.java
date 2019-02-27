@@ -58,5 +58,5 @@ public abstract class AbstractFourPosition extends BinarySearcher {
      * and check, whether this remaining problem is solvable with 2-SAT (like 2 position)
      *
      */
-    abstract boolean doTwoSat(boolean returnSolution);
+    abstract boolean doTwoSat(DataRecord record, boolean returnSolution);
 }

@@ -335,21 +335,43 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
     }
 
     @Override
-    boolean doTwoSat(boolean returnSolution) {
+    boolean doTwoSat(DataRecord record, boolean returnSolution) {
         // Get Points from labels
         Set<FourPositionPoint> intersectingPoints = new HashSet<>();
+        for (FourPositionLabel conflictingLabel : labelsWithConflicts) {
+            intersectingPoints.add(conflictingLabel.getPoI());
+        }
+        int count = 0;
+        for (FourPositionPoint point : intersectingPoints) {
+            point.
+        }
 
         // Create input array from points
         ArrayList<List<Integer>[]> input = createImplicationGraph(intersectingPoints);
 
         // Get solution from
         // call is boolean solvable (adj of length 2n, invadj of length 2n)
-        boolean isSolvable = (new TwoPositionBinarySearcher()).isSolvable(input[0], input[1]);
+        if (!returnSolution) {
+            boolean isSolvable = (new TwoPositionBinarySearcher()).isSolvable(input[0], input[1]);
+            if (!isSolvable) return false;
+        }
         // call getSolution(adj, inadj) assumes is solvable returns boolean array of length n
         boolean labels[] = (new TwoPositionBinarySearcher()).getSolution(input[0], input[1]);
 
         // translate back to labels
+        if (returnSolution) {
+            int n = labels.length;
+            int count = 0;
+            for (FourPositionPoint point : intersectingPoints) {
+                if (labels[count]) {
+                    record.
+                }
 
+
+                count++;
+            }
+        }
+        return true;
     }
 
     private ArrayList<List<Integer>[]> createImplicationGraph(Set<FourPositionPoint> intersectingPoints) {
@@ -366,14 +388,16 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
         preprocessing(record, height);
         boolean solvable = eliminateImpossibleCandidates();
         if (!solvable) return false;
-        solvable = doTwoSat(false);
+        solvable = doTwoSat(record, false);
         if (!solvable) return false;
         return true;
     }
 
     @Override
     void getSolution(DataRecord record, double height) {
-        // TODO: implement
+        preprocessing(record, height);
+        boolean solvable = eliminateImpossibleCandidates();
+        solvable = doTwoSat(true);
     }
 
 
