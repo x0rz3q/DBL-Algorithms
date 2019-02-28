@@ -36,6 +36,7 @@ public class FourPositionLabel extends AbstractLabel {
 
     public void setDirection(DirectionEnum direction) throws IllegalArgumentException {
         PointInterface point = this.PoI;
+        this.direction = direction;
 
         switch (direction) {
             case NE:

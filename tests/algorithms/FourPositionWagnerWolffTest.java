@@ -239,6 +239,7 @@ class FourPositionWagnerWolffTest {
         record.labels = new ArrayList<>();
         record.collection = new KDTree();
         record.aspectRatio = 1;
+        record.height = 15;
         FourPositionPoint point = new FourPositionPoint(new Point(100,100));
         FourPositionPoint point2 = new FourPositionPoint(new Point(120, 100));
         FourPositionLabel label = new FourPositionLabel(0, record.aspectRatio, 0, point, DirectionEnum.NE);
@@ -250,10 +251,10 @@ class FourPositionWagnerWolffTest {
 
         FourPositionPoint pointPoint = new FourPositionPoint(label);
         FourPositionPoint point2Point = new FourPositionPoint(label2);
-        FourPositionLabel pointLabel1 = new FourPositionLabel(15, record.aspectRatio, 0, pointPoint, DirectionEnum.NE);
-        FourPositionLabel pointLabel2 = new FourPositionLabel(15, record.aspectRatio, 0, pointPoint, DirectionEnum.NW);
-        FourPositionLabel point2Label1 = new FourPositionLabel(15, record.aspectRatio, 0, point2Point, DirectionEnum.SE);
-        FourPositionLabel point2Label2 = new FourPositionLabel(15, record.aspectRatio, 0, point2Point, DirectionEnum.SW);
+        FourPositionLabel pointLabel1 = new FourPositionLabel(record.height, record.aspectRatio, 0, pointPoint, DirectionEnum.NE);
+        FourPositionLabel pointLabel2 = new FourPositionLabel(record.height, record.aspectRatio, 0, pointPoint, DirectionEnum.NW);
+        FourPositionLabel point2Label1 = new FourPositionLabel(record.height, record.aspectRatio, 0, point2Point, DirectionEnum.SE);
+        FourPositionLabel point2Label2 = new FourPositionLabel(record.height, record.aspectRatio, 0, point2Point, DirectionEnum.SW);
 
         pointPoint.addCandidate(pointLabel1);
         pointPoint.addCandidate(pointLabel2);
@@ -271,7 +272,7 @@ class FourPositionWagnerWolffTest {
         algo.getLabelsWithConflicts().add(point2Label2);
 
         algo.doTwoSat(record, true);
-
+        System.out.println("weehaa");
     }
 
     @Test
