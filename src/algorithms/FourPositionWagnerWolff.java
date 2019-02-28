@@ -58,8 +58,12 @@ public class FourPositionWagnerWolff extends AbstractFourPosition {
 
     @Override
     void preprocessing(DataRecord record, Double sigma) {
-        //labels.collection = new QuadTree(new Rectangle(0,0,10000,10000));
-        labels.collection = new KDTree(); // is bugged
+        // initialization
+        pointsQueue = new ArrayDeque<>();
+        labelsWithConflicts = new ArrayList<>();
+        selectedLabels = new ArrayList<>();
+        labels = new DataRecord();
+        labels.collection = new KDTree();
         labels.aspectRatio = record.aspectRatio;
 
         double ratio = record.aspectRatio;

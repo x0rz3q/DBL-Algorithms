@@ -272,7 +272,80 @@ class FourPositionWagnerWolffTest {
         algo.getLabelsWithConflicts().add(point2Label2);
 
         algo.doTwoSat(record, true);
-        System.out.println("weehaa");
+    }
+
+    @Test
+    void doTwoSat2() {
+        DataRecord record = new DataRecord();
+        record.labels = new ArrayList<>();
+        record.collection = new KDTree();
+        record.aspectRatio = 1;
+        record.height = 30;
+        FourPositionPoint point1 = new FourPositionPoint(new Point(430, 460));
+        FourPositionPoint point2 = new FourPositionPoint(new Point(465, 450));
+        FourPositionPoint point3 = new FourPositionPoint(new Point(450, 500));
+        FourPositionPoint point4 = new FourPositionPoint(new Point(500, 500));
+        record.collection.insert(point1);
+        record.collection.insert(point2);
+        record.collection.insert(point3);
+        record.collection.insert(point4);
+        FourPositionLabel label1 = new FourPositionLabel(0, record.aspectRatio, 0, point1, DirectionEnum.NE);
+        FourPositionLabel label2 = new FourPositionLabel(0, record.aspectRatio, 0, point2, DirectionEnum.NE);
+        FourPositionLabel label3 = new FourPositionLabel(0, record.aspectRatio, 0, point3, DirectionEnum.NE);
+        FourPositionLabel label4 = new FourPositionLabel(0, record.aspectRatio, 0, point4, DirectionEnum.NE);
+        record.labels.add(label1);
+        record.labels.add(label2);
+        record.labels.add(label3);
+        record.labels.add(label4);
+
+        FourPositionPoint pointPoint1 = new FourPositionPoint(label1);
+        FourPositionPoint pointPoint2 = new FourPositionPoint(label2);
+        FourPositionPoint pointPoint3 = new FourPositionPoint(label3);
+        FourPositionPoint pointPoint4 = new FourPositionPoint(label4);
+        FourPositionLabel pointPoint1Label1 = new FourPositionLabel(record.height, record.aspectRatio, 0, pointPoint1, DirectionEnum.NE);
+        FourPositionLabel pointPoint1Label2 = new FourPositionLabel(record.height, record.aspectRatio, 0, pointPoint1, DirectionEnum.SE);
+        pointPoint1.addCandidate(pointPoint1Label1);
+        pointPoint1.addCandidate(pointPoint1Label2);
+        FourPositionLabel pointPoint2Label1 = new FourPositionLabel(record.height, record.aspectRatio, 0, pointPoint2, DirectionEnum.NE);
+        FourPositionLabel pointPoint2Label2 = new FourPositionLabel(record.height, record.aspectRatio, 0, pointPoint2, DirectionEnum.SW);
+        pointPoint2.addCandidate(pointPoint2Label1);
+        pointPoint2.addCandidate(pointPoint2Label2);
+        FourPositionLabel pointPoint3Label1 = new FourPositionLabel(record.height, record.aspectRatio, 0, pointPoint3, DirectionEnum.NE);
+        FourPositionLabel pointPoint3Label2 = new FourPositionLabel(record.height, record.aspectRatio, 0, pointPoint3, DirectionEnum.SE);
+        pointPoint3.addCandidate(pointPoint3Label1);
+        pointPoint3.addCandidate(pointPoint3Label2);
+        FourPositionLabel pointPoint4Label1 = new FourPositionLabel(record.height, record.aspectRatio, 0, pointPoint4, DirectionEnum.NW);
+        FourPositionLabel pointPoint4Label2 = new FourPositionLabel(record.height, record.aspectRatio, 0, pointPoint4, DirectionEnum.SW);
+        pointPoint4.addCandidate(pointPoint4Label1);
+        pointPoint4.addCandidate(pointPoint4Label2);
+
+        pointPoint1Label1.addConflict(pointPoint3Label2);
+        pointPoint1Label2.addConflict(pointPoint2Label2);
+        pointPoint2Label1.addConflict(pointPoint3Label2);
+        pointPoint2Label1.addConflict(pointPoint4Label2);
+        pointPoint2Label2.addConflict(pointPoint1Label2);
+        pointPoint3Label1.addConflict(pointPoint4Label1);
+        pointPoint3Label2.addConflict(pointPoint1Label1);
+        pointPoint3Label2.addConflict(pointPoint2Label1);
+        pointPoint3Label2.addConflict(pointPoint4Label2);
+        pointPoint4Label1.addConflict(pointPoint3Label1);
+        pointPoint4Label2.addConflict(pointPoint2Label1);
+        pointPoint4Label2.addConflict(pointPoint3Label2);
+
+        algo.getLabelsWithConflicts().add(pointPoint1Label1);
+        algo.getLabelsWithConflicts().add(pointPoint1Label2);
+        algo.getLabelsWithConflicts().add(pointPoint2Label1);
+        algo.getLabelsWithConflicts().add(pointPoint2Label2);
+        algo.getLabelsWithConflicts().add(pointPoint3Label1);
+        algo.getLabelsWithConflicts().add(pointPoint3Label2);
+        algo.getLabelsWithConflicts().add(pointPoint4Label1);
+        algo.getLabelsWithConflicts().add(pointPoint4Label2);
+
+        algo.doTwoSat(record, true);
+        assertEquals("NE", record.labels.get(0).getPlacement());
+        assertEquals("SW", record.labels.get(1).getPlacement());
+        assertEquals("NE", record.labels.get(2).getPlacement());
+        assertEquals("SW", record.labels.get(3).getPlacement());
     }
 
     @Test
