@@ -35,7 +35,7 @@ public class Record {
         PlacementModelEnum model = PlacementModelEnum.fromString(scan("placement model: .*", scanner));
         double ratio = Double.parseDouble(scan("aspect ratio: .*", scanner));
         double height = Double.parseDouble(scan("height: .*", scanner));
-        int points = Integer.parseInt(scan("number of points: .*", scanner));
+        this.pointCount = Integer.parseInt(scan("number of points: .*", scanner));
 
         scanner.nextLine();
         scanner.useDelimiter(Pattern.compile("\\p{javaWhitespace}+"));

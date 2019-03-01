@@ -21,7 +21,6 @@ public class Controller {
     public void initialize() {
         mainPanel.setBackground(new Background(new BackgroundFill(Color.web("#000"), CornerRadii.EMPTY, Insets.EMPTY)));
         this.record = new Record(System.in);
-//        this.record = Record.parse();
     }
 
     public void setTitle(Stage stage) {
