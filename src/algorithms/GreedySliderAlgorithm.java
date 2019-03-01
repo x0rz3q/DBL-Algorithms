@@ -63,7 +63,7 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
 
             if (high - low < epsilon) {
                 if (low != mid) solve(record, sortedLabels, low);
-                record.height = low;
+                record.height = low / record.aspectRatio;
                 break;
             }
         }

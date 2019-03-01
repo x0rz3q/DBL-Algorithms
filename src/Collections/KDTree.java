@@ -43,7 +43,7 @@ public class KDTree extends AbstractCollection {
      * @param nodes Collection of {@link GeometryInterface} to be contained in the tree
      * @param depth Depth of this root.
      */
-    private KDTree(List<GeometryInterface> nodes, int depth, int limit) {
+    private KDTree(List<? extends GeometryInterface> nodes, int depth, int limit) {
         this.nodes = new ArrayList<>();
         this.count = nodes.size();
         this.depth = depth;
@@ -57,7 +57,7 @@ public class KDTree extends AbstractCollection {
      *
      * @param nodes Collection of {@link GeometryInterface} to be contained in the tree
      */
-    public KDTree(List<GeometryInterface> nodes, int limit) {
+    public KDTree(List<? extends GeometryInterface> nodes, int limit) {
         this(nodes, 0, limit);
     }
 
@@ -151,7 +151,7 @@ public class KDTree extends AbstractCollection {
      * @param nodes what nodes to put in this subtree
      * @param depth depth of the root
      */
-    private void buildTree(List<GeometryInterface> nodes, int depth) {
+    private void buildTree(List<? extends GeometryInterface> nodes, int depth) {
         if (nodes.size() + this.nodes.size() <= this.dataLimit) { // if below data limit
             this.nodes.addAll(nodes);
             this.depth = depth;
