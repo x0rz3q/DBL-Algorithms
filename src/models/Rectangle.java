@@ -10,10 +10,20 @@ public class Rectangle implements GeometryInterface {
     private PointInterface topRight;
     private PointInterface PoI;
 
+    public Rectangle(double xMin, double yMin, double xMax, double yMax) {
+        this.bottomLeft = new Point(xMin, yMin);
+        this.topRight = new Point(xMax, yMax);
+    }
+
     public Rectangle(double xMin, double yMin, double xMax, double yMax, PointInterface point) {
         this.bottomLeft = new Point(xMin, yMin);
         this.topRight = new Point(xMax, yMax);
         this.PoI = point;
+    }
+
+    public Rectangle(PointInterface bottomLeft, PointInterface topRight) {
+        this.bottomLeft = bottomLeft;
+        this.topRight = topRight;
     }
 
     public Rectangle(PointInterface bottomLeft, PointInterface topRight, PointInterface pointOfInterest) {
