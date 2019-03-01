@@ -19,14 +19,19 @@ class Strategy2pos extends GenerationStrategy {
         double width = data.result * data.ratio;
 
         QuadTree tree = new QuadTree(new Rectangle(0, 0, 100000, 100000, new Point(0, 0)));
+        QuadTree pointsTree = new QuadTree(new Rectangle(0, 0, 100000, 100000));
         for (Rectangle r : rectangles) {
             tree.insert(r);
+            pointsTree.insert(new Rectangle(r.getPoI(), r.getPoI(), r.getPoI()));
         }
 
         while (rectangles.size() < data.n && counter < data.n * 100000) {
             counter++;
 
             Point candidate = new Point(data.xGenerator.sample(), data.yGenerator.sample());
+            while (pointsTree.query2D(new Rectangle(candidate.getX() - 0.5, candidate.getY() - 0.5, candidate.getX() + 0.5, candidate.getY() + 0.5)).size() > 0) {
+                candidate = new Point(data.xGenerator.sample(), data.yGenerator.sample());
+            }
             boolean useLeft = rand.nextBoolean();
             if (useLeft) {
                 // Check left
@@ -35,6 +40,7 @@ class Strategy2pos extends GenerationStrategy {
                 if (tree.query2D(candidateRectangle).size() == 0) {
                     rectangles.add(candidateRectangle);
                     tree.insert(candidateRectangle);
+                    pointsTree.insert(new Rectangle(candidate, candidate, candidate));
                     continue;
                 }
 
@@ -44,6 +50,7 @@ class Strategy2pos extends GenerationStrategy {
                 if (tree.query2D(candidateRectangle).size() == 0) {
                     rectangles.add(candidateRectangle);
                     tree.insert(candidateRectangle);
+                    pointsTree.insert(new Rectangle(candidate, candidate, candidate));
                     continue;
                 }
 
@@ -54,6 +61,7 @@ class Strategy2pos extends GenerationStrategy {
                 if (tree.query2D(candidateRectangle).size() == 0) {
                     rectangles.add(candidateRectangle);
                     tree.insert(candidateRectangle);
+                    pointsTree.insert(new Rectangle(candidate, candidate, candidate));
                     continue;
                 }
 
@@ -63,6 +71,7 @@ class Strategy2pos extends GenerationStrategy {
                 if (tree.query2D(candidateRectangle).size() == 0) {
                     rectangles.add(candidateRectangle);
                     tree.insert(candidateRectangle);
+                    pointsTree.insert(new Rectangle(candidate, candidate, candidate));
                     continue;
                 }
             }
