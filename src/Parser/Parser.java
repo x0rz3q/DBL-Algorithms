@@ -9,6 +9,7 @@ import interfaces.AbstractCollectionInterface;
 import interfaces.ParserInterface;
 import interfaces.models.GeometryInterface;
 import interfaces.models.LabelInterface;
+import interfaces.models.PointInterface;
 import models.*;
 
 import java.io.IOException;
@@ -53,6 +54,8 @@ public class Parser implements ParserInterface {
         double xMax = -1;
         double yMax = -1;
 
+        List<PointInterface> points = new ArrayList<>();
+
         try {
             while (!sc.hasNextInt()) sc.next();
             int n = sc.nextInt();
@@ -71,6 +74,8 @@ public class Parser implements ParserInterface {
                 yMax = Math.max(yMax, y);
 
                 LabelInterface label = null;
+                points.add(new Point(x,y));
+
                 switch (rec.placementModel) {
                     case TWO_POS:
                         label = new PositionLabel(x, y, 0, rec.aspectRatio, i, DirectionEnum.NE);
@@ -95,7 +100,7 @@ public class Parser implements ParserInterface {
             //TODO: xmin etc can be removed.
             rec.collection = initQuadTree(rec.labels, xMin, xMax, yMin, yMax);
         } else if (collectionClass == KDTree.class && rec.placementModel == PlacementModelEnum.FOUR_POS) {
-            rec.collection = initKDTree4Pos(rec.labels);
+            rec.collection = initKDTree4Pos(points);
         } else if (collectionClass == KDTree.class) {
             rec.collection = initKDTree(rec.labels);
         } else {
@@ -122,12 +127,8 @@ public class Parser implements ParserInterface {
         return new KDTree(new ArrayList<>(labels), 5);
     }
 
-    private KDTree initKDTree4Pos(List<LabelInterface> labels) {
-        KDTree tree = new KDTree();
-
-        for (LabelInterface label : labels) {
-            tree.insert(new FourPositionPoint(label.getPOI()));
-        }
+    private KDTree initKDTree4Pos(List<PointInterface> points) {
+        KDTree tree = new KDTree(points, 1);
 
         return tree;
     }
