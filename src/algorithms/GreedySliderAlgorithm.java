@@ -50,21 +50,25 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
         }
         sortedLabels.sort(comparator);
 
-        double epsilon = 0.000000000000001;
+        double epsilon = 0;
         double low = 0;
         double high = Double.MAX_VALUE;
         while (true) {
             double mid = (low + high) / 2;
             if (solve(record, sortedLabels, mid)) {
+                System.err.println(mid);
                 low = mid;
             } else {
+                System.err.println(mid);
                 high = mid;
             }
 
-            if (high - low < epsilon) {
+            if (mid == epsilon) {
                 if (low != mid) solve(record, sortedLabels, low);
                 record.height = low / record.aspectRatio;
                 break;
+            } else {
+                epsilon = mid;
             }
         }
     }
@@ -84,7 +88,9 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
         for (FieldExtendedSliderLabel label : sortedLabels) {
             if (!setLabel(record, label, width)) {
                 for (SliderLabel l : sortedLabels) {
+                    record.collection.remove(l);
                     l.setHeight(0);
+                    record.collection.insert(l);
                 }
                 return false;
             }
@@ -119,11 +125,13 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
 
         if (xMax > label.getPOI().getX()) return false;
 
+        record.collection.remove(label);
         if (xMax == label.getPOI().getX() - width) {
             label.setFieldExtended((int) label.getPOI().getX(), 0, width);
         } else {
             label.setFieldExtended(maxLabel.getSequenceStartX(), maxLabel.getSequenceIndex() + 1, width);
         }
+        record.collection.insert(label);
 
         return true;
     }

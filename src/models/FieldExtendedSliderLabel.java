@@ -86,6 +86,8 @@ public class FieldExtendedSliderLabel extends SliderLabel {
             throw new IllegalArgumentException("FieldExtendedSliderLabel.setRectangle rectangle not above Poi");
         }
 
+        if (width == 0) throw new IllegalArgumentException("FieldExtendedSliderLabel.setRectangle doesn't handle width = 0 rectangles");
+
         this.rectangle = new Rectangle(
                 sequenceStartX + (sequenceIndex - 1) * width,
                 this.poi.getY(),
@@ -98,11 +100,6 @@ public class FieldExtendedSliderLabel extends SliderLabel {
         this.width = width;
         this.height = width / aspectRatio;
         this.isExtended = true;
-
-        if (sequenceIndex == 0) {
-            this.shift = 0;
-        } else {
-            this.shift = (sequenceStartX - this.getXMax()) / width + sequenceIndex;
-        }
+        this.shift = (sequenceStartX - this.poi.getXMax()) / width + sequenceIndex;
     }
 }
