@@ -1,16 +1,12 @@
 package visualizer;
 
 import Collections.QuadTree;
-import com.sun.org.apache.regexp.internal.RE;
-import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
 import interfaces.models.GeometryInterface;
 import interfaces.models.LabelInterface;
 import models.*;
 
 import java.io.InputStream;
-import java.io.StringWriter;
 import java.util.*;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Record {

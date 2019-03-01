@@ -1,17 +1,12 @@
 package visualizer;
 
 
-import interfaces.models.LabelInterface;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import models.Rectangle;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class Controller {
     @FXML
