@@ -11,8 +11,16 @@ public class FourPositionLabel extends AbstractLabel {
 
     private ArrayList<FourPositionLabel> conflicts = new ArrayList<>();
 
+    public FourPositionLabel(double x, double y, double height, double aspectRatio, int ID, DirectionEnum direction) {
+        super(x, y, height, aspectRatio, ID);
+        this.direction = direction;
+        this.PoI = new FourPositionPoint(this.poi);
+        this.setHeight(height);
+    }
+
     public FourPositionLabel(double height, double aspectRatio, int ID, FourPositionPoint point, DirectionEnum direction) {
         super(point.getX(), point.getY(), height, aspectRatio, ID);
+
         this.direction = direction;
         PoI = point;
         this.setHeight(height);
