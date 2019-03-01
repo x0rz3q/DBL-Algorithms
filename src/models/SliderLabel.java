@@ -24,9 +24,12 @@ public class SliderLabel extends AbstractLabel {
             throw new IllegalArgumentException("SliderLabel.setEdgeLength.pre violated: shift > 1 || shift < 0");
         }
 
-        this.rectangle = new Rectangle(this.poi.getX(), this.poi.getY(),
-                this.poi.getX() + this.height * this.aspectRation * this.shift,
+        this.rectangle = new Rectangle(
+                this.poi.getX() + this.height * this.aspectRatio * (this.shift - 1),
+                this.poi.getY(),
+                this.poi.getX() + this.height * this.aspectRatio * this.shift,
                 this.poi.getY() + this.height);
+        this.shift = shift;
     }
 
     public String getPlacement() {
@@ -46,7 +49,6 @@ public class SliderLabel extends AbstractLabel {
 
     @Override
     public void setWidth(double width) {
-        this.setHeight(width / this.aspectRation);
-        this.setShift(this.shift);
+        this.setHeight(width / this.aspectRatio);
     }
 }
