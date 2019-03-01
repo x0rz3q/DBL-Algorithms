@@ -5,9 +5,9 @@ import interfaces.models.PointInterface;
 import java.util.ArrayList;
 
 public class FourPositionLabel extends AbstractLabel {
-    protected  DirectionEnum direction;
+    private DirectionEnum direction;
 
-    private FourPositionPoint PoI = null;
+    private FourPositionPoint PoI;
 
     private ArrayList<FourPositionLabel> conflicts = new ArrayList<>();
 

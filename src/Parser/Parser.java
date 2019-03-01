@@ -27,7 +27,7 @@ public class Parser implements ParserInterface {
         if (source == null) throw new NullPointerException("parser.input: source not found");
 
         DataRecord rec = new DataRecord();
-        Scanner sc = new Scanner(source);
+        Scanner sc = new Scanner(source).useLocale(Locale.ENGLISH);
 
         if (!sc.hasNext()) {
             throw new IllegalArgumentException("Parser.input.pre violated: source length is zero");
@@ -72,8 +72,10 @@ public class Parser implements ParserInterface {
                 LabelInterface label = null;
                 switch (rec.placementModel) {
                     case TWO_POS:
-                    case FOUR_POS:
                         label = new PositionLabel(x, y, 0, rec.aspectRatio, i, DirectionEnum.NE);
+                        break;
+                    case FOUR_POS:
+                        label = new FourPositionLabel(0, rec.aspectRatio, i, null, DirectionEnum.NE);
                         break;
                     case ONE_SLIDER:
                         label = new FieldExtendedSliderLabel(x, y, 0, rec.aspectRatio, 0, i);

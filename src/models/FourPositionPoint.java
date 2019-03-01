@@ -1,6 +1,5 @@
 package models;
 
-import interfaces.models.LabelInterface;
 import interfaces.models.PointInterface;
 
 import java.util.ArrayList;
