@@ -27,7 +27,7 @@ public class Parser implements ParserInterface {
         if (source == null) throw new NullPointerException("parser.input: source not found");
 
         DataRecord rec = new DataRecord();
-        Scanner sc = new Scanner(source);
+        Scanner sc = new Scanner(source).useLocale(Locale.ENGLISH);
 
         if (!sc.hasNext()) {
             throw new IllegalArgumentException("Parser.input.pre violated: source length is zero");
