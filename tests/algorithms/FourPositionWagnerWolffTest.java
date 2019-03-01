@@ -558,7 +558,6 @@ class FourPositionWagnerWolffTest {
         record.labels.add(label3);
         record.labels.add(label4);
         record.labels.add(label5);
-        algo.getSolution(record, 203);
-        System.out.println("wheehaa");
+        algo.getSolution(record, 200);
     }
 }
