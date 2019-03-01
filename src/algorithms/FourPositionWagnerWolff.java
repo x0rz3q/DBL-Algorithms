@@ -59,7 +59,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
             conflicts[i++] = size;
         }
 
-        // Optionally sort conflicts before passing them to general binary searcher TODO determine whether required
+        // Optionally sort conflicts before passing them to general binary searcher
         Arrays.sort(conflicts);
 
         return conflicts;
@@ -269,7 +269,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
     }
 
     /**
-     * Checks wether a candidate p_i of a given point p intersects all remaining candidates of a different point q.
+     * Checks whether a candidate p_i of a given point p intersects all remaining candidates of a different point q.
      * If so, p_i is removed.
      * If candidates of p were removed then p is put back in the queue
      *
@@ -487,6 +487,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
     void getSolution(DataRecord record, double height) {
         preprocessing(record, height);
         boolean solvable = eliminateImpossibleCandidates();
+        applyHeuristic();
         record.height = height;
         solvable = doTwoSat(record, true);
     }
