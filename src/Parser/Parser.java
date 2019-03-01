@@ -94,6 +94,8 @@ public class Parser implements ParserInterface {
         if (collectionClass == QuadTree.class) {
             //TODO: xmin etc can be removed.
             rec.collection = initQuadTree(rec.labels, xMin, xMax, yMin, yMax);
+        } else if (collectionClass == KDTree.class && rec.placementModel == PlacementModelEnum.FOUR_POS) {
+            rec.collection = initKDTree4Pos(rec.labels);
         } else if (collectionClass == KDTree.class) {
             rec.collection = initKDTree(rec.labels);
         } else {
@@ -118,6 +120,16 @@ public class Parser implements ParserInterface {
 
     private KDTree initKDTree(List<LabelInterface> labels) {
         return new KDTree(new ArrayList<>(labels), 5);
+    }
+
+    private KDTree initKDTree4Pos(List<LabelInterface> labels) {
+        KDTree tree = new KDTree();
+
+        for (LabelInterface label : labels) {
+            tree.insert(new FourPositionPoint(label.getPOI()));
+        }
+
+        return tree;
     }
 
     /**
