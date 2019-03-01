@@ -52,14 +52,12 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
 
         double epsilon = 0;
         double low = 0;
-        double high = Double.MAX_VALUE;
+        double high = Integer.MAX_VALUE; //@TODO find a better upper bound if there exists one
         while (true) {
             double mid = (low + high) / 2;
             if (solve(record, sortedLabels, mid)) {
-                System.err.println(mid);
                 low = mid;
             } else {
-                System.err.println(mid);
                 high = mid;
             }
 
