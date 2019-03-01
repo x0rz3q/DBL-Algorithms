@@ -1002,3 +1002,4 @@ number of points: 1000
 8090 9084
 7406 777
 label height: 4.0
+min height: 4.0

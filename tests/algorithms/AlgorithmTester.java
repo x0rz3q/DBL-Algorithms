@@ -2,7 +2,7 @@ package algorithms;
 
 import Collections.QuadTree;
 import Parser.DataRecord;
-import Parser.Pair;
+import Parser.TestDataRecord;
 import Parser.Parser;
 import interfaces.AbstractAlgorithmInterface;
 import interfaces.AbstractCollectionInterface;
@@ -22,9 +22,9 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 public class AlgorithmTester {
 
-    private void runTest(DataRecord record, String fileName, double optHeight, AbstractAlgorithmInterface algorithms) {
+    private void runTest(TestDataRecord record, String fileName, AbstractAlgorithmInterface algorithms) {
         algorithms.solve(record);
-        assertEquals(optHeight, record.height, "the height found is not correct in file: " + fileName);
+        assertTrue(record.height >= record.reqHeight, "the height found is not correct in file: " + fileName + ", expected min: " + record.reqHeight + " actual value: " + record.height);
         assertTrue(Interpreter.isValid(record), "the solution found is not valid in file: " + fileName);
     }
 
@@ -38,9 +38,9 @@ public class AlgorithmTester {
             Collection<DynamicTest> tests = new ArrayList<>();
             for (File file : listOfFiles) {
                 if (file.isFile()) {
-                    Pair<DataRecord, Double> input = parser.inputTestMode(new FileInputStream(file), collection);
+                    TestDataRecord input = parser.inputTestMode(new FileInputStream(file), collection);
                     tests.add(dynamicTest("test of " + algorithm.getClass() + " on file: " + file.getName(),
-                            () -> runTest(input.getKey(), file.getName(), input.getValue(), algorithm)));
+                            () -> runTest(input, file.getName(), algorithm)));
                 }
             }
             return tests;

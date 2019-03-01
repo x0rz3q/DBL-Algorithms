@@ -534,5 +534,31 @@ class FourPositionWagnerWolffTest {
 
     @Test
     void getSolution() {
+        DataRecord record = new DataRecord();
+        record.labels = new ArrayList<>();
+        record.collection = new KDTree();
+        record.aspectRatio = 1;
+        FourPositionPoint point1 = new FourPositionPoint(new Point(100, 100));
+        FourPositionPoint point2 = new FourPositionPoint(new Point(200, 200));
+        FourPositionPoint point3 = new FourPositionPoint(new Point(300, 300));
+        FourPositionPoint point4 = new FourPositionPoint(new Point(400, 400));
+        FourPositionPoint point5 = new FourPositionPoint(new Point(500, 500));
+        LabelInterface label1 = new FourPositionLabel(0, record.aspectRatio, 0, point1, DirectionEnum.NE);
+        LabelInterface label2 = new FourPositionLabel(0, record.aspectRatio, 0, point2, DirectionEnum.NE);
+        LabelInterface label3 = new FourPositionLabel(0, record.aspectRatio, 0, point3, DirectionEnum.NE);
+        LabelInterface label4 = new FourPositionLabel(0, record.aspectRatio, 0, point4, DirectionEnum.NE);
+        LabelInterface label5 = new FourPositionLabel(0, record.aspectRatio, 0, point5, DirectionEnum.NE);
+        record.collection.insert(point1);
+        record.collection.insert(point2);
+        record.collection.insert(point3);
+        record.collection.insert(point4);
+        record.collection.insert(point5);
+        record.labels.add(label1);
+        record.labels.add(label2);
+        record.labels.add(label3);
+        record.labels.add(label4);
+        record.labels.add(label5);
+        algo.getSolution(record, 203);
+        System.out.println("wheehaa");
     }
 }

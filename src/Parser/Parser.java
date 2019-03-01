@@ -7,7 +7,9 @@ import Collections.KDTree;
 import Collections.QuadTree;
 import interfaces.AbstractCollectionInterface;
 import interfaces.ParserInterface;
+import interfaces.models.GeometryInterface;
 import interfaces.models.LabelInterface;
+import interfaces.models.PointInterface;
 import models.*;
 
 import java.io.IOException;
@@ -20,7 +22,7 @@ import java.util.*;
 public class Parser implements ParserInterface {
 
     private boolean testMode = false;
-    private double optHeight;
+    private double optHeight, reqHeight;
 
     @Override
     public DataRecord input(InputStream source, Class<? extends AbstractCollectionInterface> collectionClass) throws NullPointerException, IOException {
@@ -52,6 +54,8 @@ public class Parser implements ParserInterface {
         double xMax = -1;
         double yMax = -1;
 
+        List<PointInterface> points = new ArrayList<>();
+
         try {
             while (!sc.hasNextInt()) sc.next();
             int n = sc.nextInt();
@@ -70,12 +74,14 @@ public class Parser implements ParserInterface {
                 yMax = Math.max(yMax, y);
 
                 LabelInterface label = null;
+                points.add(new Point(x,y));
+
                 switch (rec.placementModel) {
                     case TWO_POS:
                         label = new PositionLabel(x, y, 0, rec.aspectRatio, i, DirectionEnum.NE);
                         break;
                     case FOUR_POS:
-                        label = new FourPositionLabel(0, rec.aspectRatio, i, null, DirectionEnum.NE);
+                        label = new FourPositionLabel(x, y, 0, rec.aspectRatio, i, DirectionEnum.NE);
                         break;
                     case ONE_SLIDER:
                         label = new FieldExtendedSliderLabel(x, y, 0, rec.aspectRatio, 0, i);
@@ -93,8 +99,10 @@ public class Parser implements ParserInterface {
         if (collectionClass == QuadTree.class) {
             //TODO: xmin etc can be removed.
             rec.collection = initQuadTree(rec.labels, xMin, xMax, yMin, yMax);
+        } else if (collectionClass == KDTree.class && rec.placementModel == PlacementModelEnum.FOUR_POS) {
+            rec.collection = initKDTree4Pos(points);
         } else if (collectionClass == KDTree.class) {
-            rec.collection = initKDTree();
+            rec.collection = initKDTree(rec.labels);
         } else {
             throw new InputMismatchException("parser.input collection class initializer undefined");
         }
@@ -103,6 +111,8 @@ public class Parser implements ParserInterface {
         if (testMode) {
             while (!sc.hasNextDouble()) sc.next();
             optHeight = sc.nextDouble();
+            while (!sc.hasNextDouble()) sc.next();
+            reqHeight = sc.nextDouble();
         }
 
         sc.close();
@@ -113,8 +123,14 @@ public class Parser implements ParserInterface {
         return new QuadTree(new Rectangle(-10000, -10000, 15000, 15000), points);
     }
 
-    private KDTree initKDTree() {
-        throw new UnsupportedOperationException("parser.initKDTree not implemented yet");
+    private KDTree initKDTree(List<LabelInterface> labels) {
+        return new KDTree(new ArrayList<>(labels), 5);
+    }
+
+    private KDTree initKDTree4Pos(List<PointInterface> points) {
+        KDTree tree = new KDTree(points, 1);
+
+        return tree;
     }
 
     /**
@@ -122,15 +138,15 @@ public class Parser implements ParserInterface {
      *
      * @param source          {@link Readable}
      * @param collectionClass {@link interfaces.AbstractAlgorithmInterface}
-     * @return Pair<DataRecord       ,               Double>
+     * @return {@link TestDataRecord}
      * @throws NullPointerException if {@code source == null}
      * @throws IOException          if read error occurs
      */
-    public Pair<DataRecord, Double> inputTestMode(InputStream source, Class<? extends AbstractCollectionInterface> collectionClass) throws IOException {
+    public TestDataRecord inputTestMode(InputStream source, Class<? extends AbstractCollectionInterface> collectionClass) throws IOException {
         testMode = true;
         DataRecord rec = input(source, collectionClass);
         testMode = false;
-        return new Pair<DataRecord, Double>(rec, optHeight);
+        return new TestDataRecord(rec, optHeight, reqHeight);
     }
 
     @Override
