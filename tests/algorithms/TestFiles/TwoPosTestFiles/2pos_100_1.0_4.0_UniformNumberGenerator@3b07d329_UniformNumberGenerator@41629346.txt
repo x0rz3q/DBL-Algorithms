@@ -102,3 +102,4 @@ number of points: 100
 119 624
 507 595
 label height: 4.0
+min height: 4.0

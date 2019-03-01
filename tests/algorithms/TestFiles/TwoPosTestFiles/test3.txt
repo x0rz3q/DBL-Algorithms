@@ -7,3 +7,4 @@ number of points: 5
 10000 9999
 10000 10000
 label height: 2.0
+min height: 2.0

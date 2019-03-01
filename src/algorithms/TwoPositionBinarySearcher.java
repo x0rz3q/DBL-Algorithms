@@ -14,7 +14,7 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
     private List<Integer>[] adj;
     private List<Integer>[] adjInv;
 
-    ImplicationGraphSolver solver;
+    private ImplicationGraphSolver solver;
 
     public TwoPositionBinarySearcher() {
         solver = new ImplicationGraphSolver();
