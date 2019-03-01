@@ -1,11 +1,14 @@
 package algorithms;
 
 import Parser.DataRecord;
+import distance.FourPositionDistance;
 import interfaces.models.GeometryInterface;
 import interfaces.models.LabelInterface;
+import interfaces.models.PointInterface;
 import models.DirectionEnum;
 import models.PositionLabel;
 import models.Rectangle;
+import Collections.KDTree;
 
 import java.util.*;
 
@@ -22,29 +25,32 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
 
     @Override
     double[] getSolutionSpace(DataRecord record) {
-        double maxHeight = Math.min(20000, (20000.0 * record.aspectRatio));
-        SortedSet<Double> solutions = new TreeSet<>();
+        FourPositionDistance distanceFunction = new FourPositionDistance();
+        distanceFunction.setAspectRatio(record.aspectRatio);
+        int k = 8; // number of nearest neighbours to search for
+        if (record.labels.size() < 9) k = record.labels.size() - 1;
+        Set<Double> conflictSizes = new HashSet<>();
+        for (LabelInterface label : record.labels) {
+            PointInterface point = label.getPOI();
+            Set<GeometryInterface> nearestNeighbours = ((KDTree) record.collection).nearestNeighbours(distanceFunction, k, point);
 
-        double index = 0;
-        while (index < maxHeight) {
-            solutions.add(new Double(index));
-            index++;
+            for (GeometryInterface target : nearestNeighbours) {
+                double conflictSize = distanceFunction.calculate(point, ((LabelInterface) target).getPOI());
+                conflictSizes.add(conflictSize);
+                conflictSizes.add(conflictSize/2.0);
+            }
         }
 
-        index = 0;
-        while (index * record.aspectRatio < maxHeight) {
-            solutions.add(new Double(index * record.aspectRatio));
-            index += 0.5;
+        double[] conflicts = new double[conflictSizes.size()];
+        int i = 0;
+        for (double size : conflictSizes) {
+            conflicts[i++] = size;
         }
 
-        double[] solutionSpace = new double[solutions.size()];
-        int counter = 0;
-        for (Double d : solutions) {
-            solutionSpace[counter] = d;
-            counter++;
-        }
+        // Optionally sort conflicts before passing them to general binary searcher
+        Arrays.sort(conflicts);
 
-        return solutionSpace;
+        return conflicts;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package algorithms;
 
+import Collections.KDTree;
 import Collections.QuadTree;
 import Parser.DataRecord;
 import Parser.TestDataRecord;
@@ -53,16 +54,16 @@ public class AlgorithmTester {
 
     @TestFactory
     public Collection<DynamicTest> TwoPosTest() {
-        return readInFiles("tests/algorithms/TestFiles/TwoPosTestFiles", new TwoPositionBinarySearcher(), QuadTree.class);
+        return readInFiles("tests/algorithms/TestFiles/TwoPosTestFiles", new TwoPositionBinarySearcher(), KDTree.class);
     }
 
     @TestFactory
     public Collection<DynamicTest> FourPosTest() {
-        return readInFiles("tests/algorithms/TestFiles/FourPosTestFiles", new TwoPositionBinarySearcher(), QuadTree.class);
+        return readInFiles("tests/algorithms/TestFiles/FourPosTestFiles", new TwoPositionBinarySearcher(), KDTree.class);
     }
 
     @TestFactory
     public Collection<DynamicTest> SliderTest() {
-        return readInFiles("tests/algorithms/TestFiles/SliderTestFiles", new GreedySliderAlgorithm(), QuadTree.class);
+        return readInFiles("tests/algorithms/TestFiles/SliderTestFiles", new GreedySliderAlgorithm(), KDTree.class);
     }
 }
