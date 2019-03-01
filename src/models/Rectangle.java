@@ -35,6 +35,7 @@ public class Rectangle implements GeometryInterface {
     public PointInterface getPoI() {
         return this.PoI;
     }
+    public void setPoI(PointInterface p) { this.PoI = p; }
 
     @Override
     public PointInterface getBottomLeft() {
