@@ -20,14 +20,14 @@ import java.util.*;
 public class Parser implements ParserInterface {
 
     private boolean testMode = false;
-    private double optHeight;
+    private double optHeight, reqHeight;
 
     @Override
     public DataRecord input(InputStream source, Class<? extends AbstractCollectionInterface> collectionClass) throws NullPointerException, IOException {
         if (source == null) throw new NullPointerException("parser.input: source not found");
 
         DataRecord rec = new DataRecord();
-        Scanner sc = new Scanner(source);
+        Scanner sc = new Scanner(source).useLocale(Locale.ENGLISH);
 
         if (!sc.hasNext()) {
             throw new IllegalArgumentException("Parser.input.pre violated: source length is zero");
@@ -76,7 +76,8 @@ public class Parser implements ParserInterface {
                         label = new PositionLabel(x, y, 0, rec.aspectRatio, i, DirectionEnum.NE);
                         break;
                     case ONE_SLIDER:
-                        label = new SliderLabel(x, y, 0, rec.aspectRatio, 0, i);
+                        label = new FieldExtendedSliderLabel(x, y, 0, rec.aspectRatio, 0, i);
+//                        label = new SliderLabel(x, y, 0, rec.aspectRatio, 0, i);
                         break;
                 }
 
@@ -100,6 +101,8 @@ public class Parser implements ParserInterface {
         if (testMode) {
             while (!sc.hasNextDouble()) sc.next();
             optHeight = sc.nextDouble();
+            while (!sc.hasNextDouble()) sc.next();
+            reqHeight = sc.nextDouble();
         }
 
         sc.close();
@@ -119,15 +122,15 @@ public class Parser implements ParserInterface {
      *
      * @param source          {@link Readable}
      * @param collectionClass {@link interfaces.AbstractAlgorithmInterface}
-     * @return Pair<DataRecord       ,               Double>
+     * @return {@link TestDataRecord}
      * @throws NullPointerException if {@code source == null}
      * @throws IOException          if read error occurs
      */
-    public Pair<DataRecord, Double> inputTestMode(InputStream source, Class<? extends AbstractCollectionInterface> collectionClass) throws IOException {
+    public TestDataRecord inputTestMode(InputStream source, Class<? extends AbstractCollectionInterface> collectionClass) throws IOException {
         testMode = true;
         DataRecord rec = input(source, collectionClass);
         testMode = false;
-        return new Pair<DataRecord, Double>(rec, optHeight);
+        return new TestDataRecord(rec, optHeight, reqHeight);
     }
 
     @Override

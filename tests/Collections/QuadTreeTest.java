@@ -1,6 +1,7 @@
 package Collections;
 
 import interfaces.models.GeometryInterface;
+import interfaces.models.PointInterface;
 import models.Point;
 import models.Rectangle;
 import org.junit.jupiter.api.Test;
@@ -143,5 +144,31 @@ class QuadTreeTest extends AbstractCollectionTest {
         this.instance.insert(point2);
         this.instance.insert(point3);
         assertEquals(3, this.instance.getSize());
+    }
+
+    @Test
+    void remove() {
+        GeometryInterface point1 = new Point(10, 50);
+        GeometryInterface point2 = new Point(500, 500);
+        GeometryInterface point3 = new Point(2000, 3000);
+        this.instance.insert(point1);
+        this.instance.insert(point2);
+        this.instance.insert(point3);
+        assertTrue(this.instance.remove(point1));
+        assertEquals(2, this.instance.size());
+        assertFalse(this.instance.remove(new Point(100, 100)));
+    }
+    @Test
+    void remove1() {
+        GeometryInterface R1 = new Rectangle(10, 10, 30, 30);
+        GeometryInterface R2 = new Rectangle(20, 20, 50, 50);
+        GeometryInterface R3 = new Rectangle(100, 100, 500, 500);
+        this.instance.insert(R1);
+        this.instance.insert(R2);
+        this.instance.insert(R3);
+        assertTrue(this.instance.remove(R2));
+        assertEquals(2, this.instance.size());
+        assertTrue(this.instance.remove(R3));
+        assertEquals(1, this.instance.size());
     }
 }
