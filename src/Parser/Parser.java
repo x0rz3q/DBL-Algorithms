@@ -44,7 +44,7 @@ public class Parser implements ParserInterface {
 
         try {
             while (!sc.hasNextFloat()) sc.next();
-            rec.aspectRatio = sc.nextFloat();
+            rec.aspectRatio = sc.nextDouble();
         } catch (NoSuchElementException e) {
             throw new IOException("parser.input: no aspect ratio found");
         }
