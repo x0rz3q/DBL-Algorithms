@@ -1,7 +1,9 @@
 package algorithms;
 
 import Parser.DataRecord;
+import Parser.Pair;
 import distance.FourPositionDistance;
+import distance.TwoPositionDistance;
 import interfaces.models.GeometryInterface;
 import interfaces.models.LabelInterface;
 import interfaces.models.PointInterface;
@@ -25,7 +27,7 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
 
     @Override
     double[] getSolutionSpace(DataRecord record) {
-        FourPositionDistance distanceFunction = new FourPositionDistance();
+        TwoPositionDistance distanceFunction = new TwoPositionDistance();
         distanceFunction.setAspectRatio(record.aspectRatio);
         int k = 8; // number of nearest neighbours to search for
         if (record.labels.size() < 9) k = record.labels.size() - 1;
@@ -35,9 +37,11 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
             Set<GeometryInterface> nearestNeighbours = ((KDTree) record.collection).nearestNeighbours(distanceFunction, k, point);
 
             for (GeometryInterface target : nearestNeighbours) {
-                double conflictSize = distanceFunction.calculate(point, ((LabelInterface) target).getPOI());
-                conflictSizes.add(conflictSize);
-                conflictSizes.add(conflictSize/2.0);
+                Pair<Double, Boolean> conflictSize = distanceFunction.calculateAndIsWidth(point, ((LabelInterface) target).getPOI());
+                conflictSizes.add(conflictSize.getKey());
+                if (conflictSize.getValue()) {
+                    conflictSizes.add(conflictSize.getKey() / 2.0);
+                }
             }
         }
 
@@ -46,8 +50,7 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
         for (double size : conflictSizes) {
             conflicts[i++] = size;
         }
-
-        // Optionally sort conflicts before passing them to general binary searcher
+        
         Arrays.sort(conflicts);
 
         return conflicts;
