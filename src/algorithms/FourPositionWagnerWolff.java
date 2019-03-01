@@ -7,6 +7,7 @@ import interfaces.models.LabelInterface;
 import interfaces.models.PointInterface;
 import models.*;
 import Collections.KDTree;
+import Collections.QuadTree;
 import java.util.*;
 
 import static models.DirectionEnum.*;
@@ -84,7 +85,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         labelsWithConflicts = new ArrayList<>();
         selectedLabels = new ArrayList<>();
         labels = new DataRecord();
-        labels.collection = new KDTree();
+        labels.collection = new QuadTree(new Rectangle(0, 0, 10000, 10000));
         labels.aspectRatio = record.aspectRatio;
 
         double ratio = record.aspectRatio;
