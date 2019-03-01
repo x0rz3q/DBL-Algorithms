@@ -7,6 +7,7 @@ import Collections.KDTree;
 import Collections.QuadTree;
 import interfaces.AbstractCollectionInterface;
 import interfaces.ParserInterface;
+import interfaces.models.GeometryInterface;
 import interfaces.models.LabelInterface;
 import models.*;
 
@@ -75,7 +76,7 @@ public class Parser implements ParserInterface {
                         label = new PositionLabel(x, y, 0, rec.aspectRatio, i, DirectionEnum.NE);
                         break;
                     case FOUR_POS:
-                        label = new FourPositionLabel(0, rec.aspectRatio, i, null, DirectionEnum.NE);
+                        label = new FourPositionLabel(x, y, 0, rec.aspectRatio, i, DirectionEnum.NE);
                         break;
                     case ONE_SLIDER:
                         label = new FieldExtendedSliderLabel(x, y, 0, rec.aspectRatio, 0, i);
@@ -94,7 +95,7 @@ public class Parser implements ParserInterface {
             //TODO: xmin etc can be removed.
             rec.collection = initQuadTree(rec.labels, xMin, xMax, yMin, yMax);
         } else if (collectionClass == KDTree.class) {
-            rec.collection = initKDTree();
+            rec.collection = initKDTree(rec.labels);
         } else {
             throw new InputMismatchException("parser.input collection class initializer undefined");
         }
@@ -115,8 +116,8 @@ public class Parser implements ParserInterface {
         return new QuadTree(new Rectangle(-10000, -10000, 15000, 15000), points);
     }
 
-    private KDTree initKDTree() {
-        throw new UnsupportedOperationException("parser.initKDTree not implemented yet");
+    private KDTree initKDTree(List<LabelInterface> labels) {
+        return new KDTree(new ArrayList<>(labels), 5);
     }
 
     /**
