@@ -128,7 +128,7 @@ public class KDTree extends AbstractCollection {
             if (cn != null) cd = dist.calculate(getReferencePoint(cn), getReferencePoint(node));
             /* if node is a splitter of this tree or not (a leaf and no data stored and bounding box further away than current smallest dist) */
             if (getReferencePoint(node).equals(t.splitter) ||
-                    !(t.right.isLeaf() && t.right.nodes.isEmpty() && t.right.distanceToSplitter(node, dist) > cd)) {
+                    !(t.right.isLeaf() && t.right.nodes.isEmpty() && t.distanceToSplitter(node, dist) > cd)) {
                 cn = nearest(t.right, dist, node, cd, cn, ignorables);
             }
         } else { // node in right
@@ -138,7 +138,7 @@ public class KDTree extends AbstractCollection {
             if (cn != null) cd = dist.calculate(getReferencePoint(cn), getReferencePoint(node));
             /* if node is a splitter of this tree or not (a leaf and no data stored and bounding box further away than current smallest dist) */
             if (getReferencePoint(node).equals(t.splitter) ||
-                    !(t.left.isLeaf() && t.left.nodes.isEmpty() && t.left.distanceToSplitter(node, dist) > cd)) {
+                    !(t.left.isLeaf() && t.left.nodes.isEmpty() && t.distanceToSplitter(node, dist) > cd)) {
                 cn = nearest(t.left, dist, node, cd, cn, ignorables);
             }
         }

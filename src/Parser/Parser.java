@@ -72,8 +72,10 @@ public class Parser implements ParserInterface {
                 LabelInterface label = null;
                 switch (rec.placementModel) {
                     case TWO_POS:
-                    case FOUR_POS:
                         label = new PositionLabel(x, y, 0, rec.aspectRatio, i, DirectionEnum.NE);
+                        break;
+                    case FOUR_POS:
+                        label = new FourPositionLabel(0, rec.aspectRatio, i, null, DirectionEnum.NE);
                         break;
                     case ONE_SLIDER:
                         label = new FieldExtendedSliderLabel(x, y, 0, rec.aspectRatio, 0, i);
