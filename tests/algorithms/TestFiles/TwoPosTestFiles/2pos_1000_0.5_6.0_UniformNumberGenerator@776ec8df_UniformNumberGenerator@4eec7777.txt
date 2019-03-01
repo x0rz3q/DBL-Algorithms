@@ -1002,3 +1002,4 @@ number of points: 1000
 9108 566
 5502 5126
 label height: 6.0
+min height: 6.0
