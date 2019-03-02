@@ -2,7 +2,6 @@ package algorithms;
 
 import Parser.DataRecord;
 import Parser.Pair;
-import distance.FourPositionDistance;
 import distance.TwoPositionDistance;
 import interfaces.models.GeometryInterface;
 import interfaces.models.LabelInterface;
@@ -50,7 +49,7 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
         for (double size : conflictSizes) {
             conflicts[i++] = size;
         }
-        
+
         Arrays.sort(conflicts);
 
         return conflicts;

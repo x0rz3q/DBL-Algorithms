@@ -1,8 +1,6 @@
 package algorithms;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 public class ImplicationGraphSolver {
     // variable for dfs to keep track of visited nodes
@@ -119,47 +117,62 @@ public class ImplicationGraphSolver {
     }
 
     private void dfsFirst(int start) {
-        if (visited[start]) {
-            return;
+        Deque<Integer> nodesToVisit = new ArrayDeque<Integer>();
+        nodesToVisit.add(start);
+
+        while (!nodesToVisit.isEmpty()) {
+            int current = nodesToVisit.pop();
+            if (visited[current]) {
+                continue;
+            }
+            visited[current] = true;
+
+            s.add(current);
+            for (int i : adj[current]) {
+                nodesToVisit.push(i);
+            }
         }
-
-        visited[start] = true;
-
-        for (int i : adj[start]) {
-            dfsFirst(i);
-        }
-
-        s.push(start);
     }
 
     private void dfsSecond(int start) {
-        if (visitedInv[start]) {
-            return;
-        }
-        visitedInv[start] = true;
+        Deque<Integer> nodesToVisit = new ArrayDeque<Integer>();
+        nodesToVisit.push(start);
 
-        for (int i : adjInv[start]) {
-            dfsSecond(i);
-        }
+        while (!nodesToVisit.isEmpty()) {
+            int current = nodesToVisit.pop();
+            if (visitedInv[current]) {
+                continue;
+            }
+            visitedInv[current] = true;
 
-        scc[start] = counter;
+            for (int i : adjInv[start]) {
+                nodesToVisit.push(i);
+            }
+
+            scc[current] = counter;
+        }
     }
-
 
     private void assignTrue(boolean[] solution, int node, List<Integer>[] adj) {
         int noPoints = solution.length;
 
-        if (node < noPoints) {
-            isSet[node] = true;
-            solution[node % noPoints] = true;
-        } else {
-            isSet[node - noPoints] = true;
-            solution[node % noPoints] = false;
-        }
+        Deque<Integer> nodesToVisit = new ArrayDeque<Integer>();
+        nodesToVisit.push(node);
 
-        for (int i : adj[node]) {
-            if (!isSet[i % noPoints] && scc[i] == scc[node]) {
-                assignTrue(solution, i, adj);
+        while (!nodesToVisit.isEmpty()) {
+            int current = nodesToVisit.pop();
+            if (current < noPoints) {
+                isSet[current] = true;
+                solution[current % noPoints] = true;
+            } else {
+                isSet[current - noPoints] = true;
+                solution[current % noPoints] = false;
+            }
+
+            for (int i : adj[current]) {
+                if (!isSet[i % noPoints] && scc[i] == scc[current]) {
+                    nodesToVisit.push(i);
+                }
             }
         }
     }
