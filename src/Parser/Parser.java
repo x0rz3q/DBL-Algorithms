@@ -96,15 +96,15 @@ public class Parser implements ParserInterface {
         }
 
         rec.labels = Collections.unmodifiableList(rec.labels);
-        if (collectionClass == QuadTree.class) {
-            //TODO: xmin etc can be removed.
-            rec.collection = initQuadTree(rec.labels, xMin, xMax, yMin, yMax);
-        } else if (collectionClass == KDTree.class && rec.placementModel == PlacementModelEnum.FOUR_POS) {
-            rec.collection = initKDTree4Pos(points);
-        } else if (collectionClass == KDTree.class) {
-            rec.collection = initKDTree(rec.labels);
-        } else {
-            throw new InputMismatchException("parser.input collection class initializer undefined");
+        switch (rec.placementModel) {
+            case TWO_POS:
+                rec.collection = initQuadTree(rec.labels, xMin, xMax, yMin, yMax);
+                break;
+            case FOUR_POS:
+                rec.collection = initKDTree4Pos(points);
+                break;
+            case ONE_SLIDER:
+                rec.collection = initQuadTree(rec.labels, xMin, xMax, yMin, yMax);
         }
 
         // when in test-mode, the input file contains a
