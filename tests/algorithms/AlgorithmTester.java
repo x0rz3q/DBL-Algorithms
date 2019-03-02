@@ -30,7 +30,7 @@ public class AlgorithmTester {
     }
 
 
-    private Collection<DynamicTest> readInFiles(String filePath, AbstractAlgorithmInterface algorithm, Class<? extends AbstractCollectionInterface> collection) {
+    private Collection<DynamicTest> readInFiles(String filePath, AbstractAlgorithmInterface algorithm) {
         try {
             File folder = new File(filePath);
             File[] listOfFiles = folder.listFiles();
@@ -39,7 +39,7 @@ public class AlgorithmTester {
             Collection<DynamicTest> tests = new ArrayList<>();
             for (File file : listOfFiles) {
                 if (file.isFile()) {
-                    TestDataRecord input = parser.inputTestMode(new FileInputStream(file), collection);
+                    TestDataRecord input = parser.inputTestMode(new FileInputStream(file));
                     tests.add(dynamicTest("test of " + algorithm.getClass() + " on file: " + file.getName(),
                             () -> runTest(input, file.getName(), algorithm)));
                 }
@@ -54,16 +54,16 @@ public class AlgorithmTester {
 
     @TestFactory
     public Collection<DynamicTest> TwoPosTest() {
-        return readInFiles("tests/algorithms/TestFiles/TwoPosTestFiles", new TwoPositionBinarySearcher(), KDTree.class);
+        return readInFiles("tests/algorithms/TestFiles/TwoPosTestFiles", new TwoPositionBinarySearcher());
     }
 
     @TestFactory
     public Collection<DynamicTest> FourPosTest() {
-        return readInFiles("tests/algorithms/TestFiles/FourPosTestFiles", new TwoPositionBinarySearcher(), KDTree.class);
+        return readInFiles("tests/algorithms/TestFiles/FourPosTestFiles", new TwoPositionBinarySearcher());
     }
 
     @TestFactory
     public Collection<DynamicTest> SliderTest() {
-        return readInFiles("tests/algorithms/TestFiles/SliderTestFiles", new GreedySliderAlgorithm(), KDTree.class);
+        return readInFiles("tests/algorithms/TestFiles/SliderTestFiles", new GreedySliderAlgorithm());
     }
 }
