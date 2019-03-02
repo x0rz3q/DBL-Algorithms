@@ -25,7 +25,7 @@ public class Parser implements ParserInterface {
     private double optHeight, reqHeight;
 
     @Override
-    public DataRecord input(InputStream source, Class<? extends AbstractCollectionInterface> collectionClass) throws NullPointerException, IOException {
+    public DataRecord input(InputStream source) throws NullPointerException, IOException {
         if (source == null) throw new NullPointerException("parser.input: source not found");
 
         DataRecord rec = new DataRecord();
@@ -142,9 +142,9 @@ public class Parser implements ParserInterface {
      * @throws NullPointerException if {@code source == null}
      * @throws IOException          if read error occurs
      */
-    public TestDataRecord inputTestMode(InputStream source, Class<? extends AbstractCollectionInterface> collectionClass) throws IOException {
+    public TestDataRecord inputTestMode(InputStream source) throws IOException {
         testMode = true;
-        DataRecord rec = input(source, collectionClass);
+        DataRecord rec = input(source);
         testMode = false;
         return new TestDataRecord(rec, optHeight, reqHeight);
     }
