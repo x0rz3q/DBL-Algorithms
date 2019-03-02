@@ -16,6 +16,13 @@ class TestData {
     */
     double result;
 
+    /* expected minimum result
+    *   2pos: expectedMinimum = result
+    *   4pos: expectedMinimum = result / 2
+    *   1slider: expectedMinimum = result / 2
+    */
+    double expectedMinimum;
+
     // Number Generators in the x- and y-dimensions
     NumberGenerator xGenerator;
     NumberGenerator yGenerator;
@@ -77,6 +84,12 @@ class TestData {
         }
         if (this.model.equals("4pos") && (this.result * 2 != Math.ceil(this.result * 2) && this.result * this.ratio * 2 != Math.ceil(this.result * this.ratio * 2))) {
             throw new IllegalArgumentException("Combination model-ratio-result impossible");
+        }
+
+        if (this.model.equals("2pos")) {
+            this.expectedMinimum = newResult;
+        } else {
+            this.expectedMinimum = newResult / 2;
         }
     }
 

@@ -25,7 +25,7 @@ class Controller {
         chooseStrategy();
         Point[] points = strategy.generate();
         printer.printPoints(points);
-        printer.printResult(data.result);
+        printer.printResult(data.result, data.expectedMinimum);
     }
 
     /**

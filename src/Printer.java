@@ -39,8 +39,9 @@ class Printer {
      * prints the correct result to the specified file
      * @param result
      */
-    void printResult(double result) {
+    void printResult(double result, double expectedMinimum) {
         printWriter.println("label height: " + result);
+        printWriter.println("minimum expected result: " + expectedMinimum);
         printWriter.close();
     }
 
