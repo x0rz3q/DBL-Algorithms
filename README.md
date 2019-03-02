@@ -21,15 +21,15 @@ The number of points
 #### result
 The desired result. It must follow the following format:
 
-**2pos:** 
+2pos: 
 ```
 result == integer || result * ratio * 2 == integer
 ```
-**4pos:**
+4pos:
 ```
 result * 2 == integer || result * ratio * 2 == integer
 ```
-**1slider:**
+1slider:
 ```
 result == real
 ```
@@ -44,26 +44,26 @@ Keep in mind that the boundaries of these distributions concern the points, not 
 To ensure that the rectangles fall within the QuadTree's range, make sure to limit the points accordingly.
 
 
-**Uniform:**
+Uniform:
 ```
 Uniform (lower) (upper)
 ```
 Generates numbers according to a uniform distribution, with *(lower)* being the lower bound of the range and *(upper)* the upper bound.
 
 
-**Binomial:**
+Binomial:
 ```
 Binomial (p) (n)
 ```
 Generates numbers according to a binomial distribution, with *(p)* the success probability of a trial, and *(n)* the number of trials.
 
-**Poisson:**
+Poisson:
 ```
 Poisson (p)
 ```
 Generates numbers according to a Poisson distribution, with *(p)* the Poisson mean. Note that this distribution is the equivalent of a normal distribution for discrete variables.
 
-**Geometric:**
+Geometric:
 ```
 Geometric (p)
 ```
