@@ -25,7 +25,8 @@ public class AlgorithmTester {
 
     private void runTest(TestDataRecord record, String fileName, AbstractAlgorithmInterface algorithms) {
         algorithms.solve(record);
-        assertTrue(record.height >= record.reqHeight, "the height found is not correct in file: " + fileName + ", expected min: " + record.reqHeight + " actual value: " + record.height);
+        assertTrue(record.height >= record.reqHeight, "the height found is too small in file: " + fileName + ", expected min: " + record.reqHeight + " actual value: " + record.height);
+        assertTrue(record.height <= record.optHeight, "the height found is too large in file: " + fileName + ", max value: " + record.optHeight + " actual value: " + record.height);
         assertTrue(Interpreter.isValid(record), "the solution found is not valid in file: " + fileName);
     }
 
