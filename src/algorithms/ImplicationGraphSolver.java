@@ -145,7 +145,7 @@ public class ImplicationGraphSolver {
             }
             visitedInv[current] = true;
 
-            for (int i : adjInv[start]) {
+            for (int i : adjInv[current]) {
                 nodesToVisit.push(i);
             }
 
