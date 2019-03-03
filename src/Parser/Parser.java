@@ -98,7 +98,7 @@ public class Parser implements ParserInterface {
         rec.labels = Collections.unmodifiableList(rec.labels);
         switch (rec.placementModel) {
             case TWO_POS:
-                rec.collection = initKDTree(rec.labels, xMin, xMax, yMin, yMax);
+                rec.collection = initKDTree(rec.labels);
                 break;
             case FOUR_POS:
                 rec.collection = initKDTree4Pos(points);
