@@ -25,7 +25,7 @@ public class Parser implements ParserInterface {
     private double optHeight, reqHeight;
 
     @Override
-    public DataRecord input(InputStream source, Class<? extends AbstractCollectionInterface> collectionClass) throws NullPointerException, IOException {
+    public DataRecord input(InputStream source) throws NullPointerException, IOException {
         if (source == null) throw new NullPointerException("parser.input: source not found");
 
         DataRecord rec = new DataRecord();
@@ -43,7 +43,7 @@ public class Parser implements ParserInterface {
         }
 
         try {
-            while (!sc.hasNextFloat()) sc.next();
+            while (!sc.hasNextDouble()) sc.next();
             rec.aspectRatio = sc.nextDouble();
         } catch (NoSuchElementException e) {
             throw new IOException("parser.input: no aspect ratio found");
@@ -96,15 +96,15 @@ public class Parser implements ParserInterface {
         }
 
         rec.labels = Collections.unmodifiableList(rec.labels);
-        if (collectionClass == QuadTree.class) {
-            //TODO: xmin etc can be removed.
-            rec.collection = initQuadTree(rec.labels, xMin, xMax, yMin, yMax);
-        } else if (collectionClass == KDTree.class && rec.placementModel == PlacementModelEnum.FOUR_POS) {
-            rec.collection = initKDTree4Pos(points);
-        } else if (collectionClass == KDTree.class) {
-            rec.collection = initKDTree(rec.labels);
-        } else {
-            throw new InputMismatchException("parser.input collection class initializer undefined");
+        switch (rec.placementModel) {
+            case TWO_POS:
+                rec.collection = initQuadTree(rec.labels, xMin, xMax, yMin, yMax);
+                break;
+            case FOUR_POS:
+                rec.collection = initKDTree4Pos(points);
+                break;
+            case ONE_SLIDER:
+                rec.collection = initQuadTree(rec.labels, xMin, xMax, yMin, yMax);
         }
 
         // when in test-mode, the input file contains a
@@ -142,9 +142,9 @@ public class Parser implements ParserInterface {
      * @throws NullPointerException if {@code source == null}
      * @throws IOException          if read error occurs
      */
-    public TestDataRecord inputTestMode(InputStream source, Class<? extends AbstractCollectionInterface> collectionClass) throws IOException {
+    public TestDataRecord inputTestMode(InputStream source) throws IOException {
         testMode = true;
-        DataRecord rec = input(source, collectionClass);
+        DataRecord rec = input(source);
         testMode = false;
         return new TestDataRecord(rec, optHeight, reqHeight);
     }

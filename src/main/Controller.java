@@ -28,7 +28,7 @@ public class Controller {
     }
 
     public void run() throws IOException, NullPointerException {
-        DataRecord record = this.parser.input(System.in, KDTree.class);
+        DataRecord record = this.parser.input(System.in);
         switch (record.placementModel) {
             case ONE_SLIDER:
                 (new GreedySliderAlgorithm()).solve(record);
