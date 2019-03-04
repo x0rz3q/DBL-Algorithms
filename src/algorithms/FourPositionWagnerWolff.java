@@ -183,6 +183,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
             } else if (candidateIntersectsAllRemaining(point)) {
                 continue;
             }
+            pointsQueue.addLast(point);
         }
         return true;
     }
@@ -267,8 +268,14 @@ public class FourPositionWagnerWolff extends BinarySearcher {
             pointsQueue.remove(conflict.getPoI());
             pointsQueue.addFirst(conflict.getPoI());
             labelsWithConflicts.remove(conflict);
+            for (FourPositionLabel recurseConflict : conflict.getConflicts()) {
+                if (recurseConflict == selected) continue;
+                recurseConflict.removeConflict(conflict);
+            }
             conflict.getPoI().removeCandidate(conflict);
         }
+
+
         // remove selected label from conflict graph
         labelsWithConflicts.remove(selected);
         pointsQueue.remove(point);
