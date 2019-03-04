@@ -490,36 +490,12 @@ public class FourPositionWagnerWolff extends BinarySearcher {
 
     @Override
     boolean isSolvable(DataRecord record, double height) {
-        System.out.println("==============================================");
-        System.out.println("isSolvable is called for height: " + height);
-        long Time = System.nanoTime();
-        System.out.println("isSolvable started at: " + Time);
-        time = Time;
         preprocessing(record, height);
-
-        Time = System.nanoTime();
-        System.out.println("preproceesing took: " + ((Time - time) * 0.0000000001));
-        time = Time;
-
         boolean solvable = eliminateImpossibleCandidates();
-
-        Time = System.nanoTime();
-        System.out.println("eliminateImpossibleCandidates took: " + ((Time - time) * 0.0000000001));
-        time = Time;
-
         if (!solvable) {
-            System.out.println("Some point has no candidates; return after elimImposCandidates");
-            System.out.println();
             return false;
         }
         solvable = doTwoSat(record, false);
-
-        Time = System.nanoTime();
-        System.out.println("doTwoSat took: " + ((Time - time) * 0.0000000001));
-        time = Time;
-
-        System.out.println("record for this height can be solved: " + solvable);
-        System.out.println();
         return solvable;
     }
 
