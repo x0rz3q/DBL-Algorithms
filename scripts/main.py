@@ -18,7 +18,7 @@ for root, dirs, files in os.walk(args.path):
 
 os.remove("MainWrapper.java")
 
-re = re.compile('((package [a-zA-Z.*]+;)|import ((?!java)[a-zA-Z.*]+);)')
+re = re.compile('((package [a-zA-Z.*]+;)|import(\sstatic)? ((?!java)[a-zA-Z.*]+);)')
 
 for file in glob.glob("*.java"):
     with open(file, 'r') as f:
