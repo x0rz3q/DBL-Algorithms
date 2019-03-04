@@ -20,7 +20,6 @@ public class FourPositionLabel extends AbstractLabel {
 
     public FourPositionLabel(double height, double aspectRatio, int ID, FourPositionPoint point, DirectionEnum direction) {
         super(point.getX(), point.getY(), height, aspectRatio, ID);
-
         this.direction = direction;
         PoI = point;
         this.setHeight(height);
