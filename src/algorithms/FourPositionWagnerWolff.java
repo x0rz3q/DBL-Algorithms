@@ -8,6 +8,7 @@ import interfaces.models.PointInterface;
 import models.*;
 import Collections.KDTree;
 import Collections.QuadTree;
+
 import java.util.*;
 
 public class FourPositionWagnerWolff extends BinarySearcher {
@@ -24,6 +25,13 @@ public class FourPositionWagnerWolff extends BinarySearcher {
     // DataRecord containing all labels of the current sigma
     // Only used in preprocessing
     private DataRecord labels = new DataRecord();
+
+    private long time;
+
+    public FourPositionWagnerWolff() {
+        time = System.nanoTime();
+        System.out.println("initialized at: " + time);
+    }
 
     /**
      * Calculates all conflict sizes for given DataRecord. It is sufficient for the
@@ -475,10 +483,36 @@ public class FourPositionWagnerWolff extends BinarySearcher {
 
     @Override
     boolean isSolvable(DataRecord record, double height) {
+        System.out.println("==============================================");
+        System.out.println("isSolvable is called for height: " + height);
+        long Time = System.nanoTime();
+        System.out.println("isSolvable started at: " + Time);
+        time = Time;
         preprocessing(record, height);
+
+        Time = System.nanoTime();
+        System.out.println("preproceesing took: " + ((Time - time) * 0.0000000001));
+        time = Time;
+
         boolean solvable = eliminateImpossibleCandidates();
-        if (!solvable) return false;
+
+        Time = System.nanoTime();
+        System.out.println("eliminateImpossibleCandidates took: " + ((Time - time) * 0.0000000001));
+        time = Time;
+
+        if (!solvable) {
+            System.out.println("Some point has no candidates; return after elimImposCandidates");
+            System.out.println();
+            return false;
+        }
         solvable = doTwoSat(record, false);
+
+        Time = System.nanoTime();
+        System.out.println("doTwoSat took: " + ((Time - time) * 0.0000000001));
+        time = Time;
+
+        System.out.println("record for this height can be solved: " + solvable);
+        System.out.println();
         return solvable;
     }
 
