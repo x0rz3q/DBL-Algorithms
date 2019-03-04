@@ -26,13 +26,6 @@ public class FourPositionWagnerWolff extends BinarySearcher {
     // Only used in preprocessing
     private DataRecord labels = new DataRecord();
 
-    private long time;
-
-    public FourPositionWagnerWolff() {
-        time = System.nanoTime();
-        System.out.println("initialized at: " + time);
-    }
-
     /**
      * Calculates all conflict sizes for given DataRecord. It is sufficient for the
      * 4-position algorithm to only consider the heights corresponding to the important conflict
