@@ -387,7 +387,6 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         // remove highest conflict candidate
         for (FourPositionLabel conflict : maxConflictCandidate.getConflicts()) {
             conflict.removeConflict(maxConflictCandidate);
-            if (conflict.getConflicts().size() == 0) labelsWithConflicts.remove(conflict);
         }
         maxConflictCandidate.getPoI().removeCandidate(maxConflictCandidate);
         labelsWithConflicts.remove(maxConflictCandidate);
