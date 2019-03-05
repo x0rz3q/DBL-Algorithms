@@ -45,11 +45,18 @@ public class Record {
 
             LabelInterface label = null;
 
-            if (scanner.hasNextDouble()) {
-                double alpha = scanner.nextDouble();
-                label = new SliderLabel(x, y, height,ratio, alpha, 0);
-            } else
-                label = new PositionLabel(x, y, height, ratio, 0, DirectionEnum.fromString(scanner.next()));
+            switch (model) {
+                case ONE_SLIDER:
+                    double alpha = scanner.nextDouble();
+                    label = new SliderLabel(x, y, height,ratio, alpha, 0);
+                    break;
+                case TWO_POS:
+                    label = new PositionLabel(x, y, height, ratio, 0, DirectionEnum.fromString(scanner.next()));
+                    break;
+                case FOUR_POS:
+                    label = new FourPositionLabel(x, y, height, ratio, 0, DirectionEnum.fromString(scanner.next()));
+                    break;
+            }
 
             Collection<GeometryInterface> intersections = this.tree.query2D(label.getRectangle());
 
