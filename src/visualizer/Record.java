@@ -14,8 +14,8 @@ public class Record {
     private QuadTree tree;
     private int pointCount = 0;
     private double extent;
-    private double xMin = 0;
-    private double yMin = 0;
+    private double xMin = Integer.MAX_VALUE;
+    private double yMin = Integer.MAX_VALUE;
 
     private String scan(String regex, Scanner scanner) {
         while(!scanner.hasNext(regex)) scanner.next();
@@ -63,7 +63,7 @@ public class Record {
             this.labels.put(label, new HashSet(intersections));
 
             this.xMin = Math.min(label.getXMin(), this.xMin);
-            this.yMin = Math.min(label.getXMax(), this.yMin);
+            this.yMin = Math.min(label.getYMin(), this.yMin);
             xMax = Math.max((int)label.getXMax(), xMax);
             yMax = Math.max(label.getYMax(), yMax);
         }
