@@ -341,6 +341,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
     void applyHeuristic() {
         // select Heuristic to be used
         numberOfConflictsHeuristic();
+        //numberOfConflictsHeuristicVariation();
     }
 
     /**
@@ -363,6 +364,39 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         // remove highest conflict candidate for points with 4 candidates
         for (FourPositionPoint conflictPoint : conflictPoints) {
             if (conflictPoint.getCandidates().size() == 4) {
+                chooseLabelsNumberOfConflictsHeuristic(conflictPoint);
+            }
+        }
+
+        // remove highest conflict candidate for points with 3 candidates
+        for (FourPositionPoint conflictPoint : conflictPoints) {
+            if (conflictPoint.getCandidates().size() == 3) {
+                chooseLabelsNumberOfConflictsHeuristic(conflictPoint);
+            }
+        }
+    }
+
+    /**
+     * Second Concrete Heuristic (adaptation of I from paper)
+     * Runs through all points twice:
+     * Run 1 - For every point with 4 candidates, remove 2 candidates with largest number of conflicts
+     * Run 2 - For every point with 3 candidates, remove candidate with largest number of conflicts
+     *
+     * @modifies selectedLabels
+     * @modifies labelsWithConflicts
+     * @post all points have at most two candidates
+     */
+    private void numberOfConflictsHeuristicVariation() {
+        // select points
+        Set<FourPositionPoint> conflictPoints = new HashSet<>();
+        for (FourPositionLabel candidate : labelsWithConflicts) {
+            conflictPoints.add(candidate.getPoI());
+        }
+
+        // remove highest conflict candidate for points with 4 candidates
+        for (FourPositionPoint conflictPoint : conflictPoints) {
+            if (conflictPoint.getCandidates().size() == 4) {
+                chooseLabelsNumberOfConflictsHeuristic(conflictPoint);
                 chooseLabelsNumberOfConflictsHeuristic(conflictPoint);
             }
         }
