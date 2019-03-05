@@ -224,6 +224,8 @@ public class FourPositionWagnerWolff extends BinarySearcher {
             if (candidate != selected) {
                 for (FourPositionLabel conflict : candidate.getConflicts()) {
                     conflict.removeConflict(candidate);
+                    pointsQueue.remove(conflict.getPoI());
+                    pointsQueue.addLast(conflict.getPoI());
                     if (conflict.getConflicts().size() == 0) labelsWithConflicts.remove(conflict);
                 }
                 labelsWithConflicts.remove(candidate);
@@ -263,6 +265,8 @@ public class FourPositionWagnerWolff extends BinarySearcher {
             for (FourPositionLabel recurseConflict : conflict.getConflicts()) {
                 if (recurseConflict == selected) continue;
                 recurseConflict.removeConflict(conflict);
+                pointsQueue.remove(recurseConflict.getPoI());
+                pointsQueue.addLast(recurseConflict.getPoI());
                 if (recurseConflict.getConflicts().size() == 0) labelsWithConflicts.remove(recurseConflict);
             }
             conflict.getPoI().removeCandidate(conflict);
@@ -315,6 +319,8 @@ public class FourPositionWagnerWolff extends BinarySearcher {
             for (FourPositionLabel candidate : labelsThatCantExist) {
                 for (FourPositionLabel conflict : candidate.getConflicts()) {
                     conflict.removeConflict(candidate);
+                    pointsQueue.remove(conflict.getPoI());
+                    pointsQueue.addLast(conflict.getPoI());
                     if (conflict.getConflicts().size() == 0) labelsWithConflicts.remove(conflict);
                 }
                 point.removeCandidate(candidate);
@@ -485,9 +491,8 @@ public class FourPositionWagnerWolff extends BinarySearcher {
     boolean isSolvable(DataRecord record, double height) {
         preprocessing(record, height);
         boolean solvable = eliminateImpossibleCandidates();
-        if (!solvable) {
-            return false;
-        }
+        if (!solvable) return false;
+        applyHeuristic();
         solvable = doTwoSat(record, false);
         return solvable;
     }
