@@ -30,8 +30,8 @@ public class Controller {
             Rectangle rectangle = key.getRectangle();
 
             javafx.scene.shape.Rectangle shape = new javafx.scene.shape.Rectangle();
-            shape.setLayoutY(this.mainPanel.getHeight() - (rectangle.getYMin() + Math.abs(this.record.getyMin()) + rectangle.getHeight()) * scaleFactor);
-            shape.setLayoutX(rectangle.getXMin() * scaleFactor);
+            shape.setLayoutY(this.mainPanel.getHeight() - (rectangle.getYMin() - Math.abs(this.record.getyMin()) + rectangle.getHeight()) * scaleFactor);
+            shape.setLayoutX((rectangle.getXMin() - Math.abs(this.record.getxMin())) * scaleFactor);
             shape.setWidth(rectangle.getWidth() * scaleFactor);
             shape.setHeight(rectangle.getHeight() * scaleFactor);
 
