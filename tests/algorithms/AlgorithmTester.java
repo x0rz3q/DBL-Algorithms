@@ -1,5 +1,6 @@
 package algorithms;
 
+import Collections.KDTree;
 import Collections.QuadTree;
 import Parser.DataRecord;
 import Parser.TestDataRecord;
@@ -24,12 +25,13 @@ public class AlgorithmTester {
 
     private void runTest(TestDataRecord record, String fileName, AbstractAlgorithmInterface algorithms) {
         algorithms.solve(record);
-        assertTrue(record.height >= record.reqHeight, "the height found is not correct in file: " + fileName + ", expected min: " + record.reqHeight + " actual value: " + record.height);
+        assertTrue(record.height >= record.reqHeight, "the height found is too small in file: " + fileName + ", expected min: " + record.reqHeight + " actual value: " + record.height);
+        assertTrue(record.height <= record.optHeight, "the height found is too large in file: " + fileName + ", max value: " + record.optHeight + " actual value: " + record.height);
         assertTrue(Interpreter.isValid(record), "the solution found is not valid in file: " + fileName);
     }
 
 
-    private Collection<DynamicTest> readInFiles(String filePath, AbstractAlgorithmInterface algorithm, Class<? extends AbstractCollectionInterface> collection) {
+    private Collection<DynamicTest> readInFiles(String filePath, AbstractAlgorithmInterface algorithm) {
         try {
             File folder = new File(filePath);
             File[] listOfFiles = folder.listFiles();
@@ -38,7 +40,7 @@ public class AlgorithmTester {
             Collection<DynamicTest> tests = new ArrayList<>();
             for (File file : listOfFiles) {
                 if (file.isFile()) {
-                    TestDataRecord input = parser.inputTestMode(new FileInputStream(file), collection);
+                    TestDataRecord input = parser.inputTestMode(new FileInputStream(file));
                     tests.add(dynamicTest("test of " + algorithm.getClass() + " on file: " + file.getName(),
                             () -> runTest(input, file.getName(), algorithm)));
                 }
@@ -53,16 +55,16 @@ public class AlgorithmTester {
 
     @TestFactory
     public Collection<DynamicTest> TwoPosTest() {
-        return readInFiles("tests/algorithms/TestFiles/TwoPosTestFiles", new TwoPositionBinarySearcher(), QuadTree.class);
+        return readInFiles("tests/algorithms/TestFiles/TwoPosTestFiles", new TwoPositionBinarySearcher());
     }
 
     @TestFactory
     public Collection<DynamicTest> FourPosTest() {
-        return readInFiles("tests/algorithms/TestFiles/FourPosTestFiles", new TwoPositionBinarySearcher(), QuadTree.class);
+        return readInFiles("tests/algorithms/TestFiles/FourPosTestFiles", new FourPositionWagnerWolff());
     }
 
     @TestFactory
     public Collection<DynamicTest> SliderTest() {
-        return readInFiles("tests/algorithms/TestFiles/SliderTestFiles", new GreedySliderAlgorithm(), QuadTree.class);
+        return readInFiles("tests/algorithms/TestFiles/SliderTestFiles", new GreedySliderAlgorithm());
     }
 }
