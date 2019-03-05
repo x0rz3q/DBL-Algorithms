@@ -26,3 +26,5 @@ number of points: 25
 7489 4547
 7489 4551
 7489 4567
+label height: 5.0
+min height: 3.0

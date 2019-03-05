@@ -9,7 +9,10 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 class FourPositionWagnerWolffTest {
 
@@ -230,7 +233,184 @@ class FourPositionWagnerWolffTest {
     }
 
     @Test
-    void applyHeuristic() {
+    void applyHeuristic1() {
+        FourPositionPoint point = new FourPositionPoint(new Point(100, 100));
+        FourPositionLabel label1 = new FourPositionLabel(0, 1, 0, point, DirectionEnum.NE);
+        FourPositionLabel label2 = new FourPositionLabel(0, 1, 0, point, DirectionEnum.SE);
+        FourPositionLabel label3 = new FourPositionLabel(0, 1, 0, point, DirectionEnum.SW);
+        point.addCandidate(label1);
+        point.addCandidate(label2);
+        point.addCandidate(label3);
+        algo.getLabelsWithConflicts().add(label1);
+        algo.getLabelsWithConflicts().add(label2);
+        algo.getLabelsWithConflicts().add(label3);
+        algo.applyHeuristic();
+
+        for (FourPositionLabel label : algo.getLabelsWithConflicts()) {
+            assertTrue(label.getPoI().getCandidates().size() == 2);
+        }
+    }
+
+    @Test
+    void applyHeuristic2() {
+        FourPositionPoint point = new FourPositionPoint(new Point(100, 100));
+        FourPositionLabel label1 = new FourPositionLabel(0, 1, 0, point, DirectionEnum.NE);
+        FourPositionLabel label2 = new FourPositionLabel(0, 1, 0, point, DirectionEnum.SE);
+        FourPositionLabel label3 = new FourPositionLabel(0, 1, 0, point, DirectionEnum.SW);
+        FourPositionLabel label4 = new FourPositionLabel(0, 1, 0, point, DirectionEnum.NW);
+        point.addCandidate(label1);
+        point.addCandidate(label2);
+        point.addCandidate(label3);
+        point.addCandidate(label4);
+        algo.getLabelsWithConflicts().add(label1);
+        algo.getLabelsWithConflicts().add(label2);
+        algo.getLabelsWithConflicts().add(label3);
+        algo.getLabelsWithConflicts().add(label4);
+        algo.applyHeuristic();
+
+        for (FourPositionLabel label : algo.getLabelsWithConflicts()) {
+            assertTrue(label.getPoI().getCandidates().size() == 2);
+        }
+    }
+
+    @Test
+    void applyHeuristic3() {
+        FourPositionPoint point1 = new FourPositionPoint(new Point(100, 100));
+        FourPositionPoint point2 = new FourPositionPoint(new Point(50, 50));
+
+        FourPositionLabel point1label1 = new FourPositionLabel(0, 1, 0, point1, DirectionEnum.NE);
+        FourPositionLabel point1label2 = new FourPositionLabel(0, 1, 0, point1, DirectionEnum.SE);
+        FourPositionLabel point1label3 = new FourPositionLabel(0, 1, 0, point1, DirectionEnum.SW);
+        FourPositionLabel point2label1 = new FourPositionLabel(0, 1, 0, point2, DirectionEnum.NE);
+        FourPositionLabel point2label2 = new FourPositionLabel(0, 1, 0, point2, DirectionEnum.SE);
+        FourPositionLabel point2label3 = new FourPositionLabel(0, 1, 0, point2, DirectionEnum.SW);
+        FourPositionLabel point2label4 = new FourPositionLabel(0, 1, 0, point2, DirectionEnum.NW);
+
+        point1.addCandidate(point1label1);
+        point1.addCandidate(point1label2);
+        point1.addCandidate(point1label3);
+        point2.addCandidate(point2label1);
+        point2.addCandidate(point2label2);
+        point2.addCandidate(point2label3);
+        point2.addCandidate(point2label4);
+
+        algo.getLabelsWithConflicts().add(point1label1);
+        algo.getLabelsWithConflicts().add(point1label2);
+        algo.getLabelsWithConflicts().add(point1label3);
+        algo.getLabelsWithConflicts().add(point2label1);
+        algo.getLabelsWithConflicts().add(point2label2);
+        algo.getLabelsWithConflicts().add(point2label3);
+        algo.getLabelsWithConflicts().add(point2label4);
+
+        algo.applyHeuristic();
+
+        for (FourPositionLabel label : algo.getLabelsWithConflicts()) {
+            assertTrue(label.getPoI().getCandidates().size() <= 2);
+        }
+    }
+
+    @Test
+    void applyHeuristic4() {
+        // Ask Hidde for picture
+        // Create points
+        FourPositionPoint pointNW = new FourPositionPoint(new Point(100, 100));
+        FourPositionPoint pointNE = new FourPositionPoint(new Point(119, 102));
+        FourPositionPoint pointSE = new FourPositionPoint(new Point(121, 83));
+        FourPositionPoint pointSW = new FourPositionPoint(new Point(102, 81));
+
+        // Create labels
+        FourPositionLabel pointNWlabelNE = new FourPositionLabel(10,1, 0, pointNW, DirectionEnum.NE);
+        FourPositionLabel pointNWlabelSE = new FourPositionLabel(10,1, 0, pointNW, DirectionEnum.SE);
+        FourPositionLabel pointNWlabelSW = new FourPositionLabel(10,1, 0, pointNW, DirectionEnum.SW);
+
+        FourPositionLabel pointNElabelNW = new FourPositionLabel(10, 1, 0, pointNE, DirectionEnum.NW);
+        FourPositionLabel pointNElabelSE = new FourPositionLabel(10, 1, 0, pointNE, DirectionEnum.SE);
+        FourPositionLabel pointNElabelSW = new FourPositionLabel(10, 1, 0, pointNE, DirectionEnum.SW);
+
+        FourPositionLabel pointSElabelNW = new FourPositionLabel(10, 1,0, pointSE, DirectionEnum.NW);
+        FourPositionLabel pointSElabelNE = new FourPositionLabel(10, 1,0, pointSE, DirectionEnum.NE);
+        FourPositionLabel pointSElabelSW = new FourPositionLabel(10, 1,0, pointSE, DirectionEnum.SW);
+
+        FourPositionLabel pointSWlabelNW = new FourPositionLabel(10, 1, 0, pointSW, DirectionEnum.NW);
+        FourPositionLabel pointSWlabelNE = new FourPositionLabel(10, 1, 0, pointSW, DirectionEnum.NE);
+        FourPositionLabel pointSWlabelSE = new FourPositionLabel(10, 1, 0, pointSW, DirectionEnum.SE);
+
+        // Add conflicts
+        pointNWlabelNE.addConflict(pointNElabelNW);
+        pointNWlabelNE.addConflict(pointNElabelSW);
+
+        pointNWlabelSW.addConflict(pointSWlabelNW);
+
+        pointNWlabelSE.addConflict(pointSWlabelNW);
+        pointNWlabelSE.addConflict(pointSWlabelNE);
+        pointNWlabelSE.addConflict(pointNElabelSW);
+
+        pointNElabelNW.addConflict(pointNWlabelNE);
+
+        pointNElabelSW.addConflict(pointNWlabelNE);
+        pointNElabelSW.addConflict(pointNWlabelSE);
+        pointNElabelSW.addConflict(pointSElabelNW);
+
+        pointNElabelSE.addConflict(pointSElabelNW);
+        pointNElabelSE.addConflict(pointSElabelNE);
+
+        pointSElabelNW.addConflict(pointNElabelSW);
+        pointSElabelNW.addConflict(pointNElabelSE);
+        pointSElabelNW.addConflict(pointSWlabelNE);
+
+        pointSElabelSW.addConflict(pointSWlabelNE);
+        pointSElabelSW.addConflict(pointSWlabelSE);
+
+        pointSElabelNE.addConflict(pointNElabelSE);
+
+        pointSWlabelNW.addConflict(pointNWlabelSW);
+        pointSWlabelNW.addConflict(pointNWlabelSE);
+
+        pointSWlabelNE.addConflict(pointNWlabelSE);
+        pointSWlabelNE.addConflict(pointSElabelNW);
+        pointSWlabelNE.addConflict(pointSElabelSW);
+
+        pointSWlabelSE.addConflict(pointSElabelSW);
+
+        // Register candidates to points
+        pointNW.addCandidate(pointNWlabelNE);
+        pointNW.addCandidate(pointNWlabelSE);
+        pointNW.addCandidate(pointNWlabelSW);
+
+        pointNE.addCandidate(pointNElabelNW);
+        pointNE.addCandidate(pointNElabelSW);
+        pointNE.addCandidate(pointNElabelSE);
+
+        pointSE.addCandidate(pointSElabelNW);
+        pointSE.addCandidate(pointSElabelNE);
+        pointSE.addCandidate(pointSElabelSW);
+
+        pointSW.addCandidate(pointSWlabelNW);
+        pointSW.addCandidate(pointSWlabelNE);
+        pointSW.addCandidate(pointSWlabelSE);
+
+        // Register candidates to LabelsWithConflicts
+        algo.getLabelsWithConflicts().add(pointNWlabelNE);
+        algo.getLabelsWithConflicts().add(pointNWlabelSE);
+        algo.getLabelsWithConflicts().add(pointNWlabelSW);
+
+        algo.getLabelsWithConflicts().add(pointNElabelNW);
+        algo.getLabelsWithConflicts().add(pointNElabelSW);
+        algo.getLabelsWithConflicts().add(pointNElabelSE);
+
+        algo.getLabelsWithConflicts().add(pointSElabelNW);
+        algo.getLabelsWithConflicts().add(pointSElabelNE);
+        algo.getLabelsWithConflicts().add(pointSElabelSW);
+
+        algo.getLabelsWithConflicts().add(pointSWlabelNW);
+        algo.getLabelsWithConflicts().add(pointSWlabelNE);
+        algo.getLabelsWithConflicts().add(pointSWlabelSE);
+
+        algo.applyHeuristic();
+
+        for (FourPositionLabel label : algo.getLabelsWithConflicts()) {
+            assertTrue(label.getPoI().getCandidates().size() == 2);
+        }
     }
 
     @Test
@@ -354,5 +534,30 @@ class FourPositionWagnerWolffTest {
 
     @Test
     void getSolution() {
+        DataRecord record = new DataRecord();
+        record.labels = new ArrayList<>();
+        record.collection = new KDTree();
+        record.aspectRatio = 1;
+        FourPositionPoint point1 = new FourPositionPoint(new Point(100, 100));
+        FourPositionPoint point2 = new FourPositionPoint(new Point(200, 200));
+        FourPositionPoint point3 = new FourPositionPoint(new Point(300, 300));
+        FourPositionPoint point4 = new FourPositionPoint(new Point(400, 400));
+        FourPositionPoint point5 = new FourPositionPoint(new Point(500, 500));
+        LabelInterface label1 = new FourPositionLabel(0, record.aspectRatio, 0, point1, DirectionEnum.NE);
+        LabelInterface label2 = new FourPositionLabel(0, record.aspectRatio, 0, point2, DirectionEnum.NE);
+        LabelInterface label3 = new FourPositionLabel(0, record.aspectRatio, 0, point3, DirectionEnum.NE);
+        LabelInterface label4 = new FourPositionLabel(0, record.aspectRatio, 0, point4, DirectionEnum.NE);
+        LabelInterface label5 = new FourPositionLabel(0, record.aspectRatio, 0, point5, DirectionEnum.NE);
+        record.collection.insert(point1);
+        record.collection.insert(point2);
+        record.collection.insert(point3);
+        record.collection.insert(point4);
+        record.collection.insert(point5);
+        record.labels.add(label1);
+        record.labels.add(label2);
+        record.labels.add(label3);
+        record.labels.add(label4);
+        record.labels.add(label5);
+        algo.getSolution(record, 200);
     }
 }

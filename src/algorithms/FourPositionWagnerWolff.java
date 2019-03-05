@@ -8,6 +8,7 @@ import interfaces.models.PointInterface;
 import models.*;
 import Collections.KDTree;
 import Collections.QuadTree;
+
 import java.util.*;
 
 public class FourPositionWagnerWolff extends BinarySearcher {
@@ -259,8 +260,15 @@ public class FourPositionWagnerWolff extends BinarySearcher {
             pointsQueue.remove(conflict.getPoI());
             pointsQueue.addFirst(conflict.getPoI());
             labelsWithConflicts.remove(conflict);
+            for (FourPositionLabel recurseConflict : conflict.getConflicts()) {
+                if (recurseConflict == selected) continue;
+                recurseConflict.removeConflict(conflict);
+                if (recurseConflict.getConflicts().size() == 0) labelsWithConflicts.remove(recurseConflict);
+            }
             conflict.getPoI().removeCandidate(conflict);
         }
+
+
         // remove selected label from conflict graph
         labelsWithConflicts.remove(selected);
         pointsQueue.remove(point);
@@ -477,7 +485,9 @@ public class FourPositionWagnerWolff extends BinarySearcher {
     boolean isSolvable(DataRecord record, double height) {
         preprocessing(record, height);
         boolean solvable = eliminateImpossibleCandidates();
-        if (!solvable) return false;
+        if (!solvable) {
+            return false;
+        }
         solvable = doTwoSat(record, false);
         return solvable;
     }
