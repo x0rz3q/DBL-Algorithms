@@ -308,7 +308,6 @@ public class FourPositionWagnerWolff extends BinarySearcher {
                     }
                 }
                 canExist = false;
-                break;
             }
 
             if (!canExist) {
@@ -388,24 +387,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         // remove highest conflict candidate
         for (FourPositionLabel conflict : maxConflictCandidate.getConflicts()) {
             conflict.removeConflict(maxConflictCandidate);
-            if (conflict.getConflicts().size() == 0) {
-                labelsWithConflicts.remove(conflict);
-                selectedLabels.add(conflict);
-                Set<FourPositionLabel> toBeDeregistered = new HashSet<>();
-                for (FourPositionLabel otherLabel : conflict.getPoI().getCandidates()) {
-                    if (otherLabel != conflict) {
-                        toBeDeregistered.add(otherLabel);
-                    }
-                }
-
-                for (FourPositionLabel label : toBeDeregistered) {
-                    label.getPoI().removeCandidate(label);
-                    for (FourPositionLabel conflictOfSelected : label.getConflicts()) {
-                        conflictOfSelected.removeConflict(label);
-                    }
-                    labelsWithConflicts.remove(label);
-                }
-            }
+            if (conflict.getConflicts().size() == 0) labelsWithConflicts.remove(conflict);
         }
         maxConflictCandidate.getPoI().removeCandidate(maxConflictCandidate);
         labelsWithConflicts.remove(maxConflictCandidate);
