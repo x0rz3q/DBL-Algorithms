@@ -1,10 +1,10 @@
 package visualizer;
 
-
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import models.Rectangle;
 
@@ -43,7 +43,14 @@ public class Controller {
 
             shape.setFill(Color.TRANSPARENT);
 
+            javafx.scene.shape.Circle circle = new Circle();
+            circle.setCenterX((key.getPOI().getX() - Math.abs(this.record.getxMin())) * scaleFactor);
+            circle.setCenterY(this.mainPanel.getHeight() - (key.getPOI().getY() - Math.abs(this.record.getyMin())) * scaleFactor);
+            circle.setRadius(1);
+            circle.setFill(Color.GREEN);
+
             this.mainPanel.getChildren().add(shape);
+            this.mainPanel.getChildren().add(circle);
         });
     }
 }
