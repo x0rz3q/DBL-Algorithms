@@ -26,7 +26,7 @@ class Strategy4pos extends GenerationStrategy {
             pointsTree.insert(new Rectangle(r.getPoI(), r.getPoI(), r.getPoI()));
         }
 
-        while (rectangles.size() < data.n && counter < data.n * 100000) {
+        while (rectangles.size() < data.n && counter < data.n * 1e7) {
             counter++;
 
 
