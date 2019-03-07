@@ -169,7 +169,7 @@ public class Parser implements ParserInterface {
                 throw new NoSuchElementException("parser.output placement model unknown");
         }
 
-        DecimalFormat format = new DecimalFormat(".00");
+        DecimalFormat format = new DecimalFormat("0.0000000000000000000000");
 
         writer.write(
                 "aspect ratio: " + record.aspectRatio + "\n"
