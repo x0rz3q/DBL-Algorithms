@@ -10,13 +10,16 @@ Their name will reflect their specification.
 ### General format
 The general format for a line in the *"TextCaseSpecification.txt"* file is as follows:
 ```
-(model) (nPoints) (result) (ratio) (xGenerator) (yGenerator)
+(model) (nPoints) (ratio) (result) (xGenerator) (yGenerator)
 ``` 
 #### model
 Which model the testcase is meant for. Possibilities: "2pos", "4pos", "1slider"
 
 #### nPoints
 The number of points
+
+#### ratio
+The ratio between height and width as specified in the Problem Description.
 
 #### result
 The desired result. It must follow the following format:
@@ -33,9 +36,6 @@ result * 2 == integer || result * ratio * 2 == integer
 ```
 result == real
 ```
-
-#### ratio
-The ratio between height and width as specified in the Problem Discription.   
 
 #### xGenerator
 The distribution generator to be used for generating the *x*-coordinates of the points.
