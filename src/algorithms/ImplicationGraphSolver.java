@@ -77,7 +77,7 @@ public class ImplicationGraphSolver {
         while (!s.empty()) {
             int n = s.pop();
             if (!visitedInv[n]) {
-                componentsInReverseTopOrder.add(0, n);
+                componentsInReverseTopOrder.add(n);
                 dfsSecond(n);
                 counter++;
             }

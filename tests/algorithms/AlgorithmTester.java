@@ -1,12 +1,8 @@
 package algorithms;
 
-import Collections.KDTree;
-import Collections.QuadTree;
-import Parser.DataRecord;
-import Parser.TestDataRecord;
 import Parser.Parser;
+import Parser.TestDataRecord;
 import interfaces.AbstractAlgorithmInterface;
-import interfaces.AbstractCollectionInterface;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import visualizer.Interpreter;
@@ -17,7 +13,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
@@ -27,9 +22,8 @@ public class AlgorithmTester {
         algorithms.solve(record);
         assertTrue(record.height >= record.reqHeight, "the height found is too small in file: " + fileName + ", expected min: " + record.reqHeight + " actual value: " + record.height);
         assertTrue(record.height <= record.optHeight, "the height found is too large in file: " + fileName + ", max value: " + record.optHeight + " actual value: " + record.height);
-        assertTrue(Interpreter.overlap(record.labels), "the solution found is not valid in file: " + fileName);
+        assertTrue(!Interpreter.overlap(record.labels), "the solution found is not valid in file: " + fileName);
     }
-
 
     private Collection<DynamicTest> readInFiles(String filePath, AbstractAlgorithmInterface algorithm) {
         try {
@@ -51,7 +45,6 @@ public class AlgorithmTester {
         }
         return null;
     }
-
 
     @TestFactory
     public Collection<DynamicTest> TwoPosTest() {
