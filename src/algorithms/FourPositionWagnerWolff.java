@@ -340,8 +340,9 @@ public class FourPositionWagnerWolff extends BinarySearcher {
      */
     void applyHeuristic() {
         // select Heuristic to be used
-        numberOfConflictsHeuristic();
+        //numberOfConflictsHeuristic();
         //numberOfConflictsHeuristicVariation();
+        intermediateEliminateHeuristic();
     }
 
     /**
@@ -424,6 +425,31 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         }
         maxConflictCandidate.getPoI().removeCandidate(maxConflictCandidate);
         labelsWithConflicts.remove(maxConflictCandidate);
+    }
+
+    private void intermediateEliminateHeuristic() {
+        // Collect all points that are still alive and put them back in the pointsQueue
+        Set<FourPositionPoint> conflictPoints = new HashSet<>();
+        for (FourPositionLabel candidate : labelsWithConflicts) {
+            conflictPoints.add(candidate.getPoI());
+        }
+        pointsQueue.addAll(conflictPoints);
+
+        // remove highest conflict candidate for points with 4 candidates
+        for (FourPositionPoint conflictPoint : conflictPoints) {
+            if (conflictPoint.getCandidates().size() == 4) {
+                chooseLabelsNumberOfConflictsHeuristic(conflictPoint);
+            }
+        }
+
+        eliminateImpossibleCandidates();
+
+        // remove highest conflict candidate for points with 3 candidates
+        for (FourPositionPoint conflictPoint : conflictPoints) {
+            if (conflictPoint.getCandidates().size() == 3) {
+                chooseLabelsNumberOfConflictsHeuristic(conflictPoint);
+            }
+        }
     }
 
     /**
