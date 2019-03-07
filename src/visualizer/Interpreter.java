@@ -16,7 +16,7 @@ public class Interpreter {
 
         for (LabelInterface geo : geoms) {
             if (tree.query2D(geo.getRectangle()).size() > 0) {
-                return false;
+                return true;
             }
 
             tree.insert(geo);
