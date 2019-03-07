@@ -107,7 +107,7 @@ public class FieldExtendedSliderLabel extends SliderLabel {
 
     @Override
     public String getPlacement() {
-        DecimalFormat format = new DecimalFormat("0.0000000000000000000000");
+        DecimalFormat format = new DecimalFormat("0.000000");
         return format.format(shift);
     }
 }
