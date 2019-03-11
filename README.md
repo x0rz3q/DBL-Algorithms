@@ -41,9 +41,7 @@ result == real
 #### xGenerator
 The distribution generator to be used for generating the *x*-coordinates of the points.
 Each distribution takes its own argument(s). 
-Keep in mind that the boundaries of these distributions concern the points, not the rectangles.
-To ensure that the rectangles fall within the QuadTree's range, make sure to limit the points accordingly.
-
+All points are limited to (0, 10000).
 
 Uniform:
 ```
