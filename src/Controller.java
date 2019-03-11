@@ -60,7 +60,7 @@ class Controller {
         int index = rand.nextInt(robin.length());
 
         data = newData;
-        writeFile = new File(data.model + "_" + data.n + "_" + data.ratio + "_" + data.result + "_" + data.xGenerator.toString() + "_" + data.yGenerator.toString()+".txt" + robin.substring(0, index));
+        writeFile = new File(data.model + "_" + data.n + "_" + data.ratio + "_" + data.result + "_" + data.xGenerator.toString() + "_" + data.yGenerator.toString() + robin.substring(0, index) + ".txt");
         writeFile.createNewFile();
         this.printer.setFile(writeFile);
     }
