@@ -11,3 +11,5 @@ number of points: 10
 2664 888
 2664 1776
 2664 2664
+label height: 888.0
+min height: 400.0
