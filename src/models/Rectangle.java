@@ -216,4 +216,45 @@ public class Rectangle implements GeometryInterface {
         boundaryPointArray = boundaryPoints.toArray(boundaryPointArray);
         return boundaryPointArray;
     }
+
+    /**
+     * Returns the integer boundary points on the specified sides, except corners
+     * @param north
+     * @param east
+     * @param south
+     * @param west
+     * @return array of points containing the integer points on the specified boundaries
+     */
+    public Point[] getBoundaryStrict(boolean north, boolean east, boolean south, boolean west) {
+        ArrayList<Point> boundaryPoints = new ArrayList<>();
+        int xLowerBound = (int) Math.floor(this.bottomLeft.getX());
+        int xUpperBound = (int) Math.ceil(this.topRight.getX());
+        int yLowerBound = (int) Math.floor(this.bottomLeft.getY());
+        int yUpperBound = (int) Math.ceil(this.topRight.getY());
+
+        if (north && (this.topRight.getY()) == Math.floor(this.topRight.getY())) {
+            for (int x = xLowerBound + 1; x < xUpperBound; x++) {
+                boundaryPoints.add(new Point(x, this.topRight.getY()));
+            }
+        }
+        if (east && (this.topRight.getX()) == Math.floor(this.topRight.getX())) {
+            for (int y = yLowerBound + 1; y < yUpperBound; y++) {
+                boundaryPoints.add(new Point(this.topRight.getX(), y));
+            }
+        }
+        if (south && (this.bottomLeft.getY()) == Math.floor(this.bottomLeft.getY())) {
+            for (int x = xLowerBound + 1; x < xUpperBound; x++) {
+                boundaryPoints.add(new Point(x, this.bottomLeft.getY()));
+            }
+        }
+        if (west && (this.bottomLeft.getX()) == Math.floor(this.bottomLeft.getX())) {
+            for (int y = yLowerBound + 1; y < yUpperBound; y++) {
+                boundaryPoints.add(new Point(this.bottomLeft.getX(), y));
+            }
+        }
+
+        Point[] boundaryPointArray = new Point[boundaryPoints.size()];
+        boundaryPointArray = boundaryPoints.toArray(boundaryPointArray);
+        return boundaryPointArray;
+    }
 }

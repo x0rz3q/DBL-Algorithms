@@ -133,13 +133,13 @@ class Strategy4pos extends GenerationStrategy {
         // select correct boundary to be locked in
         Point[] boundarySelected;
         if (selectedDirection == 0) {
-            boundarySelected = sel.getBoundary(true, true, false, false);
+            boundarySelected = sel.getBoundaryStrict(true, true, false, false);
         } else if (selectedDirection == 1) {
-            boundarySelected = sel.getBoundary(true, false, false, true);
+            boundarySelected = sel.getBoundaryStrict(true, false, false, true);
         } else if (selectedDirection == 2) {
-            boundarySelected = sel.getBoundary(false, false, true, true);
+            boundarySelected = sel.getBoundaryStrict(false, false, true, true);
         } else {
-            boundarySelected = sel.getBoundary(false, true, true, false);
+            boundarySelected = sel.getBoundaryStrict(false, true, true, false);
         }
 
         Point randBoundPoint = boundarySelected[rand.nextInt(boundarySelected.length)];
