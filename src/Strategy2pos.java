@@ -4,6 +4,8 @@ import models.Rectangle;
 
 import java.util.ArrayList;
 
+import static java.lang.Math.ceil;
+
 // Concrete generation strategy for 2pos
 class Strategy2pos extends GenerationStrategy {
     @Override
@@ -28,9 +30,9 @@ class Strategy2pos extends GenerationStrategy {
         while (rectangles.size() < data.n && counter < data.n * 100000) {
             counter++;
 
-            Point candidate = new Point(data.xGenerator.sample(), data.yGenerator.sample());
+            Point candidate = new Point(data.xGenerator.sample(0, 10000), data.yGenerator.sample(0, 10000));
             while (pointsTree.query2D(new Rectangle(candidate.getX() - 0.5, candidate.getY() - 0.5, candidate.getX() + 0.5, candidate.getY() + 0.5)).size() > 0) {
-                candidate = new Point(data.xGenerator.sample(), data.yGenerator.sample());
+                candidate = new Point(data.xGenerator.sample((int) ceil(width), (int) (10000 - ceil(width))), data.yGenerator.sample((int) ceil(width), (int) (10000 - ceil(width))));
             }
             boolean useLeft = rand.nextBoolean();
             if (useLeft) {
@@ -94,7 +96,7 @@ class Strategy2pos extends GenerationStrategy {
         double width = data.result * data.ratio;
 
         // initial point
-        Point startPoint = new Point(data.xGenerator.sample(), data.yGenerator.sample());
+        Point startPoint = new Point(data.xGenerator.sample(3 * (int) ceil(width), (int) (10000 - 3 * ceil(width))), data.yGenerator.sample((int) ceil(width), (int) (10000 - ceil(width))));
         // Possible labels for initial point
         Rectangle leftRectangle = new Rectangle(new Point(startPoint.getX() - width, startPoint.getY()), new Point(startPoint.getX(), startPoint.getY() + data.result), startPoint);
         Rectangle rightRectangle = new Rectangle(new Point(startPoint.getX(), startPoint.getY()), new Point(startPoint.getX() + width, startPoint.getY() + data.result), startPoint);

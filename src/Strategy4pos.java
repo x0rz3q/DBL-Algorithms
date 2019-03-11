@@ -4,6 +4,8 @@ import Collections.QuadTree;
 
 import java.util.*;
 
+import static java.lang.Math.ceil;
+
 // Concrete generation strategy for 4pos
 class Strategy4pos extends GenerationStrategy {
     @Override
@@ -30,14 +32,14 @@ class Strategy4pos extends GenerationStrategy {
             counter++;
 
 
-            Point pointGuess = new Point(data.xGenerator.sample(), data.yGenerator.sample());
+            Point pointGuess = new Point(data.xGenerator.sample(0, 10000), data.yGenerator.sample(0, 10000));
             boolean noNW = pointsTree.query2D(new Rectangle(pointGuess.getX() - 0.5, pointGuess.getY() + height - 0.5, pointGuess.getX() + 0.5, pointGuess.getY() + height + 0.5)).size() > 0;
             boolean noNE = pointsTree.query2D(new Rectangle(pointGuess.getX() + width - 0.5, pointGuess.getY() + height - 0.5, pointGuess.getX() + width + 0.5, pointGuess.getY() + height + 0.5)).size() > 0;
             boolean noSE = pointsTree.query2D(new Rectangle(pointGuess.getX() + width - 0.5, pointGuess.getY() - 0.5, pointGuess.getX() + width + 0.5, pointGuess.getY() + 0.5)).size() > 0;
             boolean noSW = pointsTree.query2D(new Rectangle(pointGuess.getX() - 0.5, pointGuess.getY() - 0.5, pointGuess.getX() + 0.5, pointGuess.getY() + 0.5)).size() > 0;
 
             while (noNE && noNW && noSE && noSW) {
-                pointGuess = new Point(data.xGenerator.sample(), data.yGenerator.sample());
+                pointGuess = new Point(data.xGenerator.sample(0, 10000), data.yGenerator.sample(0, 10000));
             }
 
 
@@ -81,7 +83,7 @@ class Strategy4pos extends GenerationStrategy {
         double height = data.result;
 
         // initial point
-        Point startPoint = new Point(data.xGenerator.sample(), data.yGenerator.sample());
+        Point startPoint = new Point(data.xGenerator.sample(3 * (int) ceil(width), (int) (10000 - 3 * ceil(width))), data.yGenerator.sample(3 * (int) ceil(width), (int) (10000 - 3 * ceil(width))));
 
         int selectedDirection = rand.nextInt(4);
 
