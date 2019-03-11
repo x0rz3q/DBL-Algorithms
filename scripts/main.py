@@ -13,7 +13,7 @@ os.chdir("src")
 
 for root, dirs, files in os.walk(args.path):
     for file in files:
-        if file.endswith(".java"):
+        if file.endswith(".java") and not root.endswith('visualizer'):
             shutil.copyfile(os.path.join(root, file), file)
 
 os.remove("MainWrapper.java")

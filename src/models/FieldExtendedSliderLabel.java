@@ -1,5 +1,7 @@
 package models;
 
+import java.text.DecimalFormat;
+
 public class FieldExtendedSliderLabel extends SliderLabel {
 
     // the x coordinate of the first point in the sequence of connecting labels
@@ -101,5 +103,11 @@ public class FieldExtendedSliderLabel extends SliderLabel {
         this.height = width / aspectRatio;
         this.isExtended = true;
         this.shift = (sequenceStartX - this.poi.getXMax()) / width + sequenceIndex;
+    }
+
+    @Override
+    public String getPlacement() {
+        DecimalFormat format = new DecimalFormat("0.000000");
+        return format.format(shift);
     }
 }

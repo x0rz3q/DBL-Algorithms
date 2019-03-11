@@ -340,6 +340,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
      */
     void applyHeuristic() {
         // select Heuristic to be used
+
         //numberOfConflictsHeuristic();
         //numberOfConflictsHeuristicVariation();
         //ratioPointsLabelsHeuristic();
@@ -410,7 +411,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
             }
         }
     }
-
+    
     /**
      * Concrete Heuristic (adaptation of I from paper)
      * Calculates for every candidate label the ratio (# of intersecting labels / # of associated intersecting points)
