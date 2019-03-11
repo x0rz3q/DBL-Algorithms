@@ -2,6 +2,7 @@ import models.Point;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
 
 // controller for generation process of test
 class Controller {
@@ -54,8 +55,12 @@ class Controller {
      * @throws IOException
      */
     void setData(TestData newData) throws IOException {
+        Random rand = new Random();
+        String robin = "RobinRobinRobinRobinRobinRobinRobinRobinRobin";
+        int index = rand.nextInt(robin.length());
+
         data = newData;
-        writeFile = new File(data.model + "_" + data.n + "_" + data.ratio + "_" + data.result + "_" + data.xGenerator.toString() + "_" + data.yGenerator.toString()+".txt");
+        writeFile = new File(data.model + "_" + data.n + "_" + data.ratio + "_" + data.result + "_" + data.xGenerator.toString() + "_" + data.yGenerator.toString()+".txt" + robin.substring(0, index));
         writeFile.createNewFile();
         this.printer.setFile(writeFile);
     }
