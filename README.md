@@ -4,7 +4,8 @@ This document serves as a guide for using the testGenerator branch to generate c
 All interaction with the generator is achieved via the *"TestCaseSpecification.txt"* file.
 Every line of this file serves as the specification for a certain test case to be generated.
 After executing the *"Main"* class, the test cases will be generated as new *".txt"* files in the project directory.
-Their name will reflect their specification.
+Their name will reflect their specification. Note: if the program runs out of computational time, a specified testcase
+will be aborted and no labels will be printed. Afterwards it will commence with the next testcase.
 
 ## Test Case Specification
 ### General format
