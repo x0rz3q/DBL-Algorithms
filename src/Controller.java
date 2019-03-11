@@ -24,8 +24,10 @@ class Controller {
         printer.printBasics(data.model, data.ratio, data.n);
         chooseStrategy();
         Point[] points = strategy.generate();
-        printer.printPoints(points);
-        printer.printResult(data.result, data.expectedMinimum);
+        if (points.length == data.n) {
+            printer.printPoints(points);
+            printer.printResult(data.result, data.expectedMinimum);
+        }
     }
 
     /**
