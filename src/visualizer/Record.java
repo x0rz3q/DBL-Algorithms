@@ -14,8 +14,8 @@ public class Record {
     private QuadTree tree;
     private int pointCount = 0;
     private double extent;
-    private double xMin = 0;
-    private double yMin = 0;
+    private double xMin = Integer.MAX_VALUE;
+    private double yMin = Integer.MAX_VALUE;
 
     private String scan(String regex, Scanner scanner) {
         while(!scanner.hasNext(regex)) scanner.next();
@@ -30,8 +30,8 @@ public class Record {
 
         PlacementModelEnum model = PlacementModelEnum.fromString(scan("placement model: .*", scanner));
         double ratio = Double.parseDouble(scan("aspect ratio: .*", scanner));
-        double height = Double.parseDouble(scan("height: .*", scanner));
         this.pointCount = Integer.parseInt(scan("number of points: .*", scanner));
+        double height = Double.parseDouble(scan("height: .*", scanner));
 
         scanner.nextLine();
         scanner.useDelimiter(Pattern.compile("\\p{javaWhitespace}+"));
@@ -45,11 +45,18 @@ public class Record {
 
             LabelInterface label = null;
 
-            if (scanner.hasNextDouble()) {
-                double alpha = scanner.nextDouble();
-                label = new SliderLabel(x, y, height,ratio, alpha, 0);
-            } else
-                label = new PositionLabel(x, y, height, ratio, 0, DirectionEnum.fromString(scanner.next()));
+            switch (model) {
+                case ONE_SLIDER:
+                    double shift = scanner.nextDouble();
+                    label = new SliderLabel(x, y, height,ratio, shift, 0);
+                    break;
+                case TWO_POS:
+                    label = new PositionLabel(x, y, height, ratio, 0, DirectionEnum.fromString(scanner.next()));
+                    break;
+                case FOUR_POS:
+                    label = new FourPositionLabel(x, y, height, ratio, 0, DirectionEnum.fromString(scanner.next()));
+                    break;
+            }
 
             Collection<GeometryInterface> intersections = this.tree.query2D(label.getRectangle());
 
@@ -63,7 +70,7 @@ public class Record {
             this.labels.put(label, new HashSet(intersections));
 
             this.xMin = Math.min(label.getXMin(), this.xMin);
-            this.yMin = Math.min(label.getXMax(), this.yMin);
+            this.yMin = Math.min(label.getYMin(), this.yMin);
             xMax = Math.max((int)label.getXMax(), xMax);
             yMax = Math.max(label.getYMax(), yMax);
         }

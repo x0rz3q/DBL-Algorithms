@@ -1,10 +1,10 @@
 package visualizer;
 
-
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import models.Rectangle;
 
@@ -30,8 +30,8 @@ public class Controller {
             Rectangle rectangle = key.getRectangle();
 
             javafx.scene.shape.Rectangle shape = new javafx.scene.shape.Rectangle();
-            shape.setLayoutY(this.mainPanel.getHeight() - (rectangle.getYMin() + Math.abs(this.record.getyMin()) + rectangle.getHeight()) * scaleFactor);
-            shape.setLayoutX(rectangle.getXMin() * scaleFactor);
+            shape.setLayoutY(this.mainPanel.getHeight() - (rectangle.getYMin() - Math.abs(this.record.getyMin()) + rectangle.getHeight()) * scaleFactor);
+            shape.setLayoutX((rectangle.getXMin() - Math.abs(this.record.getxMin())) * scaleFactor);
             shape.setWidth(rectangle.getWidth() * scaleFactor);
             shape.setHeight(rectangle.getHeight() * scaleFactor);
 
@@ -43,7 +43,14 @@ public class Controller {
 
             shape.setFill(Color.TRANSPARENT);
 
+            javafx.scene.shape.Circle circle = new Circle();
+            circle.setCenterX((key.getPOI().getX() - Math.abs(this.record.getxMin())) * scaleFactor);
+            circle.setCenterY(this.mainPanel.getHeight() - (key.getPOI().getY() - Math.abs(this.record.getyMin())) * scaleFactor);
+            circle.setRadius(1);
+            circle.setFill(Color.GREEN);
+
             this.mainPanel.getChildren().add(shape);
+            this.mainPanel.getChildren().add(circle);
         });
     }
 }
