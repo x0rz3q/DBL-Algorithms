@@ -10,7 +10,7 @@ public class ImplicationGraphSolver {
 
     // stores for each node the component it is in
     private int[] scc;
-    private List<Integer> componentsInReverseTopOrder;
+    private Stack<Integer> componentsInReverseTopOrder;
 
     // keep track of current component
     private int counter;
@@ -64,7 +64,7 @@ public class ImplicationGraphSolver {
         s = new Stack<>();
         scc = new int[noPoints * 2];
         counter = 0;
-        componentsInReverseTopOrder = new ArrayList<>();
+        componentsInReverseTopOrder = new Stack<>();
 
         // Step 1: dfs on original graph
         for (int i = 0; i < noPoints * 2; i++) {
@@ -77,7 +77,7 @@ public class ImplicationGraphSolver {
         while (!s.empty()) {
             int n = s.pop();
             if (!visitedInv[n]) {
-                componentsInReverseTopOrder.add(n);
+                componentsInReverseTopOrder.push(n);
                 dfsSecond(n);
                 counter++;
             }
@@ -107,7 +107,10 @@ public class ImplicationGraphSolver {
 
         // assign labels to each point in reverse topological order
         isSet = new boolean[noPoints];
-        for (Integer i : componentsInReverseTopOrder) {
+        // System.out.println("components: ");
+        while(!componentsInReverseTopOrder.empty()) {
+            // System.out.println(i);
+            int i = componentsInReverseTopOrder.pop();
             if (!isSet[i % noPoints]) {
                 assignTrue(solution, i, adj);
             }
@@ -117,21 +120,17 @@ public class ImplicationGraphSolver {
     }
 
     private void dfsFirst(int start) {
-        Deque<Integer> nodesToVisit = new ArrayDeque<Integer>();
-        nodesToVisit.add(start);
-
-        while (!nodesToVisit.isEmpty()) {
-            int current = nodesToVisit.pop();
-            if (visited[current]) {
-                continue;
-            }
-            visited[current] = true;
-
-            s.add(current);
-            for (int i : adj[current]) {
-                nodesToVisit.push(i);
-            }
+        if (visited[start]) {
+            return;
         }
+
+        visited[start] = true;
+
+        for (int i : adj[start]) {
+            dfsFirst(i);
+        }
+
+        s.push(start);
     }
 
     private void dfsSecond(int start) {
@@ -148,7 +147,6 @@ public class ImplicationGraphSolver {
             for (int i : adjInv[current]) {
                 nodesToVisit.push(i);
             }
-
             scc[current] = counter;
         }
     }
