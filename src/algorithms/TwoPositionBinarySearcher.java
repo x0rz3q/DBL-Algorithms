@@ -6,6 +6,7 @@ import distance.TwoPositionDistance;
 import interfaces.models.GeometryInterface;
 import interfaces.models.LabelInterface;
 import interfaces.models.PointInterface;
+import models.AbstractLabel;
 import models.DirectionEnum;
 import models.PositionLabel;
 import models.Rectangle;
@@ -57,6 +58,7 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
 
     @Override
     boolean isSolvable(DataRecord record, double height) {
+        if(!preprocessingCheck(record, height)) return false;
         initializeGraph(record, height);
 
         return solver.isSolvable(adj, adjInv);
@@ -139,5 +141,15 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
 
         adj[a].add(b);
         adjInv[b].add(a);
+    }
+
+    private Boolean preprocessingCheck(DataRecord record, Double height) {
+        double width = height*record.aspectRatio;
+        for (LabelInterface label: record.labels) {
+            Rectangle left = new Rectangle(label.getXMin() - width, label.getYMin(), label.getXMin(), label.getYMin() + height);
+            Rectangle right = new Rectangle(label.getXMin(), label.getYMin(), label.getXMin() + width, label.getYMin() + height);
+            if (!record.collection.query2D(left).isEmpty() && !record.collection.query2D(right).isEmpty()) return false;
+        }
+        return true;
     }
 }
