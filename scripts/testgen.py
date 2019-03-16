@@ -29,8 +29,6 @@ def divisorGenerator(n):
 def getRatio(result):
     return random.randint(1, max(int(result/2), 1)) 
 
-
-
 tests = [] # contains the tests 
 for algo in algorithms:
     for nPoints in point_amounts:
