@@ -118,4 +118,8 @@ class TestData {
         }
         this.yGenerator = newyGenerator;
     }
+
+    public String toString() {
+        return model + " " + n + " " + ratio + " " +result;
+    }
 }

@@ -4,17 +4,18 @@ import math
 filename = "TestCaseSpecification.txt"
 algorithms = ["2pos"] # algorithms to generate tests for
 # model, npoints, ratio, result xgen, ygen
-point_amounts = [10, 100, 1000, 5000, 10000, 15000]
-result_range = [6, 24] # range of picking random result
+point_amounts = [10, 100, 1000, 10000, 15000, 20000, 25000]
+result_range = [2, 6] # range of picking random result
 amount = 100 # amount of cases per point amount
 
 # currently assume uniform generator
 generator = "Uniform"
-lowerbound_range = [10, 150]
-upperbound_range = [500, 10000]
+lowerbound_range = [10,500]
+upperbound_range = [5000,10000]
 
 def generatorGen():
-    return random.randint(lowerbound_range[0], lowerbound_range[1]), random.randint(upperbound_range[0], upperbound_range[1]) 
+    lower = random.randint(lowerbound_range[0], lowerbound_range[1]) 
+    return lower, random.randint(lower + upperbound_range[0], upperbound_range[1]) 
 
 def divisorGenerator(n):
     divisors = []
@@ -26,12 +27,7 @@ def divisorGenerator(n):
     return divisors
 
 def getRatio(result):
-    start = 2
-    while (result % start == 0):
-        start *= 2
-    start /= 2
-
-    return result / start if result % 2 == 0 else 1
+    return random.randint(1, max(int(result/2), 1)) 
 
 
 
