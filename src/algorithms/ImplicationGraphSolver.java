@@ -120,17 +120,26 @@ public class ImplicationGraphSolver {
     }
 
     private void dfsFirst(int start) {
-        if (visited[start]) {
-            return;
+        Deque<Integer> nodesToVisit = new ArrayDeque<Integer>();
+        nodesToVisit.add(start);
+        Stack<Integer> currentStack = new Stack<>();
+
+        while (!nodesToVisit.isEmpty()) {
+            int current = nodesToVisit.pop();
+            if (visited[current]) {
+                continue;
+            }
+            visited[current] = true;
+
+            currentStack.push(current);
+            for (int i : adj[current]) {
+                nodesToVisit.push(i);
+            }
         }
 
-        visited[start] = true;
-
-        for (int i : adj[start]) {
-            dfsFirst(i);
+        while(!currentStack.empty()) {
+            s.add(currentStack.pop());
         }
-
-        s.push(start);
     }
 
     private void dfsSecond(int start) {

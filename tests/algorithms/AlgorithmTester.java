@@ -3,6 +3,8 @@ package algorithms;
 import Parser.Parser;
 import Parser.TestDataRecord;
 import interfaces.AbstractAlgorithmInterface;
+import interfaces.models.LabelInterface;
+import models.PositionLabel;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import visualizer.Interpreter;
@@ -20,6 +22,10 @@ public class AlgorithmTester {
 
     private void runTest(TestDataRecord record, String fileName, AbstractAlgorithmInterface algorithms) {
         algorithms.solve(record);
+
+        for (LabelInterface l : record.labels) {
+            ((PositionLabel)l).setHeight(record.height);
+        }
         assertTrue(record.height >= record.reqHeight, "the height found is too small in file: " + fileName + ", expected min: " + record.reqHeight + " actual value: " + record.height);
         assertTrue(record.height <= record.optHeight, "the height found is too large in file: " + fileName + ", max value: " + record.optHeight + " actual value: " + record.height);
         assertTrue(!Interpreter.overlap(record.labels), "the solution found is not valid in file: " + fileName);
