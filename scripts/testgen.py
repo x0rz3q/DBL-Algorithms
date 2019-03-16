@@ -1,15 +1,21 @@
 import random
+import os
 import math
+import subprocess
 
 filename = "TestCaseSpecification.txt"
 algorithms = ["2pos"] # algorithms to generate tests for
 # model, npoints, ratio, result xgen, ygen
 point_amounts = [10, 100, 1000, 10000, 15000, 20000, 25000]
-result_range = [2, 6] # range of picking random result
+result_range = [2, 12] # range of picking random result
 amount = 100 # amount of cases per point amount
 
+project_location = "/home/juris/Uni/DBL-Algorithms/"
+test_location = project_location +"profiling/tests"
+class_files = project_location + "out/production/DBL-Algorithms/"
+
 # currently assume uniform generator
-generator = "Uniform"
+generator = "Uniform" # when more generators are used, adjust regex at the bottom of the script
 lowerbound_range = [10,500]
 upperbound_range = [5000,10000]
 
@@ -53,7 +59,14 @@ for t in tests:
     f.write(t + "\n")
 f.close()
 
+os.chdir(class_files)
 
+main_command = ["java", "Main"]
+subprocess.check_output(main_command)
+
+os.chdir(project_location)
+# move all files
+subprocess.check_output(["mv", f"*{generator}*", test_location])
 
 
 
