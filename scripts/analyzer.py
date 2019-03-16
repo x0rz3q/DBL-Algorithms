@@ -1,4 +1,5 @@
 import subprocess
+import csv
 import sys
 import matplotlib.pylab as plt
 import time
@@ -50,10 +51,18 @@ def analyze(algo_name, output_name):
     # run algo on tests
     pure_results = runAlgo(algo_name)
     results = [] 
+
     # process data
     for k, r in pure_results.items():
         results.append((k, round(r[0] / r[1], 2)))  # get avg
     results.sort()
+
+    # save it
+    with open(f"{output_location}{output_name}.csv", "w") as output:
+        writer = csv.writer(output, lineterminator='\n')
+        for val in results:
+            writer.writerow([val])
+
     # plot it
     x, y = zip(*results)
     plt.plot(x, y) 

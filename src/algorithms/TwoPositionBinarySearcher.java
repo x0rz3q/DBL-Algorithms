@@ -1,16 +1,15 @@
 package algorithms;
 
+import Collections.KDTree;
 import Parser.DataRecord;
 import Parser.Pair;
 import distance.TwoPositionDistance;
 import interfaces.models.GeometryInterface;
 import interfaces.models.LabelInterface;
 import interfaces.models.PointInterface;
-import models.AbstractLabel;
 import models.DirectionEnum;
 import models.PositionLabel;
 import models.Rectangle;
-import Collections.KDTree;
 
 import java.util.*;
 
@@ -58,7 +57,7 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
 
     @Override
     boolean isSolvable(DataRecord record, double height) {
-        if(!preprocessingCheck(record, height)) return false;
+        // if(!preprocessingCheck(record, height)) return false;
         initializeGraph(record, height);
 
         return solver.isSolvable(adj, adjInv);
