@@ -7,6 +7,7 @@ import os
 project_location = "/home/juris/Uni/DBL-Algorithms/"
 csv_location = project_location + "profiling/"
 output_name = "combo"
+extension = ".pdf"
 x_label = "|P|"
 y_label = "t (seconds)"
 
@@ -31,4 +32,4 @@ for i in full_info:
 
 plt.xlabel(x_label)
 plt.ylabel(y_label)
-plt.savefig(f"{csv_location}{output_name}.png")
+plt.savefig(f"{csv_location}{output_name}{extension}")
