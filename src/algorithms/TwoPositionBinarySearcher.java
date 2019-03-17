@@ -57,7 +57,7 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
 
     @Override
     boolean isSolvable(DataRecord record, double height) {
-        // if(!preprocessingCheck(record, height)) return false;
+        if(!preprocessingCheck(record, height)) return false;
         initializeGraph(record, height);
 
         return solver.isSolvable(adj, adjInv);

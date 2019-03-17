@@ -70,4 +70,4 @@ def analyze(algo_name, output_name):
     plt.ylabel("t")
     plt.savefig(f"{output_location}{output_name}.png") 
 
-analyze("2pos", "2pos_analysis")
+analyze("2pos", "2pos_analysis_no_processing")
