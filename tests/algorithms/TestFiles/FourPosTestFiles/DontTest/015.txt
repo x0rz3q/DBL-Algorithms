@@ -1001,3 +1001,5 @@ number of points: 1000
 8091 1260
 8091 400
 8149 1280
+min height: 20
+label height: 10
