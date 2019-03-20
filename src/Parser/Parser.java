@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -170,6 +171,7 @@ public class Parser implements ParserInterface {
         }
 
         DecimalFormat format = new DecimalFormat("0.000000");
+        format.setRoundingMode(RoundingMode.FLOOR);
 
         writer.write(
                 "aspect ratio: " + record.aspectRatio + "\n"
