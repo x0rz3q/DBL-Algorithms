@@ -457,7 +457,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         }
     }
 
-    private void chooceLabelsRatioPointsLabelsHeuristic(FourPositionPoint conflictPoint, HashMap<FourPositionLabel, Double> ratioMap) {
+    private void chooseLabelsRatioPointsLabelsHeuristic(FourPositionPoint conflictPoint, HashMap<FourPositionLabel, Double> ratioMap) {
         // select conflict candidate with highest ratio
         FourPositionLabel maxConflictCandidate = conflictPoint.getCandidates().get(0);
         for (FourPositionLabel candidate : conflictPoint.getCandidates()) {
