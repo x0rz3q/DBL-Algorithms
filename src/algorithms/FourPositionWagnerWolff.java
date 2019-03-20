@@ -445,14 +445,14 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         // remove highest conflict candidate for points with 4 candidates
         for (FourPositionPoint conflictPoint : conflictPoints) {
             if (conflictPoint.getCandidates().size() == 4) {
-                chooceLabelsRatioPointsLabelsHeuristic(conflictPoint, ratioMap);
+                chooseLabelsRatioPointsLabelsHeuristic(conflictPoint, ratioMap);
             }
         }
 
         // remove highest conflict candidate for points with 3 candidates
         for (FourPositionPoint conflictPoint : conflictPoints) {
             if (conflictPoint.getCandidates().size() == 3) {
-                chooceLabelsRatioPointsLabelsHeuristic(conflictPoint, ratioMap);
+                chooseLabelsRatioPointsLabelsHeuristic(conflictPoint, ratioMap);
             }
         }
     }
