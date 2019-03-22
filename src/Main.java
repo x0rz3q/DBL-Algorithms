@@ -8,7 +8,7 @@ public class Main {
 
         // ADAPT LOCATION HERE ------------------------------------------------------------------------
         // String testCaseLocation = "/home/juris/Uni/DBL-Algorithms/TestCaseSpecification.txt";
-        String testCaseLocation = "/home/juris/Uni/DBL-Algorithms/TestCaseSpecification.txt";
+        String testCaseLocation = "/home/juris/Uni/DBL-Algorithms/hiddestests.txt";
         // ADAPT LOCATION BEFORE HERE -----------------------------------------------------------------
 
         TestReader reader = new TestReader(testCaseLocation);

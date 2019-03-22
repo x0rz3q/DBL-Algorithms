@@ -8,7 +8,7 @@ import os
 # only change this directory and it should work
 # for windows people (puke) slashes might need different syntax 
 project_location = "/home/juris/Uni/DBL-Algorithms/"
-test_location = project_location + "profiling/tests/" # location of generated tests
+test_location = project_location + "profiling/hiddetests/" # location of generated tests
 class_location = project_location + "out/production/DBL-Algorithms/" # location of compiled class files
 output_location = project_location + "profiling/" # output graphs location 
 
@@ -70,4 +70,4 @@ def analyze(algo_name, output_name):
     plt.ylabel("t")
     plt.savefig(f"{output_location}{output_name}.png") 
 
-analyze("2pos", "2pos_analysis_no_processing")
+analyze("4pos", "4pos_anal")
