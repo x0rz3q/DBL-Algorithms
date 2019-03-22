@@ -41,7 +41,7 @@ class Printer {
      */
     void printResult(double result, double expectedMinimum) {
         printWriter.println("label height: " + result);
-        printWriter.println("minimum expected result: " + expectedMinimum);
+        printWriter.print("minimum expected result: " + expectedMinimum);
         printWriter.close();
     }
 

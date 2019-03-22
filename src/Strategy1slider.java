@@ -37,6 +37,7 @@ class Strategy1slider extends GenerationStrategy {
             Rectangle candidateRectangle = new Rectangle(candidate.getX() - (shift - 1.0) * width, candidate.getY(), candidate.getX() + shift * width, candidate.getY() + height);
 
             if (tree.query2D(candidateRectangle).size() == 0) {
+                candidateRectangle.setPoI(candidate);
                 rectangles.add(candidateRectangle);
                 tree.insert(candidateRectangle);
                 pointsTree.insert(new Rectangle(candidate, candidate, candidate));
