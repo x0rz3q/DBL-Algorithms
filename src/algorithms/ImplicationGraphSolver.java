@@ -65,7 +65,6 @@ public class ImplicationGraphSolver {
         scc = new int[noPoints * 2];
         counter = 0;
         componentsInReverseTopOrder = new ArrayList<>();
-
         // Step 1: dfs on original graph
         for (int i = 0; i < noPoints * 2; i++) {
             if (!visited[i]) {
@@ -77,7 +76,7 @@ public class ImplicationGraphSolver {
         while (!s.empty()) {
             int n = s.pop();
             if (!visitedInv[n]) {
-                componentsInReverseTopOrder.add(n);
+                componentsInReverseTopOrder.add(0, n);
                 dfsSecond(n);
                 counter++;
             }
@@ -86,6 +85,7 @@ public class ImplicationGraphSolver {
 
     /**
      * we assume that we have a 2pos problem with n nodes
+     *
      * @param adj    List<Integer>[] implication graph: an array of List<Integer> of length 2n where the first
      *               n values correspond to the first label of each node (value i corresponds to first label of node i)
      *               and the next n values correspond to the second label of each node (value. i + n corresponds to second label of node i)
@@ -95,9 +95,9 @@ public class ImplicationGraphSolver {
      * @param adjInv List<Integer>[] inverse of implication graph:
      *               \forall(i; adj.has(i); \forall(j; adj[i].has(j); adjInv[j].contains(i)))
      *               \forall(i; adjInv.has(i); \forall(j; adjInv[i].has(j); adj[j].contains(i)))
-     * @pre isSolvable(adj, adjInv)
      * @return \return represents a possible solution to adj. Where we have \result.length = n and \result[i] represents the label of node i
-     *          where node i has the first label, if \result[i] is true and otherwise node i needs to have the second label
+     * where node i has the first label, if \result[i] is true and otherwise node i needs to have the second label
+     * @pre isSolvable(adj, adjInv)
      */
     public boolean[] getSolution(List<Integer>[] adj, List<Integer>[] adjInv) {
         noPoints = adj.length / 2;
@@ -116,26 +116,43 @@ public class ImplicationGraphSolver {
         return solution;
     }
 
-    private void dfsFirst(int start) {
-        Deque<Integer> nodesToVisit = new ArrayDeque<Integer>();
-        nodesToVisit.add(start);
-
-        while (!nodesToVisit.isEmpty()) {
-            int current = nodesToVisit.pop();
-            if (visited[current]) {
-                continue;
-            }
-            visited[current] = true;
-
-            s.add(current);
-            for (int i : adj[current]) {
-                nodesToVisit.push(i);
-            }
+    private boolean allVisited(int start) {
+        for (Integer i : adj[start]) {
+            if (!visited[i])
+                return false;
         }
+
+        return true;
+    }
+
+    private Integer next(Integer start) {
+        for (Integer i : adj[start]) {
+            if (!visited[i])
+                return i;
+        }
+
+        return null;
+    }
+
+    private void dfsFirst(Integer start) {
+        Stack<Integer> integers = new Stack<>();
+        integers.add(start);
+
+        do {
+            Integer next = integers.peek();
+            visited[next] = true;
+
+            if (!allVisited(next)) {
+                integers.add(next(next));
+            } else {
+                next = integers.pop();
+                s.add(next);
+            }
+        } while(!integers.isEmpty());
     }
 
     private void dfsSecond(int start) {
-        Deque<Integer> nodesToVisit = new ArrayDeque<Integer>();
+        Deque<Integer> nodesToVisit = new ArrayDeque<>();
         nodesToVisit.push(start);
 
         while (!nodesToVisit.isEmpty()) {
@@ -148,7 +165,6 @@ public class ImplicationGraphSolver {
             for (int i : adjInv[current]) {
                 nodesToVisit.push(i);
             }
-
             scc[current] = counter;
         }
     }
