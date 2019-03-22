@@ -201,7 +201,7 @@ public class KDTree extends AbstractCollection {
 
     @Override
     public Collection<GeometryInterface> query2D(Rectangle range) {
-        Collection<GeometryInterface> results = new ArrayList<>();
+        Collection<GeometryInterface> results = new ArrayList<>(100);
         query2D(this, range, results);
         return results;
     }

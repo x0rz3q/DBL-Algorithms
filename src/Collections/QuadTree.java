@@ -100,7 +100,7 @@ public class QuadTree extends AbstractCollection {
         return this.NE.remove(node) || this.NW.remove(node) || this.SE.remove(node) || this.SW.remove(node);
     }
     public Collection<GeometryInterface> query2D(Rectangle range) {
-        Collection<GeometryInterface> results = new ArrayList<>();
+        Collection<GeometryInterface> results = new ArrayList<>(100);
         query2D(this, range, results);
         return results;
     }
