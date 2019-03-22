@@ -27,7 +27,7 @@ class Strategy2pos extends GenerationStrategy {
             pointsTree.insert(new Rectangle(r.getPoI(), r.getPoI(), r.getPoI()));
         }
 
-        while (rectangles.size() < data.n && counter < data.n * 100000) {
+        while (rectangles.size() < data.n && counter < data.n * 1e5) {
             counter++;
 
             Point candidate = new Point(data.xGenerator.sample(0, 10000), data.yGenerator.sample(0, 10000));

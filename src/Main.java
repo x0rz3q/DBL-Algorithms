@@ -1,8 +1,5 @@
-import java.io.*;
-import java.lang.*;
-import java.util.*;
-
-import org.apache.commons.math3.distribution.*;
+import java.io.IOException;
+import java.util.ArrayList;
 
 
 public class Main {
@@ -10,6 +7,7 @@ public class Main {
 
 
         // ADAPT LOCATION HERE ------------------------------------------------------------------------
+        // String testCaseLocation = "/home/juris/Uni/DBL-Algorithms/TestCaseSpecification.txt";
         String testCaseLocation = "TestCaseSpecification.txt";
         // ADAPT LOCATION BEFORE HERE -----------------------------------------------------------------
 
@@ -18,6 +16,7 @@ public class Main {
 
         ArrayList<TestData> tests = reader.getTests();
         for (TestData test : tests) {
+            System.out.println(test.toString());
             controller.setData(test);
             controller.generate();
         }

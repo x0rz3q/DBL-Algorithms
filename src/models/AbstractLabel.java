@@ -7,14 +7,14 @@ import interfaces.models.PointInterface;
 public abstract class AbstractLabel implements LabelInterface {
     protected Rectangle rectangle;
     protected int ID;
-    protected double aspectRation;
+    protected double aspectRatio;
     protected PointInterface poi;
     protected double height;
 
     public AbstractLabel(double x, double y, double size, double aspectRation, int ID) {
         this.poi = new Point(x, y);
         this.ID = ID;
-        this.aspectRation = aspectRation;
+        this.aspectRatio = aspectRation;
     }
 
     @Override
@@ -113,6 +113,6 @@ public abstract class AbstractLabel implements LabelInterface {
      * @post {@code this.height == width / this.aspectRatio && this.width == width}
      */
     public void setWidth(double width) {
-        this.height = width / this.aspectRation;
+        this.height = width / this.aspectRatio;
     }
 }

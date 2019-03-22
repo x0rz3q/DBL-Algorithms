@@ -1,14 +1,11 @@
 package algorithms;
 
-import Collections.QuadTree;
-import Parser.DataRecord;
-import Parser.Pair;
 import Parser.Parser;
+import Parser.TestDataRecord;
 import interfaces.AbstractAlgorithmInterface;
-import interfaces.AbstractCollectionInterface;
-import main.Interpreter;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
+import visualizer.Interpreter;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,20 +13,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 public class AlgorithmTester {
 
-    private void runTest(DataRecord record, String fileName, double optHeight, AbstractAlgorithmInterface algorithms) {
+    private void runTest(TestDataRecord record, String fileName, AbstractAlgorithmInterface algorithms) {
         algorithms.solve(record);
-        assertEquals(optHeight, record.height, "the height found is not correct in file: " + fileName);
-        assertTrue(Interpreter.isValid(record), "the solution found is not valid in file: " + fileName);
+        assertTrue(record.height >= record.reqHeight, "the height found is too small in file: " + fileName + ", expected min: " + record.reqHeight + " actual value: " + record.height);
+        assertTrue(record.height <= record.optHeight, "the height found is too large in file: " + fileName + ", max value: " + record.optHeight + " actual value: " + record.height);
+        assertTrue(!Interpreter.overlap(record.labels), "the solution found is not valid in file: " + fileName);
     }
 
-
-    private Collection<DynamicTest> readInFiles(String filePath, AbstractAlgorithmInterface algorithm, Class<? extends AbstractCollectionInterface> collection) {
+    private Collection<DynamicTest> readInFiles(String filePath, AbstractAlgorithmInterface algorithm) {
         try {
             File folder = new File(filePath);
             File[] listOfFiles = folder.listFiles();
@@ -38,9 +34,9 @@ public class AlgorithmTester {
             Collection<DynamicTest> tests = new ArrayList<>();
             for (File file : listOfFiles) {
                 if (file.isFile()) {
-                    Pair<DataRecord, Double> input = parser.inputTestMode(new FileInputStream(file), collection);
+                    TestDataRecord input = parser.inputTestMode(new FileInputStream(file));
                     tests.add(dynamicTest("test of " + algorithm.getClass() + " on file: " + file.getName(),
-                            () -> runTest(input.getKey(), file.getName(), input.getValue(), algorithm)));
+                            () -> runTest(input, file.getName(), algorithm)));
                 }
             }
             return tests;
@@ -50,19 +46,18 @@ public class AlgorithmTester {
         return null;
     }
 
-
     @TestFactory
     public Collection<DynamicTest> TwoPosTest() {
-        return readInFiles("tests/algorithms/TestFiles/TwoPosTestFiles", new TwoPositionBinarySearcher(), QuadTree.class);
+        return readInFiles("tests/algorithms/TestFiles/TwoPosTestFiles", new TwoPositionBinarySearcher());
     }
 
     @TestFactory
     public Collection<DynamicTest> FourPosTest() {
-        return readInFiles("tests/algorithms/TestFiles/FourPosTestFiles", new TwoPositionBinarySearcher(), QuadTree.class);
+        return readInFiles("tests/algorithms/TestFiles/FourPosTestFiles", new FourPositionWagnerWolff());
     }
 
     @TestFactory
     public Collection<DynamicTest> SliderTest() {
-        return readInFiles("tests/algorithms/TestFiles/SliderTestFiles", new GreedySliderAlgorithm(), QuadTree.class);
+        return readInFiles("tests/algorithms/TestFiles/SliderTestFiles", new GreedySliderAlgorithm());
     }
 }

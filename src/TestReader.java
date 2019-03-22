@@ -20,6 +20,9 @@ class TestReader {
     ArrayList<TestData> getTests() throws  IllegalArgumentException {
         ArrayList<TestData> tests = new ArrayList<>();
         while(sc.hasNextLine()) {
+            if (!sc.hasNext()) {
+                break;
+            }
             TestData currentTest = new TestData();
 
             currentTest.setModel(sc.next());
