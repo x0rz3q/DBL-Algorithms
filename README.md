@@ -35,7 +35,7 @@ result * 2 == integer || result * ratio * 2 == integer
 ```
 1slider:
 ```
-result == real
+(result * ratio * 2 == integer && result * ratio >= 1.5) || (result == integer && result * ratio >= 1.0)
 ```
 
 #### xGenerator
