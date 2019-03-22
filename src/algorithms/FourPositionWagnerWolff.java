@@ -14,17 +14,24 @@ import java.util.*;
 public class FourPositionWagnerWolff extends BinarySearcher {
 
     // phase 2 queue
-    private ArrayDeque<FourPositionPoint> pointsQueue = new ArrayDeque<>();
+    private ArrayDeque<FourPositionPoint> pointsQueue;
 
     // conflict graph
-    private ArrayList<FourPositionLabel> labelsWithConflicts = new ArrayList<>();
+    private ArrayList<FourPositionLabel> labelsWithConflicts;
 
     // selected candidates
-    private ArrayList<FourPositionLabel> selectedLabels = new ArrayList<>();
+    private ArrayList<FourPositionLabel> selectedLabels;
 
     // DataRecord containing all labels of the current sigma
     // Only used in preprocessing
     private DataRecord labels = new DataRecord();
+
+    private double time = 0;
+    private double conflictSizeTime = 0;
+    private double preprocessTime = 0;
+    private double eliminateTime = 0;
+    private double heuristicTime = 0;
+    private double twoSatTime = 0;
 
     /**
      * Calculates all conflict sizes for given DataRecord. It is sufficient for the
@@ -37,6 +44,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
      *                      i is a conflictSize for record)
      */
     double[] findConflictSizes(DataRecord record) {
+        time = System.nanoTime();
         FourPositionDistance distanceFunction = new FourPositionDistance();
         distanceFunction.setAspectRatio(record.aspectRatio);
         int k = 8; // number of nearest neighbours to search for
@@ -62,6 +70,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         // Optionally sort conflicts before passing them to general binary searcher
         Arrays.sort(conflicts);
 
+        conflictSizeTime = System.nanoTime() - time;
         return conflicts;
     }
 
@@ -80,9 +89,9 @@ public class FourPositionWagnerWolff extends BinarySearcher {
      */
     void preprocessing(DataRecord record, Double sigma) {
         // initialization
-        pointsQueue = new ArrayDeque<>();
-        labelsWithConflicts = new ArrayList<>();
-        selectedLabels = new ArrayList<>();
+        pointsQueue = new ArrayDeque<>(record.labels.size()*2);
+        labelsWithConflicts = new ArrayList<>(record.labels.size()*2);
+        selectedLabels = new ArrayList<>(record.labels.size()*2);
         labels = new DataRecord();
         labels.collection = new QuadTree(new Rectangle(0, 0, 10000, 10000));
         labels.aspectRatio = record.aspectRatio;
@@ -169,7 +178,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
             FourPositionPoint point = pointsQueue.pollFirst(); // also removes element from queue
             if (noCandidates(point)) {
                 return false;
-            } else if (hasCandidateWithoutIntersections(point)) {
+            }  else if (hasCandidateWithoutIntersections(point)) {
                 continue;
             } else if (oneCandidate(point)) {
                 continue;
@@ -497,6 +506,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         for (FourPositionLabel candidate : labelsWithConflicts) {
             conflictPoints.add(candidate.getPoI());
         }
+
         pointsQueue.addAll(conflictPoints);
 
         // remove highest conflict candidate for points with 4 candidates
@@ -612,11 +622,27 @@ public class FourPositionWagnerWolff extends BinarySearcher {
 
     @Override
     boolean isSolvable(DataRecord record, double height) {
+
+        time = System.nanoTime();
         preprocessing(record, height);
+        preprocessTime += System.nanoTime()-time;
+
+        time = System.nanoTime();
         boolean solvable = eliminateImpossibleCandidates();
+        eliminateTime += System.nanoTime()-time;
+
         if (!solvable) return false;
+
+        time = System.nanoTime();
         applyHeuristic();
+        heuristicTime += System.nanoTime()-time;
+
+
+        time = System.nanoTime();
         solvable = doTwoSat(record, false);
+        twoSatTime += System.nanoTime()-time;
+
+        time = System.nanoTime();
         return solvable;
     }
 
@@ -627,6 +653,16 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         applyHeuristic();
         record.height = height;
         solvable = doTwoSat(record, true);
+//        System.err.println("findConflictSizes took: " + (conflictSizeTime/Math.pow(10, 9)));
+//        System.err.println("preprocessing took: " + (preprocessTime/Math.pow(10, 9)));
+//        System.err.println("eliminate took: " + (eliminateTime/Math.pow(10, 9)));
+//        System.err.println("heuristic took: " + (heuristicTime/Math.pow(10, 9)));
+//        System.err.println("twoSat took: " + (twoSatTime/Math.pow(10, 9)));
+//        conflictSizeTime = 0;
+//        preprocessTime = 0;
+//        eliminateTime = 0;
+//        heuristicTime = 0;
+//        twoSatTime = 0;
     }
 
 
