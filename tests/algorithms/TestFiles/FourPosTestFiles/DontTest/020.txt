@@ -10001,3 +10001,5 @@ number of points: 10000
 9991 9687
 9991 9867
 9991 9915
+min height: 3.0
+label height: 2.75
