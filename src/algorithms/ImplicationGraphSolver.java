@@ -115,19 +115,6 @@ public class ImplicationGraphSolver {
 
         return solution;
     }
-//
-//    private void dfsFirst(int start) {
-//        if (visited[start])
-//            return;
-//
-//        visited[start] = true;
-//
-//        for (Integer i : adj[start]) {
-//            dfsFirst(i);
-//        }
-//
-//        s.push(start);
-//    }
 
     private boolean allVisited(int start) {
         for (Integer i : adj[start]) {
