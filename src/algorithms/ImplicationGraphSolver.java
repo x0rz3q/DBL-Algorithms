@@ -10,7 +10,7 @@ public class ImplicationGraphSolver {
 
     // stores for each node the component it is in
     private int[] scc;
-    private Deque<Integer> componentsInReverseTopOrder;
+    private List<Integer> componentsInReverseTopOrder;
 
     // keep track of current component
     private int counter;
@@ -64,7 +64,7 @@ public class ImplicationGraphSolver {
         s = new Stack<>();
         scc = new int[noPoints * 2];
         counter = 0;
-        componentsInReverseTopOrder = new ArrayDeque<>();
+        componentsInReverseTopOrder = new ArrayList<>();
         // Step 1: dfs on original graph
         for (int i = 0; i < noPoints * 2; i++) {
             if (!visited[i]) {
@@ -76,7 +76,7 @@ public class ImplicationGraphSolver {
         while (!s.empty()) {
             int n = s.pop();
             if (!visitedInv[n]) {
-                componentsInReverseTopOrder.push(n);
+                componentsInReverseTopOrder.add(0, n);
                 dfsSecond(n);
                 counter++;
             }
@@ -115,31 +115,53 @@ public class ImplicationGraphSolver {
 
         return solution;
     }
+//
+//    private void dfsFirst(int start) {
+//        if (visited[start])
+//            return;
+//
+//        visited[start] = true;
+//
+//        for (Integer i : adj[start]) {
+//            dfsFirst(i);
+//        }
+//
+//        s.push(start);
+//    }
 
-    private void dfsFirst(int start) {
-        Deque<Integer> nodesToVisit = new ArrayDeque<>();
-        nodesToVisit.add(start);
-        Stack<Integer> currentStack = new Stack<>();
-
-        while (!nodesToVisit.isEmpty()) {
-            int current = nodesToVisit.pop();
-            if (visited[current]) {
-                continue;
-            }
-            visited[current] = true;
-
-            currentStack.push(current);
-            for (int i : adj[current]) {
-                if (!visited[i]) {
-                    nodesToVisit.add(i);
-                }
-
-            }
+    private boolean allVisited(int start) {
+        for (Integer i : adj[start]) {
+            if (!visited[i])
+                return false;
         }
 
-        while (!currentStack.empty()) {
-            s.push(currentStack.pop());
+        return true;
+    }
+
+    private Integer next(Integer start) {
+        for (Integer i : adj[start]) {
+            if (!visited[i])
+                return i;
         }
+
+        return null;
+    }
+
+    private void dfsFirst(Integer start) {
+        Stack<Integer> integers = new Stack<>();
+        integers.add(start);
+
+        do {
+            Integer next = integers.peek();
+            visited[next] = true;
+
+            if (!allVisited(next)) {
+                integers.add(next(next));
+            } else {
+                next = integers.pop();
+                s.add(next);
+            }
+        } while(!integers.isEmpty());
     }
 
     private void dfsSecond(int start) {
