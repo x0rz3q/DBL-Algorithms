@@ -26,12 +26,12 @@ class Strategy4pos extends GenerationStrategy {
             pointsTree.insert(new Rectangle(r.getPoI(), r.getPoI(), r.getPoI()));
         }
 
-        while (rectangles.size() < data.n && counter < data.n * 1e5) {
+        while (rectangles.size() < data.n && counter < data.n * 1e7) {
             counter++;
 
 
             Point pointGuess = new Point(data.xGenerator.sample(0, 10000), data.yGenerator.sample(0, 10000));
-            boolean noNW = pointsTree.query2D(new Rectangle(pointGuess.getX() - 0.5, pointGuess.getY() + height - 0.5, pointGuess.getX() + 0.5, pointGuess.getY() + height + 0.5)).size() > 0;
+            /*boolean noNW = pointsTree.query2D(new Rectangle(pointGuess.getX() - 0.5, pointGuess.getY() + height - 0.5, pointGuess.getX() + 0.5, pointGuess.getY() + height + 0.5)).size() > 0;
             boolean noNE = pointsTree.query2D(new Rectangle(pointGuess.getX() + width - 0.5, pointGuess.getY() + height - 0.5, pointGuess.getX() + width + 0.5, pointGuess.getY() + height + 0.5)).size() > 0;
             boolean noSE = pointsTree.query2D(new Rectangle(pointGuess.getX() + width - 0.5, pointGuess.getY() - 0.5, pointGuess.getX() + width + 0.5, pointGuess.getY() + 0.5)).size() > 0;
             boolean noSW = pointsTree.query2D(new Rectangle(pointGuess.getX() - 0.5, pointGuess.getY() - 0.5, pointGuess.getX() + 0.5, pointGuess.getY() + 0.5)).size() > 0;
@@ -39,8 +39,32 @@ class Strategy4pos extends GenerationStrategy {
             while (noNE && noNW && noSE && noSW) {
                 pointGuess = new Point(data.xGenerator.sample(0, 10000), data.yGenerator.sample(0, 10000));
             }
+            */
+            while (pointsTree.query2D(new Rectangle(pointGuess.getX() - 0.5, pointGuess.getY() - 0.5, pointGuess.getX() + 0.5, pointGuess.getY() + 0.5)).size() > 0) {
+                pointGuess = new Point(data.xGenerator.sample(0, 10000), data.yGenerator.sample(0, 10000));
+            }
+            int randOrientation = rand.nextInt(4);
+
+            Rectangle guess;
+            if (randOrientation == 0) { // NW
+                guess = new Rectangle(pointGuess.getX() - width, pointGuess.getY(), pointGuess.getX(), pointGuess.getY() + height);
+            } else if (randOrientation == 1) { // NE
+                guess = new Rectangle(pointGuess.getX(), pointGuess.getY(), pointGuess.getX() + width, pointGuess.getY() + height);
+            } else if (randOrientation == 2) { // SW
+                guess = new Rectangle(pointGuess.getX() - width, pointGuess.getY() - height, pointGuess.getX(), pointGuess.getY());
+            } else { // SE
+                guess = new Rectangle(pointGuess.getX(), pointGuess.getY() - height, pointGuess.getX() + width, pointGuess.getY());
+            }
+
+            if (tree.query2D(guess).size() == 0) {
+                guess.setPoI(pointGuess);
+                pointsTree.insert(new Rectangle(pointGuess, pointGuess, pointGuess));
+                rectangles.add(guess);
+                tree.insert(guess);
+            }
 
 
+            /*
             Rectangle guess = new Rectangle(pointGuess.getX(), pointGuess.getY(), pointGuess.getX() + width, pointGuess.getY() + height);
             if (tree.query2D(guess).size() == 0) {
                 int randCorner = rand.nextInt(4);
@@ -61,6 +85,7 @@ class Strategy4pos extends GenerationStrategy {
                 rectangles.add(guess);
                 tree.insert(guess);
             }
+            */
         }
 
         Point[] associatedPoints = new Point[rectangles.size()];
