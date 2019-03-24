@@ -7,9 +7,7 @@ import interfaces.models.PointInterface;
 import models.Point;
 import models.Rectangle;
 
-import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 /**
  * Implementation of KDTree with only 2 Dimensions
@@ -203,7 +201,9 @@ public class KDTree extends AbstractCollection {
 
     @Override
     public Collection<GeometryInterface> query2D(Rectangle range) {
-        return query2D(this, range);
+        Collection<GeometryInterface> results = new ArrayList<>(100);
+        query2D(this, range, results);
+        return results;
     }
 
     /**
@@ -213,28 +213,27 @@ public class KDTree extends AbstractCollection {
      * @param range   range in which to search for elements
      * @return collection of SquareInterfaces such that range.intersects(element)
      */
-    private Collection<GeometryInterface> query2D(KDTree subTree, Rectangle range) {
-        Collection<GeometryInterface> leavesInRange = new ArrayList<>();
+    private Collection<GeometryInterface> query2D(KDTree subTree, Rectangle range, Collection<GeometryInterface> results) {
         for (GeometryInterface d : subTree.nodes) { // add the data which intersects
             if (range.intersects(d)) {
-                leavesInRange.add(d);
+                results.add(d);
             }
         }
         if (subTree.left == null) { // leaf, nowhere to go
-            return leavesInRange; // return what we have
+            return results; // return what we have
         }
         if (subTree.intersects(range)) { // intersects the splitter line
             // query both children
-            leavesInRange.addAll(query2D(subTree.left, range));
-            leavesInRange.addAll(query2D(subTree.right, range));
+            query2D(subTree.left, range, results);
+            query2D(subTree.right, range, results);
         } else { // otherwise only on one side check which to query
             if (subTree.inLeft(range)) {
-                leavesInRange.addAll(query2D(subTree.left, range));
+                query2D(subTree.left, range, results);
             } else {
-                leavesInRange.addAll(query2D(subTree.right, range));
+                query2D(subTree.right, range, results);
             }
         }
-        return leavesInRange;
+        return results;
     }
 
     /**

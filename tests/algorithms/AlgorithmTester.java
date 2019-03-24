@@ -3,6 +3,10 @@ package algorithms;
 import Parser.Parser;
 import Parser.TestDataRecord;
 import interfaces.AbstractAlgorithmInterface;
+import interfaces.models.LabelInterface;
+import models.FourPositionLabel;
+import models.PositionLabel;
+import models.SliderLabel;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import visualizer.Interpreter;
@@ -20,6 +24,20 @@ public class AlgorithmTester {
 
     private void runTest(TestDataRecord record, String fileName, AbstractAlgorithmInterface algorithms) {
         algorithms.solve(record);
+
+        if (algorithms instanceof FourPositionWagnerWolff) {
+            for (LabelInterface l : record.labels) {
+                ((FourPositionLabel) l).setHeight(record.height);
+            }
+        } else if (algorithms instanceof TwoPositionBinarySearcher){
+            for (LabelInterface l : record.labels) {
+                ((PositionLabel) l).setHeight(record.height);
+            }
+        } else if (algorithms instanceof GreedySliderAlgorithm){
+            for (LabelInterface l : record.labels) {
+                ((SliderLabel) l).setHeight(record.height);
+            }
+        }
         assertTrue(record.height >= record.reqHeight, "the height found is too small in file: " + fileName + ", expected min: " + record.reqHeight + " actual value: " + record.height);
         assertTrue(record.height <= record.optHeight, "the height found is too large in file: " + fileName + ", max value: " + record.optHeight + " actual value: " + record.height);
         assertTrue(!Interpreter.overlap(record.labels), "the solution found is not valid in file: " + fileName);

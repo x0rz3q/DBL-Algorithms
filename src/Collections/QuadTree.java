@@ -99,26 +99,29 @@ public class QuadTree extends AbstractCollection {
         /* not in this node, look in children */
         return this.NE.remove(node) || this.NW.remove(node) || this.SE.remove(node) || this.SW.remove(node);
     }
-
     public Collection<GeometryInterface> query2D(Rectangle range) {
-        Collection<GeometryInterface> data = new ArrayList<>();
+        Collection<GeometryInterface> results = new ArrayList<>(100);
+        query2D(this, range, results);
+        return results;
+    }
+    private static Collection<GeometryInterface> query2D(QuadTree subTree, Rectangle range, Collection<GeometryInterface> data) {
 
-        if (!this.intersects(range))
+        if (!subTree.intersects(range))
             return data;
 
-        for (GeometryInterface square : this.data) {
+        for (GeometryInterface square : subTree.data) {
             if (range.intersects(square))
                 data.add(square);
         }
 
-        if (this.NW == null) {
+        if (subTree.NW == null) {
             return data;
         }
 
-        data.addAll(this.NW.query2D(range));
-        data.addAll(this.NE.query2D(range));
-        data.addAll(this.SE.query2D(range));
-        data.addAll(this.SW.query2D(range));
+        query2D(subTree.NW,range, data);
+        query2D(subTree.NE,range, data);
+        query2D(subTree.SE,range, data);
+        query2D(subTree.SW,range, data);
 
         return data;
     }
