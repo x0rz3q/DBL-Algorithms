@@ -734,4 +734,10 @@ public class FourPositionWagnerWolff extends BinarySearcher {
     public DataRecord getLabels() {
         return labels;
     }
+
+    public void initializeDataStructures(int numberOfPoints) {
+        pointsQueue = new ArrayDeque<>(numberOfPoints * 2);
+        labelsWithConflicts = new ArrayList<>(numberOfPoints * 2);
+        selectedLabels = new ArrayList<>(numberOfPoints * 2);
+    }
 }
