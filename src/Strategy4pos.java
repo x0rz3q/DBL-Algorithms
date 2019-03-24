@@ -18,8 +18,6 @@ class Strategy4pos extends GenerationStrategy {
             rectangles.add(r);
         }
         int counter = 0;
-        double width = data.result * data.ratio;
-        double height = data.result;
 
         QuadTree tree = new QuadTree(new Rectangle(0, 0, 100000, 100000, new Point(0, 0)));
         QuadTree pointsTree = new QuadTree(new Rectangle(0, 0, 100000, 100000));
@@ -77,10 +75,6 @@ class Strategy4pos extends GenerationStrategy {
     Rectangle[] generateStart() {
         // ArrayList storing rectangles to be returned
         ArrayList<Rectangle> rectangles = new ArrayList<>();
-
-        // width of rectangle
-        double width = data.result * data.ratio;
-        double height = data.result;
 
         // initial point
         Point startPoint = new Point(data.xGenerator.sample(3 * (int) ceil(width), (int) (10000 - 3 * ceil(width))), data.yGenerator.sample(3 * (int) ceil(width), (int) (10000 - 3 * ceil(width))));
@@ -167,5 +161,7 @@ class Strategy4pos extends GenerationStrategy {
 
     Strategy4pos(TestData data) {
         this.data = data;
+        this.height = data.result;
+        this.width = data.ratio * data.result;
     }
 }

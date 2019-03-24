@@ -16,8 +16,6 @@ class Strategy1slider extends GenerationStrategy {
             rectangles.add(r);
         }
         int counter = 0;
-        double width = data.result * data.ratio;
-        double height = data.result;
 
         QuadTree tree = new QuadTree(new Rectangle(0, 0, 100000, 100000, new Point(0, 0)));
         QuadTree pointsTree = new QuadTree(new Rectangle(0, 0, 100000, 100000));
@@ -57,8 +55,6 @@ class Strategy1slider extends GenerationStrategy {
 
     @Override
     Rectangle[] generateStart() {
-        double width = data.result * data.ratio;
-        double height = data.result;
         if (2 * width == Math.ceil(2 * width) && width >= 1.5) {
             return generateStartWidth();
         } else {
@@ -67,8 +63,6 @@ class Strategy1slider extends GenerationStrategy {
     }
 
     Rectangle[] generateStartWidth() {
-        double width = data.result * data.ratio;
-        double height = data.result;
 
         // Generate starting location
         double startX = data.xGenerator.sample((int) Math.ceil(width), (int) Math.floor(10000 - 3 * width));
@@ -102,8 +96,6 @@ class Strategy1slider extends GenerationStrategy {
     }
 
     Rectangle[] generateStartHeight() {
-        double width = data.result * data.ratio;
-        double height = data.result;
 
         // Generate starting location
         double startX = data.xGenerator.sample((int) Math.ceil(width + 1), (int) Math.floor(9999 - width));
@@ -132,5 +124,7 @@ class Strategy1slider extends GenerationStrategy {
 
     Strategy1slider(TestData data) {
         this.data = data;
+        this.height = data.result;
+        this.width = data.ratio * data.result;
     }
 }
