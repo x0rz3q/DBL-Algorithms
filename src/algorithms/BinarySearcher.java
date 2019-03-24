@@ -13,7 +13,7 @@ public abstract class BinarySearcher implements AbstractAlgorithmInterface {
     @Override
     public void solve(DataRecord record) {
         double[] solutionSpace = getSolutionSpace(record);
-
+        
         if (isSolvable(record, solutionSpace[solutionSpace.length - 1])) {
             getSolution(record, solutionSpace[solutionSpace.length - 1]);
             return;

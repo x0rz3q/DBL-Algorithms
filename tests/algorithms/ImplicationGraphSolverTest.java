@@ -28,17 +28,17 @@ public class ImplicationGraphSolverTest {
             if (solution[i]) {
                 for (Integer j : adj[i]) {
                     if (j < n) {
-                        assertTrue(solution[j], "i is true therefore j should be true");
+                        assertTrue(solution[j], i + " is true therefore " + j + " should be true");
                     } else {
-                        assertTrue(!solution[j - n], "i is true therefore j should be false");
+                        assertTrue(!solution[j - n], i + " is true therefore " + j + " should be false");
                     }
                 }
             } else {
                 for (Integer j : adj[i + n]) {
                     if (j < n) {
-                        assertTrue(solution[j], "i is false therefore j should be true");
+                        assertTrue(solution[j], i + " is false therefore " + j + " should be true");
                     } else {
-                        assertTrue(!solution[j - n], "i is false therefore j should be false");
+                        assertTrue(!solution[j - n], i + " is false therefore " + j + " should be false");
                     }
                 }
             }
@@ -64,9 +64,13 @@ public class ImplicationGraphSolverTest {
         testImplicationGraph(adj, adjInv, true);
     }
 
+    @Test
+    public void testSecondGraph() {
+        testList(new int[]{0, 1, 0, 5, 2, 3, 2, 1, 3, 2, 4, 3, 4, 5, 5, 0}, 6);
+    }
 
     @Test
     public void testFirstGraph() {
-        testList(new int[]{0, 3, 2, 1}, 4);
+        testList(new int[]{0, 1, 2, 3}, 4);
     }
 }
