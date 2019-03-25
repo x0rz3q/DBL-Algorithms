@@ -1,1 +1,2 @@
-1slider 1000 5 5 Uniform 100 1000 Uniform 100 1000
+simple
+1slider hard 1000

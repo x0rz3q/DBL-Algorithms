@@ -14,7 +14,13 @@ public class Main {
         TestReader reader = new TestReader(testCaseLocation);
         Controller controller = new Controller();
 
-        ArrayList<TestData> tests = reader.getTests();
+        ArrayList<TestData> tests;
+        if (reader.determineInputStyle()) {
+            tests = reader.getTestsComplex();
+        } else {
+            tests = reader.getTestsSimple();
+        }
+
         for (TestData test : tests) {
             System.out.println(test.toString());
             controller.setData(test);
