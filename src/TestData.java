@@ -12,14 +12,14 @@ class TestData {
     /* correct result (maximum height)
     *   2pos: result == integer || result * alpha * 2 == integer
     *   4pos: result * 2 == integer || result * alpha * 2 == integer
-    *   1slider: result == real
+    *   1slider: (result == integer && result * alpha >= 1) || (result * alpha >= 1.5 && 2 * result * alpha == integer)
     */
     double result;
 
     /* expected minimum result
     *   2pos: expectedMinimum = result
     *   4pos: expectedMinimum = result / 2
-    *   1slider: expectedMinimum = result / 2
+    *   1slider: expectedMinimum = result
     */
     double expectedMinimum;
 
@@ -86,10 +86,23 @@ class TestData {
             throw new IllegalArgumentException("Combination model-ratio-result impossible");
         }
 
-        if (this.model.equals("2pos")) {
-            this.expectedMinimum = newResult;
+        if (this.model.equals("1slider")) {
+            boolean passes = false;
+            if (this.result * 2 * this.ratio == Math.ceil(this.result * 2 * this.ratio) && this.result * this.ratio >= 1.5) {
+                passes = true;
+            }
+            if (this.result == Math.ceil(this.result) && this.result * this.ratio >= 1) {
+                passes = true;
+            }
+            if (!passes) {
+                throw new IllegalArgumentException("Combination model-ratio-result invalid");
+            }
+        }
+
+        if (this.model.equals("4pos")) {
+            this.expectedMinimum = newResult * 0.9;
         } else {
-            this.expectedMinimum = newResult / 2;
+            this.expectedMinimum = newResult;
         }
     }
 

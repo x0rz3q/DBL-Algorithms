@@ -18,8 +18,6 @@ class Strategy4pos extends GenerationStrategy {
             rectangles.add(r);
         }
         int counter = 0;
-        double width = data.result * data.ratio;
-        double height = data.result;
 
         QuadTree tree = new QuadTree(new Rectangle(0, 0, 100000, 100000, new Point(0, 0)));
         QuadTree pointsTree = new QuadTree(new Rectangle(0, 0, 100000, 100000));
@@ -33,7 +31,7 @@ class Strategy4pos extends GenerationStrategy {
 
 
             Point pointGuess = new Point(data.xGenerator.sample(0, 10000), data.yGenerator.sample(0, 10000));
-            boolean noNW = pointsTree.query2D(new Rectangle(pointGuess.getX() - 0.5, pointGuess.getY() + height - 0.5, pointGuess.getX() + 0.5, pointGuess.getY() + height + 0.5)).size() > 0;
+            /*boolean noNW = pointsTree.query2D(new Rectangle(pointGuess.getX() - 0.5, pointGuess.getY() + height - 0.5, pointGuess.getX() + 0.5, pointGuess.getY() + height + 0.5)).size() > 0;
             boolean noNE = pointsTree.query2D(new Rectangle(pointGuess.getX() + width - 0.5, pointGuess.getY() + height - 0.5, pointGuess.getX() + width + 0.5, pointGuess.getY() + height + 0.5)).size() > 0;
             boolean noSE = pointsTree.query2D(new Rectangle(pointGuess.getX() + width - 0.5, pointGuess.getY() - 0.5, pointGuess.getX() + width + 0.5, pointGuess.getY() + 0.5)).size() > 0;
             boolean noSW = pointsTree.query2D(new Rectangle(pointGuess.getX() - 0.5, pointGuess.getY() - 0.5, pointGuess.getX() + 0.5, pointGuess.getY() + 0.5)).size() > 0;
@@ -41,8 +39,32 @@ class Strategy4pos extends GenerationStrategy {
             while (noNE && noNW && noSE && noSW) {
                 pointGuess = new Point(data.xGenerator.sample(0, 10000), data.yGenerator.sample(0, 10000));
             }
+            */
+            while (pointsTree.query2D(new Rectangle(pointGuess.getX() - 0.5, pointGuess.getY() - 0.5, pointGuess.getX() + 0.5, pointGuess.getY() + 0.5)).size() > 0) {
+                pointGuess = new Point(data.xGenerator.sample(0, 10000), data.yGenerator.sample(0, 10000));
+            }
+            int randOrientation = rand.nextInt(4);
+
+            Rectangle guess;
+            if (randOrientation == 0) { // NW
+                guess = new Rectangle(pointGuess.getX() - width, pointGuess.getY(), pointGuess.getX(), pointGuess.getY() + height);
+            } else if (randOrientation == 1) { // NE
+                guess = new Rectangle(pointGuess.getX(), pointGuess.getY(), pointGuess.getX() + width, pointGuess.getY() + height);
+            } else if (randOrientation == 2) { // SW
+                guess = new Rectangle(pointGuess.getX() - width, pointGuess.getY() - height, pointGuess.getX(), pointGuess.getY());
+            } else { // SE
+                guess = new Rectangle(pointGuess.getX(), pointGuess.getY() - height, pointGuess.getX() + width, pointGuess.getY());
+            }
+
+            if (tree.query2D(guess).size() == 0) {
+                guess.setPoI(pointGuess);
+                pointsTree.insert(new Rectangle(pointGuess, pointGuess, pointGuess));
+                rectangles.add(guess);
+                tree.insert(guess);
+            }
 
 
+            /*
             Rectangle guess = new Rectangle(pointGuess.getX(), pointGuess.getY(), pointGuess.getX() + width, pointGuess.getY() + height);
             if (tree.query2D(guess).size() == 0) {
                 int randCorner = rand.nextInt(4);
@@ -63,6 +85,7 @@ class Strategy4pos extends GenerationStrategy {
                 rectangles.add(guess);
                 tree.insert(guess);
             }
+            */
         }
 
         Point[] associatedPoints = new Point[rectangles.size()];
@@ -77,10 +100,6 @@ class Strategy4pos extends GenerationStrategy {
     Rectangle[] generateStart() {
         // ArrayList storing rectangles to be returned
         ArrayList<Rectangle> rectangles = new ArrayList<>();
-
-        // width of rectangle
-        double width = data.result * data.ratio;
-        double height = data.result;
 
         // initial point
         Point startPoint = new Point(data.xGenerator.sample(3 * (int) ceil(width), (int) (10000 - 3 * ceil(width))), data.yGenerator.sample(3 * (int) ceil(width), (int) (10000 - 3 * ceil(width))));
@@ -167,5 +186,7 @@ class Strategy4pos extends GenerationStrategy {
 
     Strategy4pos(TestData data) {
         this.data = data;
+        this.height = data.result;
+        this.width = data.ratio * data.result;
     }
 }

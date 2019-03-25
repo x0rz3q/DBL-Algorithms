@@ -7,6 +7,8 @@ import java.util.Random;
 abstract class GenerationStrategy {
     TestData data;
     Random rand = new Random();
+    double height;
+    double width;
 
     // TODO provide contract
     abstract Point[] generate();

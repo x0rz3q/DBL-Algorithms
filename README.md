@@ -2,12 +2,37 @@
 This document serves as a guide for using the testGenerator branch to generate custom testcases
 ## General Interface
 All interaction with the generator is achieved via the *"TestCaseSpecification.txt"* file.
-Every line of this file serves as the specification for a certain test case to be generated.
+The first line specifies the style in which the test cases are specified.
+Every other line of this file serves as the specification for a certain test case to be generated.
 After executing the *"Main"* class, the test cases will be generated as new *".txt"* files in the project directory.
 Their name will reflect their specification. Note: if the program runs out of computational time, a specified testcase
 will be aborted and no labels will be printed. Afterwards it will commence with the next testcase.
 
-## Test Case Specification
+## Specification style
+The first line of the *"TestCaseSpecification.txt* file specifies the style in which the testcases are described.
+There are two styles: **simple** & **complex**.  
+The simple style allows for quick generation of testcases, which can be specified by their difficulty.
+The complex style allows for a more fine-tuned approach, with a far higher degree of adaptability.
+
+The first line should only contain the name of the style (all lower case).
+
+## Test Case Specification Simple
+### General format
+The general format for a line in the *"TextCaseSpecification.txt"* file is as follows:
+```
+(model) (difficulty) (nPoints)
+``` 
+#### model
+Which model the testcase is meant for. Possibilities: "2pos", "4pos", "1slider"
+
+#### difficulty
+The difficulty of the testcase. Possibilities: "easy", "medium", "hard"
+
+#### nPoints
+The number of points
+
+
+## Test Case Specification Complex
 ### General format
 The general format for a line in the *"TextCaseSpecification.txt"* file is as follows:
 ```
@@ -35,7 +60,7 @@ result * 2 == integer || result * ratio * 2 == integer
 ```
 1slider:
 ```
-result == real
+(result * ratio * 2 == integer && result * ratio >= 1.5) || (result == integer && result * ratio >= 1.0)
 ```
 
 #### xGenerator
