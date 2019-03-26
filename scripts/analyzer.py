@@ -4,14 +4,23 @@ import sys
 import matplotlib.pylab as plt
 import time
 import os
+import argparse
+
 # if you want to run the analyzer
 # only change this directory and it should work
 # for windows people (puke) slashes might need different syntax 
-project_location = "/home/juris/Uni/DBL-Algorithms/"
+
+parser = argparse.ArgumentParser(description='')
+parser.add_argument('--project', help='Project Location', required=True)
+args = parser.parse_args();
+
+project_location = os.path.join(args.project,'')
 test_location = project_location + "profiling/hiddetests/" # location of generated tests
-class_location = project_location + "out/production/DBL-Algorithms/" # location of compiled class files
+class_location = project_location + "out/make" # location of compiled class files
 output_location = project_location + "profiling/" # output graphs location 
 
+os.chdir(project_location)
+subprocess.check_output(["make"])
 os.chdir(class_location) # go to class files
 
 # assuming first digit is nr Points
