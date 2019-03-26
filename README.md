@@ -10,7 +10,7 @@ will be aborted and no labels will be printed. Afterwards it will commence with 
 
 ## Specification style
 The first line of the *"TestCaseSpecification.txt* file specifies the style in which the testcases are described.
-There are two styles: **simple** & **complex**.  
+There are two styles: **simple** and **complex**.  
 The simple style allows for quick generation of testcases, which can be specified by their difficulty.
 The complex style allows for a more fine-tuned approach, with a far higher degree of adaptability.
 
@@ -26,8 +26,19 @@ The general format for a line in the *"TextCaseSpecification.txt"* file is as fo
 Which model the testcase is meant for. Possibilities: "2pos", "4pos", "1slider"
 
 #### difficulty
-The difficulty of the testcase. Possibilities: "easy", "medium", "hard"
+The difficulty of the testcase. Possibilities: "easy", "medium", "hard", "custom" 
 
+easy = 20% coverage
+
+medium = 30% coverage
+
+hard = 40% coverage
+
+custom: specify coverage by supplying an extra parameter:
+```
+custom (coverage)
+```
+where *coverage* is the coverage as a ratio (0.1 = 10%)
 #### nPoints
 The number of points
 
