@@ -6,14 +6,12 @@ import algorithms.FourPositionWagnerWolff;
 import algorithms.GreedySliderAlgorithm;
 import algorithms.TwoPositionBinarySearcher;
 import interfaces.models.LabelInterface;
-import models.FieldExtendedSliderLabel;
 import models.FourPositionLabel;
 import models.PositionLabel;
 import visualizer.Interpreter;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.rmi.server.ExportException;
 import java.util.Scanner;
 
@@ -23,7 +21,7 @@ public class AnalyzeWrapper {
             throw new IllegalArgumentException("Invalid file parameter");
         }
 
-	    long start = System.currentTimeMillis();
+        long start = System.currentTimeMillis();
 
         FileInputStream is = new FileInputStream(new File(args[0]));
         Parser parser = new Parser();
@@ -51,7 +49,7 @@ public class AnalyzeWrapper {
         Scanner scanner = new Scanner(is);
 
         String maxHeight = null;
-        while(scanner.hasNextLine()) {
+        while (scanner.hasNextLine()) {
             maxHeight = scanner.nextLine();
             if (maxHeight.contains("label height")) {
                 break;
@@ -63,22 +61,22 @@ public class AnalyzeWrapper {
 
         System.out.println("Model: " + record.placementModel.toString());
         System.out.println("Label count: " + record.labels.size());
-		System.out.println("Time: " + (end-start));
-		System.out.println("Height: " + record.height);
-		System.out.println("Max: " + maxHeight);
+        System.out.println("Time: " + (end - start));
+        System.out.println("Height: " + record.height);
+        System.out.println("Max: " + maxHeight);
 
-		for(LabelInterface label : record.labels) {
-		    // field extended label already has a height set
-		    switch(record.placementModel) {
+        for (LabelInterface label : record.labels) {
+            // field extended label already has a height set
+            switch (record.placementModel) {
                 case TWO_POS:
-                    ((PositionLabel)label).setHeight(record.height);
+                    ((PositionLabel) label).setHeight(record.height);
                     break;
                 case FOUR_POS:
-                    ((FourPositionLabel)label).setHeight(record.height);
+                    ((FourPositionLabel) label).setHeight(record.height);
                     break;
             }
         }
 
-		System.out.println("Overlaps: " + Interpreter.overlapCount(record.labels));
+        System.out.println("Overlaps: " + Interpreter.overlapCount(record.labels));
     }
 }
