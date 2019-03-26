@@ -68,12 +68,10 @@ public class AnalyzeWrapper {
 		System.out.println("Max: " + maxHeight);
 
 		for(LabelInterface label : record.labels) {
+		    // field extended label already has a height set
 		    switch(record.placementModel) {
                 case TWO_POS:
                     ((PositionLabel)label).setHeight(record.height);
-                    break;
-                case ONE_SLIDER:
-                    ((FieldExtendedSliderLabel)label).setHeight(record.height);
                     break;
                 case FOUR_POS:
                     ((FourPositionLabel)label).setHeight(record.height);
