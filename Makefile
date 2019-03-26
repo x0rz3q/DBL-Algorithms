@@ -11,3 +11,6 @@ runsolver: build
 
 testgen: build
 	java -cp out/make:lib/* "Main" ${ARGS}
+
+analyzer: build
+	java -cp out/make:lib/* "main.AnalyzeWrapper" ${ARGS}
