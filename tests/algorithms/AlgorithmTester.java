@@ -9,7 +9,6 @@ import models.PositionLabel;
 import models.SliderLabel;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import visualizer.Interpreter;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,7 +39,6 @@ public class AlgorithmTester {
         }
         assertTrue(record.height >= record.reqHeight, "the height found is too small in file: " + fileName + ", expected min: " + record.reqHeight + " actual value: " + record.height);
         assertTrue(record.height <= record.optHeight, "the height found is too large in file: " + fileName + ", max value: " + record.optHeight + " actual value: " + record.height);
-        assertTrue(!Interpreter.overlap(record.labels), "the solution found is not valid in file: " + fileName);
     }
 
     private Collection<DynamicTest> readInFiles(String filePath, AbstractAlgorithmInterface algorithm) {

@@ -55,6 +55,7 @@ for algo in algorithms:
 
 # write the tests to a file
 f = open(filename, "w+")
+f.write("complex\n")
 for t in tests:
     f.write(t + "\n")
 f.close()
