@@ -351,6 +351,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         //numberOfConflictsHeuristicVariation();
         //ratioPointsLabelsHeuristic();
         intermediateEliminateHeuristic();
+        //densityHeuristic();
     }
 
     /**
@@ -785,7 +786,6 @@ public class FourPositionWagnerWolff extends BinarySearcher {
             bruteForce(conflictingPoints, true);
             record.height = height;
         } else {
-
             applyHeuristic();
             record.height = height;
             doTwoSat(true);
