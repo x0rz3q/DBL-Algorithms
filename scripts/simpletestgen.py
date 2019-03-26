@@ -1,5 +1,10 @@
 import subprocess
 import os
+import argparse
+
+parser = argparse.ArgumentParser(description='')
+parser.add_argument('--project', help='Project Location', required=True)
+args = parser.parse_args();
 
 # set parameters
 filename = "TestCaseSpecification.txt"
@@ -10,7 +15,7 @@ amount_per_points = 10
 generate_test_files = True
 
 # set directories
-project_dir = "/home/juris/Uni/DBL-Algorithms/" # project root dir
+project_dir = os.path.join(args.project, '') # project root dir
 test_dir = project_dir + "profiling/tests/" # output for all generated tests
 class_dir = project_dir + "out/production/DBL-Algorithms/" # compiled class files
 test_spec_dir = project_dir # where to put test specification file 
