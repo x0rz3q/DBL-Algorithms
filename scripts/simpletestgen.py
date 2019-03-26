@@ -40,14 +40,12 @@ f.close()
 
 # move test spec file to the specified directory
 subprocess.check_output(["mv", filename, test_spec_dir])
-#
-#if generate_test_files:
-#    os.chdir(class_dir)
-#    subprocess.check_output(["java", "Main", test_spec_dir + filename])
-#
-#    os.chdir(project_dir)
-#    algorithm_regex = ","
-#    algorithm_regex.join(algorithms)
-#    subprocess.check_output(["mv", "*{" + algorithm_regex + "}*", test_dir])
+
+if generate_test_files:
+    os.chdir(project_dir)
+    subprocess.check_output(["make", "ARGS='"+ test_spec_dir + filename +"'", "testgen"])
+    algorithm_regex = ","
+    algorithm_regex.join(algorithms)
+    subprocess.check_output(["mv", "*{" + algorithm_regex + "}*", test_dir], shell=True)
 
 

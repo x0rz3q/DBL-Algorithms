@@ -10,4 +10,4 @@ runsolver: build
 	java -cp out/make:lib/* "main.MainWrapper" ${ARGS}
 
 testgen: build
-	java -cp out/make:lib/* "Main"
+	java -cp out/make:lib/* "Main" ${ARGS}
