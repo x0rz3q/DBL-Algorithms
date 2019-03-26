@@ -523,6 +523,81 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         }
     }
 
+    private void densityHeuristic() {
+        // select points
+        Set<FourPositionPoint> conflictPoints = new HashSet<>();
+        for (FourPositionLabel candidate : labelsWithConflicts) {
+            conflictPoints.add(candidate.getPoI());
+        }
+
+        pointsQueue.addAll(conflictPoints);
+
+        // remove highest conflict candidate for points with 4 candidates
+        for (FourPositionPoint conflictPoint : conflictPoints) {
+            if (conflictPoint.getCandidates().size() == 4) {
+                chooseLabelsDensityHeuristic(conflictPoint);
+            }
+        }
+
+        eliminateImpossibleCandidates();
+
+        // remove highest conflict candidate for points with 3 candidates
+        for (FourPositionPoint conflictPoint : conflictPoints) {
+            if (conflictPoint.getCandidates().size() == 3) {
+                chooseLabelsDensityHeuristic(conflictPoint);
+            }
+        }
+    }
+
+    private void chooseLabelsDensityHeuristic(FourPositionPoint conflictPoint) {
+        // select highest conflict candidate
+        FourPositionLabel maxConflictCandidate = conflictPoint.getCandidates().get(0);
+        int maxDensity = 0;
+        int density;
+        final int checkRange = 3; // determines the range at which the density is determined
+
+        for (FourPositionLabel candidate : conflictPoint.getCandidates()) {
+            PointInterface bottomLeftSearch;
+            PointInterface topRightSearch;
+
+            switch (candidate.getDirection()) {
+                case NE:
+                    bottomLeftSearch = candidate.getBottomLeft();
+                    topRightSearch = new Point(candidate.getXMin() + checkRange * (candidate.getXMax() - candidate.getXMin()), candidate.getYMin() + checkRange * (candidate.getYMax() - candidate.getYMin()));
+                    break;
+                case NW:
+                    bottomLeftSearch = new Point(candidate.getXMax() - checkRange * (candidate.getXMax() - candidate.getXMin()), candidate.getYMin());
+                    topRightSearch = new Point(candidate.getXMax(), candidate.getYMin() + checkRange * (candidate.getYMax() - candidate.getYMin()));
+                    break;
+                case SE:
+                    bottomLeftSearch = new Point(candidate.getXMin(), candidate.getYMax() - checkRange * (candidate.getYMax() - candidate.getYMin()));
+                    topRightSearch = new Point(candidate.getXMin() + checkRange * (candidate.getXMax() - candidate.getXMin()), candidate.getYMax());
+                    break;
+                case SW:
+                    bottomLeftSearch = new Point(candidate.getXMax() - checkRange * (candidate.getXMax() - candidate.getXMin()),  candidate.getYMax() - checkRange * (candidate.getYMax() - candidate.getYMin()));
+                    topRightSearch = candidate.getTopRight();
+                    break;
+                default:
+                    bottomLeftSearch = new Point(0, 0);
+                    topRightSearch = new Point(0, 0);
+                    break;
+            }
+
+            density = labels.collection.query2D(new Rectangle(bottomLeftSearch, topRightSearch)).size();
+            if (density > maxDensity) {
+                maxConflictCandidate = candidate;
+                maxDensity = density;
+            }
+        }
+
+        // remove highest conflict candidate
+        for (FourPositionLabel conflict : maxConflictCandidate.getConflicts()) {
+            conflict.removeConflict(maxConflictCandidate);
+        }
+        maxConflictCandidate.getPoI().removeCandidate(maxConflictCandidate);
+        labelsWithConflicts.remove(maxConflictCandidate);
+    }
+
     /**
      * Try to solve if record does not have an obvious solution.
      * For those points which still have two or more candidates left, choose exactly two (heuristic),
