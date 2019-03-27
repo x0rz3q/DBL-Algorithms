@@ -63,7 +63,7 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
 
             if (mid == epsilon) {
                 if (low != mid) solve(record, sortedLabels, low);
-                record.height = low / record.aspectRatio;
+                record.height = low;
                 break;
             } else {
                 epsilon = mid;
@@ -76,15 +76,15 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
      *
      * @param record       {@link DataRecord}
      * @param sortedLabels a List containing all labels sorted by this.comparator
-     * @param width        double denoting the width assigned to each label
+     * @param height       double denoting the height assigned to each label
      * @return whether there exists a solution
      * @pre sortedLabels is sorted by using this.comparator
      * @modifies record
      * @post if there is a solution record.collection contains it, else record.collection holds an invalid solution
      */
-    private boolean solve(DataRecord record, List<FieldExtendedSliderLabel> sortedLabels, double width) {
+    private boolean solve(DataRecord record, List<FieldExtendedSliderLabel> sortedLabels, double height) {
         for (FieldExtendedSliderLabel label : sortedLabels) {
-            if (!setLabel(record, label, width)) {
+            if (!setLabel(record, label, height)) {
                 for (SliderLabel l : sortedLabels) {
                     record.collection.remove(l);
                     l.setHeight(0);
@@ -102,15 +102,16 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
      *
      * @param record {@link DataRecord}
      * @param label  {@link SliderLabel}
-     * @param width  double denoting the width assigned to label
+     * @param height  double denoting the height assigned to label
      * @return whether it is possible to have label be placeable in collection with given width
      */
-    private boolean setLabel(DataRecord record, FieldExtendedSliderLabel label, double width) {
+    private boolean setLabel(DataRecord record, FieldExtendedSliderLabel label, double height) {
+        double width = record.aspectRatio * height;
         Rectangle queryArea = new Rectangle(
                 label.getPOI().getX() - width,
                 label.getPOI().getY(),
                 label.getPOI().getX(),
-                label.getPOI().getY() + width / record.aspectRatio);
+                label.getPOI().getY() + height);
         Collection<GeometryInterface> queryResult = record.collection.query2D(queryArea);
 
         double xMax = label.getPOI().getX() - width;
@@ -126,9 +127,9 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
 
         record.collection.remove(label);
         if (xMax == label.getPOI().getX() - width) {
-            label.setFieldExtended((int) label.getPOI().getX(), 0, width);
+            label.setFieldExtended((int) label.getPOI().getX(), 0, height);
         } else {
-            label.setFieldExtended(maxLabel.getSequenceStartX(), maxLabel.getSequenceIndex() + 1, width);
+            label.setFieldExtended(maxLabel.getSequenceStartX(), maxLabel.getSequenceIndex() + 1, height);
         }
         record.collection.insert(label);
 

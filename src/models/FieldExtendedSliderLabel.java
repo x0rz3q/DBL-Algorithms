@@ -1,5 +1,6 @@
 package models;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
 public class FieldExtendedSliderLabel extends SliderLabel {
@@ -75,12 +76,14 @@ public class FieldExtendedSliderLabel extends SliderLabel {
      *
      * @param sequenceStartX the x coordinate of the first point in the sequence of connecting labels
      * @param sequenceIndex the index of the label in the sequence of connecting labels
-     * @param width the width of all labels in the sequence of connecting labels
+     * @param height the width of all labels in the sequence of connecting labels
      * @post label is set by {@code (sequenceStartX + (sequenceIndex-1) * width, poi.x) and (sequenceStartX + sequenceIndex * width, poi.height)}
      * @throws IllegalArgumentException when label is not located on top of Poi
      */
-    public void setFieldExtended(int sequenceStartX, int sequenceIndex, double width) {
-        if (sequenceStartX < 0 || sequenceIndex < 0 || width < 0) {
+    public void setFieldExtended(int sequenceStartX, int sequenceIndex, double height) {
+        double width = aspectRatio * height;
+
+        if (sequenceStartX < 0 || sequenceIndex < 0 || height < 0) {
             throw new IllegalArgumentException("FieldExtendedSliderLabel.setRectangle parameters negative");
         }
 
@@ -88,26 +91,27 @@ public class FieldExtendedSliderLabel extends SliderLabel {
             throw new IllegalArgumentException("FieldExtendedSliderLabel.setRectangle rectangle not above Poi");
         }
 
-        if (width == 0) throw new IllegalArgumentException("FieldExtendedSliderLabel.setRectangle doesn't handle width = 0 rectangles");
+        if (height == 0) throw new IllegalArgumentException("FieldExtendedSliderLabel.setRectangle doesn't handle height = 0 rectangles");
 
         this.rectangle = new Rectangle(
                 sequenceStartX + (sequenceIndex - 1) * width,
                 this.poi.getY(),
                 sequenceStartX + sequenceIndex * width,
-                this.poi.getY() + width / aspectRatio
+                this.poi.getY() + height
         );
 
         this.sequenceStartX = sequenceStartX;
         this.sequenceIndex = sequenceIndex;
         this.width = width;
-        this.height = width / aspectRatio;
+        this.height = height;
         this.isExtended = true;
         this.shift = (sequenceStartX - this.poi.getXMax()) / width + sequenceIndex;
     }
 
     @Override
     public String getPlacement() {
-        DecimalFormat format = new DecimalFormat("0.000000");
+        DecimalFormat format = new DecimalFormat("0.000000000000");
         return format.format(shift);
+//        return new BigDecimal(shift).toString();
     }
 }
