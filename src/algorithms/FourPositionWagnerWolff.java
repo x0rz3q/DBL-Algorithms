@@ -26,7 +26,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
     // Only used in preprocessing
     private DataRecord labels = new DataRecord();
 
-    private int bruteForcePoints = 0;
+    private int bruteForceLabels = 1000;
 
     /**
      * Calculates all conflict sizes for given DataRecord. It is sufficient for the
@@ -703,7 +703,10 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         for (FourPositionLabel conflictingLabel : labelsWithConflicts) {
             conflictingPoints.add(conflictingLabel.getPoI());
         }
-        if (conflictingPoints.size() < bruteForcePoints) {
+
+        System.out.println(labelsWithConflicts.size());
+
+        if (labelsWithConflicts.size() < bruteForceLabels) {
             solvable = bruteForce(conflictingPoints, false);
         } else {
             applyHeuristic();
@@ -744,7 +747,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
                 }
             }
         }
-        return true;
+        return false;
     }
 
     private ArrayList<FourPositionLabel> removeLabel(FourPositionLabel label) {
@@ -782,7 +785,9 @@ public class FourPositionWagnerWolff extends BinarySearcher {
             conflictingPoints.add(conflictingLabel.getPoI());
         }
 
-        if (conflictingPoints.size() < bruteForcePoints) {
+        System.out.println(labelsWithConflicts.size());
+
+        if (labelsWithConflicts.size() < bruteForceLabels) {
             bruteForce(conflictingPoints, true);
             record.height = height;
         } else {
