@@ -1,82 +1,68 @@
 import subprocess
-import csv
-import sys
-import matplotlib.pylab as plt
 import time
+import sys
 import os
 import argparse
+import json
 
 # if you want to run the analyzer
 # only change this directory and it should work
 # for windows people (puke) slashes might need different syntax 
 
 parser = argparse.ArgumentParser(description='')
-parser.add_argument('--project', help='Project Location', required=True)
+parser.add_argument('--allresults', help='location of files to parse with results after running', required=True)
+
 args = parser.parse_args();
+results = args.allresults
 
-project_location = os.path.join(args.project,'')
-test_location = project_location + "profiling/tests/" # location of generated tests
-class_location = project_location + "out/make" # location of compiled class files
-output_location = project_location + "profiling/" # output graphs location 
-
-os.chdir(project_location)
-subprocess.check_output(["make"])
-os.chdir(class_location) # go to class files
+lines_per_run = 6
 
 # assuming first digit is nr Points
 def nrPoints(filename):
     return [int(s) for s in filename.split('_') if s.isdigit()][0]
 
-def runAlgo(algo_name):
-    results = {} # npoints -> [totaltime, timesrun]
+def merge(a):
+    return [j.replace('\n', '') for j in a]
 
-    total = sum(str(test).startswith(algo_name) for test in os.listdir(test_location))
-    progress = 0;
+def runAlgo():
+    analysis = {}
 
-    for test in os.listdir(test_location): # for each test
-        if not str(test).startswith(algo_name):
-           continue
+    for r in os.listdir(results):
 
-        main_command = ["java", "main.AnalyzeWrapper"] # this will run MainWrapper
-        main_command.append(test_location + test) # invoke the test
+        current_algorithm = str(r)[:-3] # current algorithm
+        print(f"Analyzing {current_algorithm}")
 
-        cur_time = time.time()
-        subprocess.check_output(main_command) # run algo
-        running_time = time.time() - cur_time
-        # update results
-        n = nrPoints(str(test)) # get nr of points and update results dictionary
-        if n not in results:
-            results[n] = [0, 0]
-        results[n][0] += running_time
-        results[n][1] += 1
-        progress += 1
-        time.sleep(0.1)
-        sys.stdout.write(f"\r{progress}/{total}")
-        sys.stdout.flush()
+        with open(results + str(r)) as f:
+            lines = f.readlines()
 
-    return results
+        results_per_run = [merge(lines[i + 1 :i+lines_per_run]) for i in range(0, len(lines), lines_per_run)]
+        num_tests = len(results_per_run)
+        progress = 0;
 
-def analyze(algo_name, output_name):
+        for res in results_per_run:
+            amount_of_labels = res[0].partition(": ")[2]
+            if amount_of_labels not in analysis:
+                analysis[amount_of_labels] = {"Time":[],
+                                              "Height":[],
+                                              "Max label height":[],
+                                              "Overlaps":[]}
+            for optimize in res[1:]:
+                partitioned = optimize.partition(": ")
+                category, amount = partitioned[0], partitioned[2]
+                analysis[amount_of_labels][category] += [amount]
+
+            time.sleep(0.1)
+            sys.stdout.write(f"\r{progress}/{num_tests}") # progress report
+            sys.stdout.flush()
+            progress += 1
+
+    return current_algorithm, analysis
+
+def analyze():
     # run algo on tests
-    pure_results = runAlgo(algo_name)
-    results = []
+    filename, r = runAlgo()
+    # write to file
+    with open(results + filename + "json", 'w') as fp:
+        json.dump(r, fp)
 
-    # process data
-    for k, r in pure_results.items():
-        results.append((k, round(r[0] / r[1], 2)))  # get avg
-    results.sort()
-
-    # save it
-    with open(f"{output_location}{output_name}.csv", "w") as output:
-        writer = csv.writer(output, lineterminator='\n')
-        for val in results:
-            writer.writerow([val])
-
-    # plot it
-    x, y = zip(*results)
-    plt.plot(x, y)
-    plt.xlabel("|P|")
-    plt.ylabel("t")
-    plt.savefig(f"{output_location}{output_name}.png")
-
-analyze("2pos", "anal")
+analyze()
