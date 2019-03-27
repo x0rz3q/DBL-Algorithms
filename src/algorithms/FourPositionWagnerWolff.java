@@ -734,7 +734,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
                     addLabel(removingLabel, point, conflicts);
                 }
             } else if (point.getCandidates().size() == 4) {
-                // remove 1 label from piont and brute force all points (including this one since it has 3 labels)
+                // remove 1 label from point and brute force all points (including this one since it has 3 labels)
                 for (int i = 0; i < 4; i++) {
                     FourPositionLabel removingLabel = point.getCandidates().get(0);
                     ArrayList<FourPositionLabel> conflicts = removeLabel(removingLabel);
