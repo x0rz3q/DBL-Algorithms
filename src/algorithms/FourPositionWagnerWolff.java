@@ -26,7 +26,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
     // Only used in preprocessing
     private DataRecord labels;
 
-    private final int bruteForceLabels = 0;
+    private final int bruteForceLabels = 20;
 
     /**
      * Calculates all conflict sizes for given DataRecord. It is sufficient for the
