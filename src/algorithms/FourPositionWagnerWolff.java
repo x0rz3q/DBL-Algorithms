@@ -24,9 +24,9 @@ public class FourPositionWagnerWolff extends BinarySearcher {
 
     // DataRecord containing all labels of the current sigma
     // Only used in preprocessing
-    private DataRecord labels = new DataRecord();
+    private DataRecord labels;
 
-    private int bruteForceLabels = 1000;
+    private int bruteForceLabels = 0;
 
     /**
      * Calculates all conflict sizes for given DataRecord. It is sufficient for the
@@ -505,14 +505,14 @@ public class FourPositionWagnerWolff extends BinarySearcher {
             conflictPoints.add(candidate.getPoI());
         }
 
-        pointsQueue.addAll(conflictPoints);
-
         // remove highest conflict candidate for points with 4 candidates
         for (FourPositionPoint conflictPoint : conflictPoints) {
             if (conflictPoint.getCandidates().size() == 4) {
                 chooseLabelsNumberOfConflictsHeuristic(conflictPoint);
             }
         }
+
+        pointsQueue.addAll(conflictPoints);
 
         eliminateImpossibleCandidates();
 
@@ -647,6 +647,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         for (FourPositionLabel label : selectedLabels) {
             label.getPoI().getOriginalRecordLabel().setDirection(label.getDirection());
         }
+
         return true;
     }
 
@@ -787,12 +788,11 @@ public class FourPositionWagnerWolff extends BinarySearcher {
 
         System.out.println(labelsWithConflicts.size());
 
+        record.height = height;
         if (labelsWithConflicts.size() < bruteForceLabels) {
             bruteForce(conflictingPoints, true);
-            record.height = height;
         } else {
             applyHeuristic();
-            record.height = height;
             doTwoSat(true);
         }
     }
