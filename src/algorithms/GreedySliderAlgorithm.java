@@ -52,7 +52,7 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
 
         double epsilon = 0;
         double low = 0;
-        double high = Integer.MAX_VALUE; //@TODO find a better upper bound if there exists one
+        double high = Double.MAX_VALUE;
         while (true) {
             double mid = (low + high) / 2;
             if (solve(record, sortedLabels, mid)) {
@@ -89,6 +89,7 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
                     record.collection.remove(l);
                     l.setHeight(0);
                     record.collection.insert(l);
+                    if (l == label) break;
                 }
                 return false;
             }
