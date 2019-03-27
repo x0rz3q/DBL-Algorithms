@@ -7,6 +7,7 @@ import models.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -137,6 +138,7 @@ class FourPositionWagnerWolffTest {
     @Test
     void eliminateImpossibleCandidates3() {
         FourPositionPoint point = new FourPositionPoint(new Point(100, 100));
+        algo.initializeDataStructures(2);
         algo.getPointsQueue().add(point);
         FourPositionLabel label = new FourPositionLabel(30, 1, 0, point, DirectionEnum.NE);
         point.addCandidate(label);
@@ -163,6 +165,7 @@ class FourPositionWagnerWolffTest {
 
     @Test
     void eliminateImpossibleCandidates4() {
+        algo.initializeDataStructures(5);
         FourPositionPoint point = new FourPositionPoint(new Point(100, 100));
         FourPositionLabel label = new FourPositionLabel(30, 1, 0, point, DirectionEnum.NE);
         point.addCandidate(label);
@@ -234,6 +237,7 @@ class FourPositionWagnerWolffTest {
 
     @Test
     void applyHeuristic1() {
+        algo.initializeDataStructures(5);
         FourPositionPoint point = new FourPositionPoint(new Point(100, 100));
         FourPositionLabel label1 = new FourPositionLabel(0, 1, 0, point, DirectionEnum.NE);
         FourPositionLabel label2 = new FourPositionLabel(0, 1, 0, point, DirectionEnum.SE);
@@ -253,6 +257,7 @@ class FourPositionWagnerWolffTest {
 
     @Test
     void applyHeuristic2() {
+        algo.initializeDataStructures(5);
         FourPositionPoint point = new FourPositionPoint(new Point(100, 100));
         FourPositionLabel label1 = new FourPositionLabel(0, 1, 0, point, DirectionEnum.NE);
         FourPositionLabel label2 = new FourPositionLabel(0, 1, 0, point, DirectionEnum.SE);
@@ -275,6 +280,7 @@ class FourPositionWagnerWolffTest {
 
     @Test
     void applyHeuristic3() {
+        algo.initializeDataStructures(5);
         FourPositionPoint point1 = new FourPositionPoint(new Point(100, 100));
         FourPositionPoint point2 = new FourPositionPoint(new Point(50, 50));
 
@@ -313,6 +319,7 @@ class FourPositionWagnerWolffTest {
     void applyHeuristic4() {
         // Ask Hidde for picture
         // Create points
+        algo.initializeDataStructures(5);
         FourPositionPoint pointNW = new FourPositionPoint(new Point(100, 100));
         FourPositionPoint pointNE = new FourPositionPoint(new Point(119, 102));
         FourPositionPoint pointSE = new FourPositionPoint(new Point(121, 83));
@@ -415,6 +422,7 @@ class FourPositionWagnerWolffTest {
 
     @Test
     void doTwoSat() {
+        algo.initializeDataStructures(10);
         DataRecord record = new DataRecord();
         record.labels = new ArrayList<>();
         record.collection = new KDTree();
@@ -451,11 +459,12 @@ class FourPositionWagnerWolffTest {
         algo.getLabelsWithConflicts().add(point2Label1);
         algo.getLabelsWithConflicts().add(point2Label2);
 
-        algo.doTwoSat(record, true);
+        algo.doTwoSat(true);
     }
 
     @Test
     void doTwoSat2() {
+        algo.initializeDataStructures(10);
         DataRecord record = new DataRecord();
         record.labels = new ArrayList<>();
         record.collection = new KDTree();
@@ -521,7 +530,7 @@ class FourPositionWagnerWolffTest {
         algo.getLabelsWithConflicts().add(pointPoint4Label1);
         algo.getLabelsWithConflicts().add(pointPoint4Label2);
 
-        algo.doTwoSat(record, true);
+        algo.doTwoSat(true);
         assertEquals("NE", record.labels.get(0).getPlacement());
         assertEquals("SW", record.labels.get(1).getPlacement());
         assertEquals("NE", record.labels.get(2).getPlacement());
