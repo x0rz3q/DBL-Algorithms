@@ -704,9 +704,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         for (FourPositionLabel conflictingLabel : labelsWithConflicts) {
             conflictingPoints.add(conflictingLabel.getPoI());
         }
-
-        System.out.println(labelsWithConflicts.size());
-
+        
         if (labelsWithConflicts.size() < bruteForceLabels) {
             solvable = bruteForce(conflictingPoints, false);
         } else {
