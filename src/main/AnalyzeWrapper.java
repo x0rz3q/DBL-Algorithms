@@ -56,6 +56,14 @@ public class AnalyzeWrapper {
             }
         }
 
+        String difficulty = null;
+        while (scanner.hasNextLine()) {
+            difficulty = scanner.nextLine();
+            if (difficulty.contains("Difficulty")) {
+                difficulty = difficulty.split("Difficulty: ")[1];
+            }
+        }
+
         if (maxHeight == null)
             throw new Exception("No maximal label height found in file " + args[0]);
 
@@ -64,6 +72,7 @@ public class AnalyzeWrapper {
         System.out.println("Time: " + (end - start));
         System.out.println("Height: " + record.height);
         System.out.println("Max: " + maxHeight);
+        System.out.println("Difficulty: " + difficulty);
 
         for (LabelInterface label : record.labels) {
             // field extended label already has a height set
