@@ -10,12 +10,12 @@ import json
 # for windows people (puke) slashes might need different syntax 
 
 parser = argparse.ArgumentParser(description='')
-parser.add_argument('--allresults', help='location of files to parse with results after running', required=True)
+parser.add_argument('--resultloc', help='location of the file to analyze', required=True)
 
 args = parser.parse_args();
-results = args.allresults
+results_loc = args.resultloc
 
-lines_per_run = 6
+lines_per_run = 7
 
 # assuming first digit is nr Points
 def nrPoints(filename):
@@ -24,45 +24,66 @@ def nrPoints(filename):
 def merge(a):
     return [j.replace('\n', '') for j in a]
 
+def get_new_table():
+    return {"Time" : [],
+            "Height" : [],
+            "Max label height" : [],
+            "Overlaps" : []
+            }
+
 def runAlgo():
-    analysis = {}
+    easy = {}
+    hard = {}
 
-    for r in os.listdir(results):
+    r = results_loc.partition('/')[-1]
+    current_algorithm = r.partition('.')[0] # current algorithm
+    print(f"Analyzing {current_algorithm}")
 
-        current_algorithm = str(r)[:-3] # current algorithm
-        print(f"Analyzing {current_algorithm}")
+    with open(results_loc) as f:
+        lines = f.readlines()
 
-        with open(results + str(r)) as f:
-            lines = f.readlines()
+    results_per_run = [merge(lines[i + 1 :i+lines_per_run]) for i in range(0, len(lines), lines_per_run)]
+    num_tests = len(results_per_run)
+    progress = 0;
 
-        results_per_run = [merge(lines[i + 1 :i+lines_per_run]) for i in range(0, len(lines), lines_per_run)]
-        num_tests = len(results_per_run)
-        progress = 0;
+    for res in results_per_run:
+        amount_of_labels = res[0].partition(": ")[2]
+        difficulty = res[4].partition(": ")[2]
 
-        for res in results_per_run:
-            amount_of_labels = res[0].partition(": ")[2]
-            if amount_of_labels not in analysis:
-                analysis[amount_of_labels] = {"Time":[],
-                                              "Height":[],
-                                              "Max label height":[],
-                                              "Overlaps":[]}
-            for optimize in res[1:]:
-                partitioned = optimize.partition(": ")
-                category, amount = partitioned[0], partitioned[2]
-                analysis[amount_of_labels][category] += [amount]
+        if ( difficulty == "hard" and amount_of_labels not in hard ) or ( difficulty == "easy" and amount_of_labels not in easy ):
+                if difficulty == "hard":
+                    hard[amount_of_labels] = get_new_table()
+                else:
+                    easy[amount_of_labels] = get_new_table()
 
-            time.sleep(0.1)
-            sys.stdout.write(f"\r{progress}/{num_tests}") # progress report
-            sys.stdout.flush()
-            progress += 1
+        for optimize in res[1:]:
+            partitioned = optimize.partition(": ")
+            category, amount = partitioned[0], partitioned[2]
 
-    return current_algorithm, analysis
+            if category == "Difficulty":
+                continue
+
+            if difficulty == "hard":
+                hard[amount_of_labels][category] += [amount]
+            else:
+                easy[amount_of_labels][category] += [amount]
+
+        time.sleep(0.1)
+        sys.stdout.write(f"\r{progress}/{num_tests}") # progress report
+        sys.stdout.flush()
+        progress += 1
+
+    return easy, hard
 
 def analyze():
     # run algo on tests
-    filename, r = runAlgo()
+    ez, hrd = runAlgo()
+
     # write to file
-    with open(results + filename + "json", 'w') as fp:
-        json.dump(r, fp)
+    with open(f"{results_loc}_easy.json", 'w') as fp:
+        json.dump(ez, fp)
+
+    with open(f"{results_loc}_hard.json", 'w') as fp:
+        json.dump(hrd, fp)
 
 analyze()
