@@ -1,27 +1,49 @@
 import subprocess
-import csv
-import sys
-import matplotlib.pylab as plt
 import time
+import sys
 import os
+import argparse
+import json
+
 # if you want to run the analyzer
 # only change this directory and it should work
 # for windows people (puke) slashes might need different syntax 
-project_location = "/home/juris/Uni/DBL-Algorithms/"
-test_location = project_location + "profiling/hiddetests/" # location of generated tests
-class_location = project_location + "out/production/DBL-Algorithms/" # location of compiled class files
-output_location = project_location + "profiling/" # output graphs location 
 
-os.chdir(class_location) # go to class files
+parser = argparse.ArgumentParser(description='')
+parser.add_argument('--resultloc', help='location of the file to analyze', required=True)
+
+args = parser.parse_args();
+results_loc = args.resultloc
+
+lines_per_run = 7
 
 # assuming first digit is nr Points
 def nrPoints(filename):
     return [int(s) for s in filename.split('_') if s.isdigit()][0]
 
-def runAlgo(algo_name):
-    results = {} # npoints -> [totaltime, timesrun]
+def merge(a):
+    return [j.replace('\n', '') for j in a]
 
-    total = sum(str(test).startswith(algo_name) for test in os.listdir(test_location))
+def get_new_table():
+    return {"Time" : [],
+            "Height" : [],
+            "Max label height" : [],
+            "Overlaps" : []
+            }
+
+def runAlgo():
+    easy = {}
+    hard = {}
+
+    r = results_loc.partition('/')[-1]
+    current_algorithm = r.partition('.')[0] # current algorithm
+    print(f"Analyzing {current_algorithm}")
+
+    with open(results_loc) as f:
+        lines = f.readlines()
+
+    results_per_run = [merge(lines[i + 1 :i+lines_per_run]) for i in range(0, len(lines), lines_per_run)]
+    num_tests = len(results_per_run)
     progress = 0;
 
     for test in os.listdir(test_location): # for each test
@@ -41,33 +63,44 @@ def runAlgo(algo_name):
         results[n][0] += running_time
         results[n][1] += 1
         progress += 1
+    for res in results_per_run:
+        amount_of_labels = res[0].partition(": ")[2]
+        difficulty = res[4].partition(": ")[2]
+
+        if ( difficulty == "hard" and amount_of_labels not in hard ) or ( difficulty == "easy" and amount_of_labels not in easy ):
+                if difficulty == "hard":
+                    hard[amount_of_labels] = get_new_table()
+                else:
+                    easy[amount_of_labels] = get_new_table()
+
+        for optimize in res[1:]:
+            partitioned = optimize.partition(": ")
+            category, amount = partitioned[0], partitioned[2]
+
+            if category == "Difficulty":
+                continue
+
+            if difficulty == "hard":
+                hard[amount_of_labels][category] += [amount]
+            else:
+                easy[amount_of_labels][category] += [amount]
+
         time.sleep(0.1)
-        sys.stdout.write(f"\r{progress}/{total}")
+        sys.stdout.write(f"\r{progress}/{num_tests}") # progress report
         sys.stdout.flush()
+        progress += 1
 
-    return results
+    return easy, hard
 
-def analyze(algo_name, output_name):
+def analyze():
     # run algo on tests
-    pure_results = runAlgo(algo_name)
-    results = []
+    ez, hrd = runAlgo()
 
-    # process data
-    for k, r in pure_results.items():
-        results.append((k, round(r[0] / r[1], 2)))  # get avg
-    results.sort()
+    # write to file
+    with open(f"{results_loc}_easy.json", 'w') as fp:
+        json.dump(ez, fp)
 
-    # save it
-    with open(f"{output_location}{output_name}.csv", "w") as output:
-        writer = csv.writer(output, lineterminator='\n')
-        for val in results:
-            writer.writerow([val])
+    with open(f"{results_loc}_hard.json", 'w') as fp:
+        json.dump(hrd, fp)
 
-    # plot it
-    x, y = zip(*results)
-    plt.plot(x, y)
-    plt.xlabel("|P|")
-    plt.ylabel("t")
-    plt.savefig(f"{output_location}{output_name}.png")
-
-analyze("4pos", "4pos_anal")
+analyze()

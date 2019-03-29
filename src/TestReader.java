@@ -101,6 +101,8 @@ class TestReader {
                 areaRatio = 10.0 / 3.0;
             } else if (difficulty.equals("hard")) {
                 areaRatio = 10.0 / 4.0;
+            } else if (difficulty.equals("custom")) {
+                areaRatio = 1 / sc.nextDouble();
             } else {
                 throw new IllegalArgumentException("Invalid difficulty (easy/medium/hard)");
             }
