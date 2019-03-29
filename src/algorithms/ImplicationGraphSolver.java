@@ -19,7 +19,6 @@ public class ImplicationGraphSolver {
      */
     public boolean isSolvable(List<Integer>[] adj, List<Integer>[] adjInv) {
         int noPoints = adj.length / 2;
-
         int[] scc = createComponents(adj, adjInv);
 
         // if node and negation are in same scc, return false
@@ -28,7 +27,6 @@ public class ImplicationGraphSolver {
                 return false;
             }
         }
-
         return true;
     }
 
@@ -50,12 +48,9 @@ public class ImplicationGraphSolver {
      */
     public boolean[] getSolution(List<Integer>[] adj, List<Integer>[] adjInv) {
         int noPoints = adj.length / 2;
-
         // final orientation for label of each point
         boolean[] solution = new boolean[noPoints];
-
         List<Integer> componentsInReverseTopOrder = new ArrayList<>();
-
         int[] scc = createComponents(adj, adjInv, componentsInReverseTopOrder);
 
         // assign labels to each point in reverse topological order
@@ -65,12 +60,11 @@ public class ImplicationGraphSolver {
                 assignTrue(solution, i, isSet, adj, scc);
             }
         }
-
         return solution;
     }
 
     private int[] createComponents(List<Integer>[] adj, List<Integer>[] adjInv) {
-        return createComponents(adj, adjInv, new ArrayList<>());
+        return createComponents(adj, adjInv, null);
     }
 
     private int[] createComponents(List<Integer>[] adj, List<Integer>[] adjInv, List<Integer> componentsInReverseTopOrder) {
@@ -98,14 +92,15 @@ public class ImplicationGraphSolver {
         while (!s.empty()) {
             int n = s.pop();
             if (!visited[n]) {
-                componentsInReverseTopOrder.add(0, n);
+                if (componentsInReverseTopOrder != null) {
+                    componentsInReverseTopOrder.add(0, n);
+                }
                 dfsSecond(n, componentCounter, visited, adjInv, scc);
                 componentCounter++;
             }
         }
         return scc;
     }
-
 
 
     private boolean allVisited(int start, boolean[] visited, List<Integer>[] adj) {
@@ -131,7 +126,7 @@ public class ImplicationGraphSolver {
         List<Integer> returnValue = new ArrayList<>();
         integers.add(start);
 
-        while(!integers.isEmpty()) {
+        while (!integers.isEmpty()) {
             Integer next = integers.peek();
             visited[next] = true;
 
@@ -165,7 +160,6 @@ public class ImplicationGraphSolver {
 
     private void assignTrue(boolean[] solution, int node, boolean[] isSet, List<Integer>[] adj, int[] scc) {
         int noPoints = solution.length;
-
         Stack<Integer> nodesToVisit = new Stack<>();
         nodesToVisit.push(node);
 
@@ -178,7 +172,6 @@ public class ImplicationGraphSolver {
                 isSet[current - noPoints] = true;
                 solution[current % noPoints] = false;
             }
-
             for (int i : adj[current]) {
                 if (!isSet[i % noPoints] && scc[i] == scc[current]) {
                     nodesToVisit.push(i);
