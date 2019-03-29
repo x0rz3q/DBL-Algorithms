@@ -29,21 +29,19 @@ def visualize_time(r):
 
 def visualize_optimality(r):
     x = sorted([int(labels) for labels in r.keys()])
-    test_amount = len(r[str(x[0])]['Height'])
+    optim_dict = {}
 
-    y = [ [ float(r[str(labels)]['Height'][i])/10.0 for labels in x if len(r[str(labels)]['Height']) > i ] for i in range(test_amount) ]
+    for label in x:
+        optim_dict[label] = [float(h) / 10.0 for h in r[str(label)]['Height']]
 
-    for y_val in y:
-        print(x)
-        print(y_val)
-        print("REEE")
-        plt.plot(x, y_val)
+    y = [statistics.mean(optim_dict[labels]) for labels in x]
+    plt.plot(x, y)
 
     plt.savefig("optimality.png")
 
 def visualize():
     results = get_dictionary(file_loc)
-    visualize_time(results)
+    # visualize_time(results)
     visualize_optimality(results)
 
 
