@@ -20,9 +20,7 @@ public class SliderLabel extends AbstractLabel {
      * @throws IllegalArgumentException if {@code shift > 0 || shift < 0}
      */
     public void setShift(double shift) throws IllegalArgumentException {
-        if (shift > 1 || shift < 0) {
-            throw new IllegalArgumentException("SliderLabel.setEdgeLength.pre violated: shift > 1 || shift < 0");
-        }
+        shift = Math.max(0, Math.min(1, shift));
 
         this.rectangle = new Rectangle(
                 this.poi.getX() + this.height * this.aspectRatio * (this.shift - 1),

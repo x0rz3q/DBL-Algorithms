@@ -80,9 +80,7 @@ public class FieldExtendedSliderLabel extends SliderLabel {
      * @throws IllegalArgumentException when label is not located on top of Poi
      */
     public void setFieldExtended(int sequenceStartX, int sequenceIndex, double width) {
-        if (sequenceStartX < 0 || sequenceIndex < 0 || width < 0) {
-            throw new IllegalArgumentException("FieldExtendedSliderLabel.setRectangle parameters negative");
-        }
+        shift = Math.max(0, Math.min(1, shift));
 
         if (sequenceStartX + (sequenceIndex-1) * width > poi.getX() || sequenceStartX + sequenceIndex * width < poi.getX()) {
             throw new IllegalArgumentException("FieldExtendedSliderLabel.setRectangle rectangle not above Poi");
@@ -107,7 +105,7 @@ public class FieldExtendedSliderLabel extends SliderLabel {
 
     @Override
     public String getPlacement() {
-        DecimalFormat format = new DecimalFormat("0.000000");
+        DecimalFormat format = new DecimalFormat("0.0000000000");
         return format.format(shift);
     }
 }
