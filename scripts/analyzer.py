@@ -26,7 +26,7 @@ def runAlgo(algo_name):
 
     for test in os.listdir(test_location): # for each test
         if not str(test).startswith(algo_name):
-           continue 
+            continue
 
         main_command = ["java", "main.MainWrapper"] # this will run MainWrapper
         main_command.append(test_location + test) # invoke the test
@@ -50,7 +50,7 @@ def runAlgo(algo_name):
 def analyze(algo_name, output_name):
     # run algo on tests
     pure_results = runAlgo(algo_name)
-    results = [] 
+    results = []
 
     # process data
     for k, r in pure_results.items():
@@ -65,9 +65,9 @@ def analyze(algo_name, output_name):
 
     # plot it
     x, y = zip(*results)
-    plt.plot(x, y) 
+    plt.plot(x, y)
     plt.xlabel("|P|")
     plt.ylabel("t")
-    plt.savefig(f"{output_location}{output_name}.png") 
+    plt.savefig(f"{output_location}{output_name}.png")
 
 analyze("4pos", "4pos_anal")
