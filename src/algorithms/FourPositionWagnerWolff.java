@@ -344,14 +344,14 @@ public class FourPositionWagnerWolff extends BinarySearcher {
      *
      * @post PoI in conflictGraph have at most 2 candidates
      */
-    void applyHeuristic() {
+    boolean applyHeuristic() {
         // select Heuristic to be used
 
-        //numberOfConflictsHeuristic();
-        //numberOfConflictsHeuristicVariation();
-        //ratioPointsLabelsHeuristic();
-        intermediateEliminateHeuristic();
-        //densityHeuristic();
+        // return numberOfConflictsHeuristic();
+        // return numberOfConflictsHeuristicVariation();
+        // return ratioPointsLabelsHeuristic();
+        return intermediateEliminateHeuristic();
+        // return densityHeuristic();
     }
 
     /**
@@ -364,7 +364,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
      * @modifies labelsWithConflicts
      * @post all points have at most two candidates
      */
-    private void numberOfConflictsHeuristic() {
+    private boolean numberOfConflictsHeuristic() {
         // select points
         Set<FourPositionPoint> conflictPoints = new HashSet<>();
         for (FourPositionLabel candidate : labelsWithConflicts) {
@@ -384,6 +384,8 @@ public class FourPositionWagnerWolff extends BinarySearcher {
                 chooseLabelsNumberOfConflictsHeuristic(conflictPoint);
             }
         }
+
+        return true;
     }
 
     /**
@@ -396,7 +398,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
      * @modifies labelsWithConflicts
      * @post all points have at most two candidates
      */
-    private void numberOfConflictsHeuristicVariation() {
+    private boolean numberOfConflictsHeuristicVariation() {
         // select points
         Set<FourPositionPoint> conflictPoints = new HashSet<>();
         for (FourPositionLabel candidate : labelsWithConflicts) {
@@ -417,6 +419,8 @@ public class FourPositionWagnerWolff extends BinarySearcher {
                 chooseLabelsNumberOfConflictsHeuristic(conflictPoint);
             }
         }
+
+        return true;
     }
 
     /**
@@ -430,7 +434,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
      * @modifies labelsWithConflicts
      * @post all points have at most two candidates
      */
-    private void ratioPointsLabelsHeuristic() {
+    private boolean ratioPointsLabelsHeuristic() {
         // Create HashMap mapping labels to their ratio
         HashMap<FourPositionLabel, Double> ratioMap = new HashMap<>();
         for (FourPositionLabel candidate : labelsWithConflicts) {
@@ -462,6 +466,8 @@ public class FourPositionWagnerWolff extends BinarySearcher {
                 chooseLabelsRatioPointsLabelsHeuristic(conflictPoint, ratioMap);
             }
         }
+
+        return true;
     }
 
     private void chooseLabelsRatioPointsLabelsHeuristic(FourPositionPoint conflictPoint, HashMap<FourPositionLabel, Double> ratioMap) {
@@ -498,9 +504,9 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         labelsWithConflicts.remove(maxConflictCandidate);
     }
 
-    private void intermediateEliminateHeuristic() {
+    private boolean intermediateEliminateHeuristic() {
         // Collect all points that are still alive and put them back in the pointsQueue
-        Set<FourPositionPoint> conflictPoints = new HashSet<>();
+        Set<FourPositionPoint> conflictPoints = new LinkedHashSet<>();
         for (FourPositionLabel candidate : labelsWithConflicts) {
             conflictPoints.add(candidate.getPoI());
         }
@@ -514,7 +520,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
 
         pointsQueue.addAll(conflictPoints);
 
-        eliminateImpossibleCandidates();
+        if (!eliminateImpossibleCandidates()) return false;
 
         // remove highest conflict candidate for points with 3 candidates
         for (FourPositionPoint conflictPoint : conflictPoints) {
@@ -522,9 +528,11 @@ public class FourPositionWagnerWolff extends BinarySearcher {
                 chooseLabelsNumberOfConflictsHeuristic(conflictPoint);
             }
         }
+
+        return true;
     }
 
-    private void densityHeuristic() {
+    private boolean densityHeuristic() {
         // select points
         Set<FourPositionPoint> conflictPoints = new HashSet<>();
         for (FourPositionLabel candidate : labelsWithConflicts) {
@@ -540,7 +548,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
             }
         }
 
-        eliminateImpossibleCandidates();
+        if (!eliminateImpossibleCandidates()) return false;
 
         // remove highest conflict candidate for points with 3 candidates
         for (FourPositionPoint conflictPoint : conflictPoints) {
@@ -548,6 +556,8 @@ public class FourPositionWagnerWolff extends BinarySearcher {
                 chooseLabelsDensityHeuristic(conflictPoint);
             }
         }
+
+        return true;
     }
 
     private void chooseLabelsDensityHeuristic(FourPositionPoint conflictPoint) {
@@ -610,7 +620,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
      */
     boolean doTwoSat(final boolean returnSolution) {
         // Get Points from labels
-        Set<FourPositionPoint> intersectingPoints = new HashSet<>();
+        Set<FourPositionPoint> intersectingPoints = new LinkedHashSet<>();
         for (FourPositionLabel conflictingLabel : labelsWithConflicts) {
             intersectingPoints.add(conflictingLabel.getPoI());
         }
@@ -708,7 +718,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         if (labelsWithConflicts.size() < bruteForceLabels) {
             solvable = bruteForce(conflictingPoints, false);
         } else {
-            applyHeuristic();
+            if (!applyHeuristic()) return false;
             solvable = doTwoSat(false);
         }
         return solvable;
@@ -783,8 +793,6 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         for (FourPositionLabel conflictingLabel : labelsWithConflicts) {
             conflictingPoints.add(conflictingLabel.getPoI());
         }
-
-        System.out.println(labelsWithConflicts.size());
 
         record.height = height;
         if (labelsWithConflicts.size() < bruteForceLabels) {
