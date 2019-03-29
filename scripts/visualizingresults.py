@@ -30,13 +30,14 @@ def visualize_time(r):
 def visualize_optimality(r):
     x = sorted([int(labels) for labels in r.keys()])
     optim_dict = {}
-
+    y = []
     for label in x:
         optim_dict[label] = [float(h) / 10.0 for h in r[str(label)]['Height']]
 
-    y = [statistics.mean(optim_dict[labels]) for labels in x]
-    plt.plot(x, y)
-
+    y.append([statistics.mean(optim_dict[labels]) for labels in x])
+    y.append([statistics.median(optim_dict[labels]) for labels in x])
+    for y_var in y:
+        plt.plot(x, y_var)
     plt.savefig("optimality.png")
 
 def visualize():
