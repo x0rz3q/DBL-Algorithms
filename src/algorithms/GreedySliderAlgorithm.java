@@ -135,7 +135,7 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
             queryResult = record.collection.query2D(queryArea);
             for (GeometryInterface entry : queryResult) {
                 if (entry != label) {
-                    if (((FieldExtendedSliderLabel) entry).getShift() == 1) return false;
+                    if (((FieldExtendedSliderLabel) entry).getShift() >= 1) return false;
                 }
             }
         }
