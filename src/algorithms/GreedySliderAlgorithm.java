@@ -54,7 +54,7 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
         double low = 0;
         double high = Double.MAX_VALUE;
         while (true) {
-            double mid = (low + high) / 2;
+            double mid = low / 2 + high / 2;
             if (solve(record, sortedLabels, mid)) {
                 low = mid;
             } else {

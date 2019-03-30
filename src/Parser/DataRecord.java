@@ -13,5 +13,4 @@ public class DataRecord {
     public String aspectRatioString;
     public PlacementModelEnum placementModel;
     public double height = 0.0d;
-    public String aspectRatioString = "";
 }
