@@ -80,7 +80,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
      * @post (\ forall p ; p \ in record ; p does not have any labels p_i assigned
      *where that p_i of size sigma contains another point in the record)
      */
-    void preprocessing(DataRecord record, Double sigma) {
+    boolean preprocessing(DataRecord record, Double sigma) {
         // initialization
         pointsQueue = new ArrayDeque<>(record.labels.size() * 2);
         labelsWithConflicts = new HashSet<>(record.labels.size() * 2);
@@ -94,11 +94,16 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         double width = sigma * ratio;
 
         for (LabelInterface p : record.labels) {
-            double pX = p.getXMax();
-            double pY = p.getYMax();
+            double pX = p.getPOI().getX();
+            double pY = p.getPOI().getY();
 
             FourPositionPoint point = new FourPositionPoint((FourPositionLabel) p);
             pointsQueue.add(point);
+
+            boolean neHasDude = true;
+            boolean nwHasDude = true;
+            boolean seHasDude = true;
+            boolean swHasDude = true;
 
             // adding new labels (All id's are 0 for now)
             // add NE square
@@ -107,6 +112,8 @@ public class FourPositionWagnerWolff extends BinarySearcher {
                 point.addCandidate(northEastLabel);
                 Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX, pY, pX + width, pY + height));
                 preprocessingLabel(northEastLabel, conflictingLabels);
+
+                neHasDude = false;
             }
             // add NW
             if (!record.collection.nodeInRange(new Rectangle(pX - width, pY, pX, pY + height))) {
@@ -114,6 +121,8 @@ public class FourPositionWagnerWolff extends BinarySearcher {
                 point.addCandidate(northWestLabel);
                 Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX - width, pY, pX, pY + height));
                 preprocessingLabel(northWestLabel, conflictingLabels);
+
+                nwHasDude = false;
             }
 
             // add SE
@@ -122,6 +131,8 @@ public class FourPositionWagnerWolff extends BinarySearcher {
                 point.addCandidate(southEastLabel);
                 Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX, pY - height, pX + width, pY));
                 preprocessingLabel(southEastLabel, conflictingLabels);
+
+                seHasDude = false;
             }
 
             // add SW
@@ -130,8 +141,16 @@ public class FourPositionWagnerWolff extends BinarySearcher {
                 point.addCandidate(southWestLabel);
                 Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX - width, pY - height, pX, pY));
                 preprocessingLabel(southWestLabel, conflictingLabels);
+
+                swHasDude = false;
+            }
+
+            if (neHasDude && nwHasDude && seHasDude && swHasDude) {
+                return false;
             }
         }
+
+        return true;
     }
 
     /**
@@ -706,7 +725,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
 
     @Override
     boolean isSolvable(DataRecord record, double height) {
-        preprocessing(record, height);
+        if (!preprocessing(record, height)) return false;
 
         boolean solvable = eliminateImpossibleCandidates();
 
@@ -723,6 +742,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
             if (!applyHeuristic()) return false;
             solvable = doTwoSat(false);
         }
+
         return solvable;
     }
 
