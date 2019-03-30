@@ -175,7 +175,7 @@ public class Parser implements ParserInterface {
         format.setRoundingMode(RoundingMode.FLOOR);
 
         writer.write(
-                "aspect ratio: " + record.aspectRatio + "\n"
+                "aspect ratio: " + record.aspectRatioString + "\n"
                         + "number of points: " + record.labels.size() + "\n"
                         + "height: " + format.format(record.height) + "\n"
         );
