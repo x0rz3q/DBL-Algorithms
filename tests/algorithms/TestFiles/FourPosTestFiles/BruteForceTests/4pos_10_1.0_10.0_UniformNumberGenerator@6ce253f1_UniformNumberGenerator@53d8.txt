@@ -1,0 +1,15 @@
+placement model: 4pos
+aspect ratio: 1.0
+number of points: 10
+124 115
+111 108
+121 115
+103 117
+118 125
+114 115
+107 109
+121 102
+123 125
+113 111
+label height: 10.0
+minimum expected result: 9.0

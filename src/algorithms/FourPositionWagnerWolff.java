@@ -14,17 +14,19 @@ import java.util.*;
 public class FourPositionWagnerWolff extends BinarySearcher {
 
     // phase 2 queue
-    private ArrayDeque<FourPositionPoint> pointsQueue = new ArrayDeque<>();
+    private ArrayDeque<FourPositionPoint> pointsQueue;
 
     // conflict graph
-    private ArrayList<FourPositionLabel> labelsWithConflicts = new ArrayList<>();
+    private ArrayList<FourPositionLabel> labelsWithConflicts;
 
     // selected candidates
-    private ArrayList<FourPositionLabel> selectedLabels = new ArrayList<>();
+    private ArrayList<FourPositionLabel> selectedLabels;
 
     // DataRecord containing all labels of the current sigma
     // Only used in preprocessing
-    private DataRecord labels = new DataRecord();
+    private DataRecord labels;
+
+    private final int bruteForceLabels = 20;
 
     /**
      * Calculates all conflict sizes for given DataRecord. It is sufficient for the
@@ -49,7 +51,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
             for (GeometryInterface target : nearestNeighbours) {
                 double conflictSize = distanceFunction.calculate(point, (PointInterface) target);
                 conflictSizes.add(conflictSize);
-                conflictSizes.add(conflictSize/2);
+                conflictSizes.add(conflictSize / 2);
             }
         }
 
@@ -70,26 +72,26 @@ public class FourPositionWagnerWolff extends BinarySearcher {
      * if the labels had a given size.
      *
      * @param record the given DataRecord
-     * @param sigma the size of the labels
+     * @param sigma  the size of the labels
      * @modifies pointsQueue
      * @modifies labelsWithConflicts
      * @modifies selectedLabels
      * @modifies labels
-     * @post (\forall p; p \in record; p does not have any labels p_i assigned
-     *              where that p_i of size sigma contains another point in the record)
+     * @post (\ forall p ; p \ in record ; p does not have any labels p_i assigned
+     *where that p_i of size sigma contains another point in the record)
      */
     void preprocessing(DataRecord record, Double sigma) {
         // initialization
-        pointsQueue = new ArrayDeque<>();
-        labelsWithConflicts = new ArrayList<>();
-        selectedLabels = new ArrayList<>();
+        pointsQueue = new ArrayDeque<>(record.labels.size() * 2);
+        labelsWithConflicts = new ArrayList<>(record.labels.size() * 2);
+        selectedLabels = new ArrayList<>(record.labels.size() * 2);
         labels = new DataRecord();
         labels.collection = new QuadTree(new Rectangle(0, 0, 10000, 10000));
         labels.aspectRatio = record.aspectRatio;
 
         double ratio = record.aspectRatio;
         double height = sigma;
-        double width = sigma*ratio;
+        double width = sigma * ratio;
 
         for (LabelInterface p : record.labels) {
             double pX = p.getXMax();
@@ -100,31 +102,31 @@ public class FourPositionWagnerWolff extends BinarySearcher {
 
             // adding new labels (All id's are 0 for now)
             // add NE square
-            if (record.collection.query2D(new Rectangle(pX, pY, pX+width, pY+height)).size() == 0) {
+            if (record.collection.query2D(new Rectangle(pX, pY, pX + width, pY + height)).size() == 0) {
                 FourPositionLabel northEastLabel = new FourPositionLabel(height, ratio, 0, point, DirectionEnum.NE);
                 point.addCandidate(northEastLabel);
-                Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX, pY, pX+width, pY+height));
+                Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX, pY, pX + width, pY + height));
                 preprocessingLabel(northEastLabel, conflictingLabels);
             }
             // add NW
-            if (record.collection.query2D(new Rectangle(pX-width, pY, pX, pY+height)).size() == 0) {
+            if (record.collection.query2D(new Rectangle(pX - width, pY, pX, pY + height)).size() == 0) {
                 FourPositionLabel northWestLabel = new FourPositionLabel(height, ratio, 0, point, DirectionEnum.NW);
                 point.addCandidate(northWestLabel);
-                Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX-width, pY, pX, pY+height));
+                Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX - width, pY, pX, pY + height));
                 preprocessingLabel(northWestLabel, conflictingLabels);
             }
             // add SE
-            if (record.collection.query2D(new Rectangle(pX, pY-height, pX+width, pY)).size() == 0) {
+            if (record.collection.query2D(new Rectangle(pX, pY - height, pX + width, pY)).size() == 0) {
                 FourPositionLabel southEastLabel = new FourPositionLabel(height, ratio, 0, point, DirectionEnum.SE);
                 point.addCandidate(southEastLabel);
-                Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX, pY-height, pX+width, pY));
+                Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX, pY - height, pX + width, pY));
                 preprocessingLabel(southEastLabel, conflictingLabels);
             }
             // add SW
-            if (record.collection.query2D(new Rectangle(pX-width, pY-height, pX, pY)).size() == 0) {
+            if (record.collection.query2D(new Rectangle(pX - width, pY - height, pX, pY)).size() == 0) {
                 FourPositionLabel southWestLabel = new FourPositionLabel(height, ratio, 0, point, DirectionEnum.SW);
                 point.addCandidate(southWestLabel);
-                Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX-width, pY-height, pX, pY));
+                Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX - width, pY - height, pX, pY));
                 preprocessingLabel(southWestLabel, conflictingLabels);
             }
         }
@@ -136,7 +138,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
      * Add q_i to labelsWithConflicts if it is not in there already.
      * Also add p_i to the datarecord for further preprocessing
      *
-     * @param label to operate on
+     * @param label             to operate on
      * @param conflictingLabels all labels that conflict with the label to operate on
      */
     private void preprocessingLabel(FourPositionLabel label, Collection<GeometryInterface> conflictingLabels) {
@@ -145,7 +147,9 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         for (GeometryInterface square : conflictingLabels) {
             label.addConflict((FourPositionLabel) square);
             ((FourPositionLabel) square).addConflict(label);
-            if (!labelsWithConflicts.contains(square)) { labelsWithConflicts.add((FourPositionLabel) square); }
+            if (!labelsWithConflicts.contains(square)) {
+                labelsWithConflicts.add((FourPositionLabel) square);
+            }
         }
 
         labels.collection.insert(label);
@@ -160,9 +164,9 @@ public class FourPositionWagnerWolff extends BinarySearcher {
      * squares it intersects (try to delete them); 4) If p has a candidate p_i which overlaps the last two
      * candidates of another site, then update and eliminate p_i.
      *
+     * @return whether all points still have candidates left (if not there is no solution for this size)
      * @modifies pointsQueue
      * @post record does not contain candidates which can't be part of the solution
-     * @return whether all points still have candidates left (if not there is no solution for this size)
      */
     boolean eliminateImpossibleCandidates() {
         while (!pointsQueue.isEmpty()) {
@@ -170,11 +174,8 @@ public class FourPositionWagnerWolff extends BinarySearcher {
             if (noCandidates(point)) {
                 return false;
             } else if (hasCandidateWithoutIntersections(point)) {
-                continue;
             } else if (oneCandidate(point)) {
-                continue;
             } else if (candidateIntersectsAllRemaining(point)) {
-                continue;
             }
         }
         return true;
@@ -194,11 +195,12 @@ public class FourPositionWagnerWolff extends BinarySearcher {
     /**
      * Checks whether the point has a candidate which is free of intersections with other labels, and selects such a
      * label if found.
+     *
      * @param point to check
+     * @return whether a candidate was chosen
      * @modifies selectedLabels
      * @modifies labelsWithConflicts
      * @modifies pointsQueue
-     * @return whether a candidate was chosen
      */
     private boolean hasCandidateWithoutIntersections(FourPositionPoint point) {
         FourPositionLabel selected = null;
@@ -232,7 +234,9 @@ public class FourPositionWagnerWolff extends BinarySearcher {
                 toBeRemoved.add(candidate);
             }
         }
-        for (FourPositionLabel candidate : toBeRemoved) { candidate.getPoI().removeCandidate(candidate); }
+        for (FourPositionLabel candidate : toBeRemoved) {
+            candidate.getPoI().removeCandidate(candidate);
+        }
         // remove selected label from conflict graph
         labelsWithConflicts.remove(selected);
         pointsQueue.remove(point);
@@ -242,11 +246,12 @@ public class FourPositionWagnerWolff extends BinarySearcher {
 
     /**
      * Checks whether a point has only one candidate left, and if so, selects this candidate
+     *
      * @param point the point to be processed
+     * @return whether the one candidate was found and selected
      * @modifies selectedLabels
      * @modifies pointsQueue
      * @modifies labelsWithConflicts
-     * @return whether the one candidate was found and selected
      */
     private boolean oneCandidate(FourPositionPoint point) {
         if (point.getCandidates().size() != 1) {
@@ -285,9 +290,9 @@ public class FourPositionWagnerWolff extends BinarySearcher {
      * If candidates of p were removed then p is put back in the queue
      *
      * @param point the given point
+     * @return whether point had candidates that intersected all remaining candidates of another point
      * @modifies labelsWithConflicts
      * @modifies pointsQueue
-     * @return whether point had candidates that intersected all remaining candidates of another point
      */
     private boolean candidateIntersectsAllRemaining(FourPositionPoint point) {
         List<FourPositionLabel> labelsThatCantExist = new ArrayList<>();
@@ -301,7 +306,8 @@ public class FourPositionWagnerWolff extends BinarySearcher {
 
             boolean canExist = true; // whether candidate can exist in solution
 
-            fullPointIntersect: for (FourPositionPoint intersectPoint : havingLabelsIntersecting) {
+            fullPointIntersect:
+            for (FourPositionPoint intersectPoint : havingLabelsIntersecting) {
                 for (FourPositionLabel intersectPointLabel : intersectPoint.getCandidates()) {
                     if (!intersectPointLabel.getConflicts().contains(candidate)) {
                         continue fullPointIntersect;
@@ -338,13 +344,14 @@ public class FourPositionWagnerWolff extends BinarySearcher {
      *
      * @post PoI in conflictGraph have at most 2 candidates
      */
-    void applyHeuristic() {
+    boolean applyHeuristic() {
         // select Heuristic to be used
 
-        //numberOfConflictsHeuristic();
-        //numberOfConflictsHeuristicVariation();
-        //ratioPointsLabelsHeuristic();
-        intermediateEliminateHeuristic();
+        // return numberOfConflictsHeuristic();
+        // return numberOfConflictsHeuristicVariation();
+        // return ratioPointsLabelsHeuristic();
+        return intermediateEliminateHeuristic();
+        // return densityHeuristic();
     }
 
     /**
@@ -357,7 +364,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
      * @modifies labelsWithConflicts
      * @post all points have at most two candidates
      */
-    private void numberOfConflictsHeuristic(){
+    private boolean numberOfConflictsHeuristic() {
         // select points
         Set<FourPositionPoint> conflictPoints = new HashSet<>();
         for (FourPositionLabel candidate : labelsWithConflicts) {
@@ -377,6 +384,8 @@ public class FourPositionWagnerWolff extends BinarySearcher {
                 chooseLabelsNumberOfConflictsHeuristic(conflictPoint);
             }
         }
+
+        return true;
     }
 
     /**
@@ -389,7 +398,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
      * @modifies labelsWithConflicts
      * @post all points have at most two candidates
      */
-    private void numberOfConflictsHeuristicVariation() {
+    private boolean numberOfConflictsHeuristicVariation() {
         // select points
         Set<FourPositionPoint> conflictPoints = new HashSet<>();
         for (FourPositionLabel candidate : labelsWithConflicts) {
@@ -410,6 +419,8 @@ public class FourPositionWagnerWolff extends BinarySearcher {
                 chooseLabelsNumberOfConflictsHeuristic(conflictPoint);
             }
         }
+
+        return true;
     }
 
     /**
@@ -423,7 +434,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
      * @modifies labelsWithConflicts
      * @post all points have at most two candidates
      */
-    private void ratioPointsLabelsHeuristic() {
+    private boolean ratioPointsLabelsHeuristic() {
         // Create HashMap mapping labels to their ratio
         HashMap<FourPositionLabel, Double> ratioMap = new HashMap<>();
         for (FourPositionLabel candidate : labelsWithConflicts) {
@@ -455,6 +466,8 @@ public class FourPositionWagnerWolff extends BinarySearcher {
                 chooseLabelsRatioPointsLabelsHeuristic(conflictPoint, ratioMap);
             }
         }
+
+        return true;
     }
 
     private void chooseLabelsRatioPointsLabelsHeuristic(FourPositionPoint conflictPoint, HashMap<FourPositionLabel, Double> ratioMap) {
@@ -491,13 +504,12 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         labelsWithConflicts.remove(maxConflictCandidate);
     }
 
-    private void intermediateEliminateHeuristic() {
+    private boolean intermediateEliminateHeuristic() {
         // Collect all points that are still alive and put them back in the pointsQueue
-        Set<FourPositionPoint> conflictPoints = new HashSet<>();
+        Set<FourPositionPoint> conflictPoints = new LinkedHashSet<>();
         for (FourPositionLabel candidate : labelsWithConflicts) {
             conflictPoints.add(candidate.getPoI());
         }
-        pointsQueue.addAll(conflictPoints);
 
         // remove highest conflict candidate for points with 4 candidates
         for (FourPositionPoint conflictPoint : conflictPoints) {
@@ -506,7 +518,9 @@ public class FourPositionWagnerWolff extends BinarySearcher {
             }
         }
 
-        eliminateImpossibleCandidates();
+        pointsQueue.addAll(conflictPoints);
+
+        if (!eliminateImpossibleCandidates()) return false;
 
         // remove highest conflict candidate for points with 3 candidates
         for (FourPositionPoint conflictPoint : conflictPoints) {
@@ -514,6 +528,85 @@ public class FourPositionWagnerWolff extends BinarySearcher {
                 chooseLabelsNumberOfConflictsHeuristic(conflictPoint);
             }
         }
+
+        return true;
+    }
+
+    private boolean densityHeuristic() {
+        // select points
+        Set<FourPositionPoint> conflictPoints = new HashSet<>();
+        for (FourPositionLabel candidate : labelsWithConflicts) {
+            conflictPoints.add(candidate.getPoI());
+        }
+
+        pointsQueue.addAll(conflictPoints);
+
+        // remove highest conflict candidate for points with 4 candidates
+        for (FourPositionPoint conflictPoint : conflictPoints) {
+            if (conflictPoint.getCandidates().size() == 4) {
+                chooseLabelsDensityHeuristic(conflictPoint);
+            }
+        }
+
+        if (!eliminateImpossibleCandidates()) return false;
+
+        // remove highest conflict candidate for points with 3 candidates
+        for (FourPositionPoint conflictPoint : conflictPoints) {
+            if (conflictPoint.getCandidates().size() == 3) {
+                chooseLabelsDensityHeuristic(conflictPoint);
+            }
+        }
+
+        return true;
+    }
+
+    private void chooseLabelsDensityHeuristic(FourPositionPoint conflictPoint) {
+        // select highest conflict candidate
+        FourPositionLabel maxConflictCandidate = conflictPoint.getCandidates().get(0);
+        int maxDensity = 0;
+        int density;
+        final int checkRange = 3; // determines the range at which the density is determined
+
+        for (FourPositionLabel candidate : conflictPoint.getCandidates()) {
+            PointInterface bottomLeftSearch;
+            PointInterface topRightSearch;
+
+            switch (candidate.getDirection()) {
+                case NE:
+                    bottomLeftSearch = candidate.getBottomLeft();
+                    topRightSearch = new Point(candidate.getXMin() + checkRange * (candidate.getXMax() - candidate.getXMin()), candidate.getYMin() + checkRange * (candidate.getYMax() - candidate.getYMin()));
+                    break;
+                case NW:
+                    bottomLeftSearch = new Point(candidate.getXMax() - checkRange * (candidate.getXMax() - candidate.getXMin()), candidate.getYMin());
+                    topRightSearch = new Point(candidate.getXMax(), candidate.getYMin() + checkRange * (candidate.getYMax() - candidate.getYMin()));
+                    break;
+                case SE:
+                    bottomLeftSearch = new Point(candidate.getXMin(), candidate.getYMax() - checkRange * (candidate.getYMax() - candidate.getYMin()));
+                    topRightSearch = new Point(candidate.getXMin() + checkRange * (candidate.getXMax() - candidate.getXMin()), candidate.getYMax());
+                    break;
+                case SW:
+                    bottomLeftSearch = new Point(candidate.getXMax() - checkRange * (candidate.getXMax() - candidate.getXMin()),  candidate.getYMax() - checkRange * (candidate.getYMax() - candidate.getYMin()));
+                    topRightSearch = candidate.getTopRight();
+                    break;
+                default:
+                    bottomLeftSearch = new Point(0, 0);
+                    topRightSearch = new Point(0, 0);
+                    break;
+            }
+
+            density = labels.collection.query2D(new Rectangle(bottomLeftSearch, topRightSearch)).size();
+            if (density > maxDensity) {
+                maxConflictCandidate = candidate;
+                maxDensity = density;
+            }
+        }
+
+        // remove highest conflict candidate
+        for (FourPositionLabel conflict : maxConflictCandidate.getConflicts()) {
+            conflict.removeConflict(maxConflictCandidate);
+        }
+        maxConflictCandidate.getPoI().removeCandidate(maxConflictCandidate);
+        labelsWithConflicts.remove(maxConflictCandidate);
     }
 
     /**
@@ -521,13 +614,13 @@ public class FourPositionWagnerWolff extends BinarySearcher {
      * For those points which still have two or more candidates left, choose exactly two (heuristic),
      * and check, whether this remaining problem is solvable with 2-SAT (like 2 position)
      *
+     * @return whether record can be solved with current height
      * @modifies record
      * @post record is solved if returnSolution is true
-     * @return whether record can be solved with current height
      */
-    boolean doTwoSat(DataRecord record, final boolean returnSolution) {
+    boolean doTwoSat(final boolean returnSolution) {
         // Get Points from labels
-        Set<FourPositionPoint> intersectingPoints = new HashSet<>();
+        Set<FourPositionPoint> intersectingPoints = new LinkedHashSet<>();
         for (FourPositionLabel conflictingLabel : labelsWithConflicts) {
             intersectingPoints.add(conflictingLabel.getPoI());
         }
@@ -544,47 +637,46 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         // Get solution from
         // call is boolean solvable (adj of length 2n, invadj of length 2n)
         if (!returnSolution) {
-            boolean isSolvable = (new ImplicationGraphSolver()).isSolvable(input.get(0), input.get(1));
-            return isSolvable;
+            return (new ImplicationGraphSolver()).isSolvable(input.get(0), input.get(1));
         }
         // call getSolution(adj, inadj) assumes is solvable returns boolean array of length n
         boolean[] labels = (new ImplicationGraphSolver()).getSolution(input.get(0), input.get(1));
 
         // translate back to labels
-        if (returnSolution) {
-            count = 0;
-            for (FourPositionPoint point : intersectingPoints) {
-                DirectionEnum direction;
-                if (labels[count]) {
-                    direction = point.getCandidates().get(0).getDirection();
-                } else {
-                    direction = point.getCandidates().get(1).getDirection();
-                }
-                point.getOriginalRecordLabel().setDirection(direction);
-                count++;
+        count = 0;
+        for (FourPositionPoint point : intersectingPoints) {
+            DirectionEnum direction;
+            if (labels[count]) {
+                direction = point.getCandidates().get(0).getDirection();
+            } else {
+                direction = point.getCandidates().get(1).getDirection();
             }
-            for (FourPositionLabel label : selectedLabels) {
-                label.getPoI().getOriginalRecordLabel().setDirection(label.getDirection());
-            }
+            point.getOriginalRecordLabel().setDirection(direction);
+            count++;
         }
+        for (FourPositionLabel label : selectedLabels) {
+            label.getPoI().getOriginalRecordLabel().setDirection(label.getDirection());
+        }
+
         return true;
     }
 
     /**
      * Creates the implication graph as requested by the {@Link ImplicationGraphSolver} based on the given points
-     * @pre (\forall FourPositionPoint p; intersectingPoints.contains(p); p.getCandidates().size() == 2)
-     *      AND ID's of points in intersectingPoints consecutive
-     *      AND ID's of p.getCandidates() == (1, 2), for all p in intersectingPoints
+     *
      * @param intersectingPoints
      * @return ArrayList containing the implication graph and the inverse implication graph represented
      * as specified by {@link ImplicationGraphSolver}
+     * @pre (\ forall FourPositionPoint p ; intersectingPoints.contains ( p); p.getCandidates().size() == 2)
+     * AND ID's of points in intersectingPoints consecutive
+     * AND ID's of p.getCandidates() == (1, 2), for all p in intersectingPoints
      */
     private ArrayList<List<Integer>[]> createImplicationGraph(Set<FourPositionPoint> intersectingPoints) {
         int nPoints = intersectingPoints.size();
         ArrayList[] adj = new ArrayList[2 * nPoints];
         ArrayList[] invAdj = new ArrayList[2 * nPoints];
 
-        for (int i = 0; i < 2*nPoints; ++i) {
+        for (int i = 0; i < 2 * nPoints; ++i) {
             adj[i] = new ArrayList<Integer>();
             invAdj[i] = new ArrayList<Integer>();
         }
@@ -613,20 +705,102 @@ public class FourPositionWagnerWolff extends BinarySearcher {
     @Override
     boolean isSolvable(DataRecord record, double height) {
         preprocessing(record, height);
+
         boolean solvable = eliminateImpossibleCandidates();
+
         if (!solvable) return false;
-        applyHeuristic();
-        solvable = doTwoSat(record, false);
+
+        Set<FourPositionPoint> conflictingPoints = new HashSet<>();
+        for (FourPositionLabel conflictingLabel : labelsWithConflicts) {
+            conflictingPoints.add(conflictingLabel.getPoI());
+        }
+        
+        if (labelsWithConflicts.size() < bruteForceLabels) {
+            solvable = bruteForce(conflictingPoints, false);
+        } else {
+            if (!applyHeuristic()) return false;
+            solvable = doTwoSat(false);
+        }
         return solvable;
+    }
+
+    private boolean bruteForce(Set<FourPositionPoint> conflictingPoints, final boolean returnSolution) {
+        // brute force 'heuristic'
+        // Remove labels s.t. maximally 2 labels per point are left in brute force manner and check for 2sat solution each time
+        if (twoSatReady(conflictingPoints)) {
+            return doTwoSat(returnSolution);
+        }
+
+        //loop through all points
+        for (FourPositionPoint point : conflictingPoints) {
+            if (point.getCandidates().size() == 3) {
+                Set<FourPositionPoint> newPoints = new HashSet<>(conflictingPoints);
+                newPoints.remove(point);
+
+                // remove 1 label from point and brute force the other points
+                for (int i = 0; i < 3; i++) {
+                    FourPositionLabel removingLabel = point.getCandidates().get(0);
+                    ArrayList<FourPositionLabel> conflicts = removeLabel(removingLabel);
+                    boolean option = bruteForce(newPoints, returnSolution);
+                    if (option) return true;
+                    addLabel(removingLabel, point, conflicts);
+                }
+            } else if (point.getCandidates().size() == 4) {
+                // remove 1 label from point and brute force all points (including this one since it has 3 labels)
+                for (int i = 0; i < 4; i++) {
+                    FourPositionLabel removingLabel = point.getCandidates().get(0);
+                    ArrayList<FourPositionLabel> conflicts = removeLabel(removingLabel);
+                    boolean option = bruteForce(conflictingPoints, returnSolution);
+                    if (option) return true;
+                    addLabel(removingLabel, point, conflicts);
+                }
+            }
+        }
+        return false;
+    }
+
+    private ArrayList<FourPositionLabel> removeLabel(FourPositionLabel label) {
+        ArrayList<FourPositionLabel> conflicts = label.getConflicts();
+        label.getPoI().removeCandidate(label);
+        for (FourPositionLabel conflict : label.getConflicts()) {
+            conflict.removeConflict(label);
+        }
+        labelsWithConflicts.remove(label);
+        return conflicts;
+    }
+
+    private void addLabel(FourPositionLabel label, FourPositionPoint point, ArrayList<FourPositionLabel> conflicts) {
+        if (conflicts.size() > 0) labelsWithConflicts.add(label);
+        for (FourPositionLabel conflict : conflicts) {
+            conflict.addConflict(label);
+        }
+        point.addCandidate(label);
+    }
+
+    private boolean twoSatReady(Set<FourPositionPoint> conflictingPoints) {
+        for (FourPositionPoint point : conflictingPoints) {
+            if (point.getCandidates().size() > 2) return false;
+        }
+        return true;
     }
 
     @Override
     void getSolution(DataRecord record, double height) {
         preprocessing(record, height);
-        boolean solvable = eliminateImpossibleCandidates();
-        applyHeuristic();
+        eliminateImpossibleCandidates();
+
+        Set<FourPositionPoint> conflictingPoints = new HashSet<>();
+        for (FourPositionLabel conflictingLabel : labelsWithConflicts) {
+            conflictingPoints.add(conflictingLabel.getPoI());
+        }
+
         record.height = height;
-        solvable = doTwoSat(record, true);
+        if (labelsWithConflicts.size() < bruteForceLabels) {
+            bruteForce(conflictingPoints, true);
+        } else {
+            applyHeuristic();
+            doTwoSat(true);
+        }
     }
 
 
@@ -645,5 +819,11 @@ public class FourPositionWagnerWolff extends BinarySearcher {
 
     public DataRecord getLabels() {
         return labels;
+    }
+
+    public void initializeDataStructures(int numberOfPoints) {
+        pointsQueue = new ArrayDeque<>(numberOfPoints * 2);
+        labelsWithConflicts = new ArrayList<>(numberOfPoints * 2);
+        selectedLabels = new ArrayList<>(numberOfPoints * 2);
     }
 }

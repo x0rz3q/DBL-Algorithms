@@ -110,8 +110,7 @@ public class FieldExtendedSliderLabel extends SliderLabel {
 
     @Override
     public String getPlacement() {
-        DecimalFormat format = new DecimalFormat("0.000000000000");
-        return format.format(shift);
-//        return new BigDecimal(shift).toString();
+        DecimalFormat format = new DecimalFormat("0.0000000000000000000000000000");
+        return format.format(Math.min(1, Math.max(0, shift)));
     }
 }

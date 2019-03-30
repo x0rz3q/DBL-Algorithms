@@ -16,7 +16,7 @@ for root, dirs, files in os.walk(args.path):
         if file.endswith(".java") and not root.endswith('visualizer'):
             shutil.copyfile(os.path.join(root, file), file)
 
-os.remove("main.MainWrapper.java")
+os.remove("MainWrapper.java")
 
 re = re.compile('((package [a-zA-Z.*]+;)|import(\sstatic)? ((?!java)[a-zA-Z.*]+);)')
 
