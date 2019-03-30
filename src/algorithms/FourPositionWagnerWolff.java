@@ -17,16 +17,16 @@ public class FourPositionWagnerWolff extends BinarySearcher {
     private ArrayDeque<FourPositionPoint> pointsQueue;
 
     // conflict graph
-    private ArrayList<FourPositionLabel> labelsWithConflicts;
+    private Set<FourPositionLabel> labelsWithConflicts;
 
     // selected candidates
-    private ArrayList<FourPositionLabel> selectedLabels;
+    private Set<FourPositionLabel> selectedLabels;
 
     // DataRecord containing all labels of the current sigma
     // Only used in preprocessing
     private DataRecord labels;
 
-    private final int bruteForceLabels = 20;
+    private final int bruteForceLabels = 0;
 
     /**
      * Calculates all conflict sizes for given DataRecord. It is sufficient for the
@@ -83,8 +83,8 @@ public class FourPositionWagnerWolff extends BinarySearcher {
     void preprocessing(DataRecord record, Double sigma) {
         // initialization
         pointsQueue = new ArrayDeque<>(record.labels.size() * 2);
-        labelsWithConflicts = new ArrayList<>(record.labels.size() * 2);
-        selectedLabels = new ArrayList<>(record.labels.size() * 2);
+        labelsWithConflicts = new HashSet<>(record.labels.size() * 2);
+        selectedLabels = new HashSet<>(record.labels.size() * 2);
         labels = new DataRecord();
         labels.collection = new QuadTree(new Rectangle(0, 0, 10000, 10000));
         labels.aspectRatio = record.aspectRatio;
@@ -811,11 +811,11 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         return pointsQueue;
     }
 
-    ArrayList<FourPositionLabel> getLabelsWithConflicts() {
+    Set<FourPositionLabel> getLabelsWithConflicts() {
         return labelsWithConflicts;
     }
 
-    ArrayList<FourPositionLabel> getSelectedLabels() {
+    Set<FourPositionLabel> getSelectedLabels() {
         return selectedLabels;
     }
 
@@ -825,7 +825,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
 
     public void initializeDataStructures(int numberOfPoints) {
         pointsQueue = new ArrayDeque<>(numberOfPoints * 2);
-        labelsWithConflicts = new ArrayList<>(numberOfPoints * 2);
-        selectedLabels = new ArrayList<>(numberOfPoints * 2);
+        labelsWithConflicts = new HashSet<>(numberOfPoints * 2);
+        selectedLabels = new HashSet<>(numberOfPoints * 2);
     }
 }
