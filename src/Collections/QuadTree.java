@@ -136,6 +136,11 @@ public class QuadTree extends AbstractCollection {
     }
 
     @Override
+    protected boolean nodeInRange(Rectangle node) {
+        throw new UnsupportedOperationException("mofo im not doing this");
+    }
+
+    @Override
     public int size() {
         int result = this.data.size();
 

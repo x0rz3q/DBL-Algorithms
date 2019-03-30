@@ -219,7 +219,7 @@ public class KDTree extends AbstractCollection {
                 results.add(d);
             }
         }
-        if (subTree.left == null) { // leaf, nowhere to go
+        if (subTree.isLeaf()) { // leaf, nowhere to go
             return results; // return what we have
         }
         if (subTree.intersects(range)) { // intersects the splitter line
@@ -341,6 +341,26 @@ public class KDTree extends AbstractCollection {
             return splitter.getY() < node.getYMax() && splitter.getY() > node.getYMin();
         } else {
             return splitter.getX() < node.getXMax() && splitter.getX() > node.getXMin();
+        }
+    }
+
+    @Override
+    protected boolean nodeInRange(Rectangle node) {
+        for (GeometryInterface o : this.nodes) {
+            if (node.intersects(o)) {
+                return true;
+            }
+        }
+        if (this.isLeaf()) return false;
+
+        if (this.intersects(node)) {
+            return this.left.nodeInRange(node) || this.right.nodeInRange(node);
+        } else {
+            if (this.inLeft(node)) {
+                return this.left.nodeInRange(node);
+            } else {
+                return this.right.nodeInRange(node);
+            }
         }
     }
 
