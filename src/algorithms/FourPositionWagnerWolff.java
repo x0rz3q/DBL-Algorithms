@@ -194,8 +194,8 @@ public class FourPositionWagnerWolff extends BinarySearcher {
             FourPositionPoint point = pointsQueue.pollFirst(); // also removes element from queue
             if (noCandidates(point)) {
                 return false;
-            } else if (hasCandidateWithoutIntersections(point)) {
             } else if (oneCandidate(point)) {
+            } else if (hasCandidateWithoutIntersections(point)) {
             } else if (candidateIntersectsAllRemaining(point)) {
             }
         }
