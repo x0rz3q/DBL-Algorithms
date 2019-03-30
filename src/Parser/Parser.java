@@ -45,7 +45,8 @@ public class Parser implements ParserInterface {
 
         try {
             while (!sc.hasNextDouble()) sc.next();
-            rec.aspectRatio = sc.nextDouble();
+            rec.aspectRatioString = sc.next();
+            rec.aspectRatio = Double.parseDouble(rec.aspectRatioString);
         } catch (NoSuchElementException e) {
             throw new IOException("parser.input: no aspect ratio found");
         }
@@ -174,7 +175,7 @@ public class Parser implements ParserInterface {
         format.setRoundingMode(RoundingMode.FLOOR);
 
         writer.write(
-                "aspect ratio: " + record.aspectRatio + "\n"
+                "aspect ratio: " + record.aspectRatioString + "\n"
                         + "number of points: " + record.labels.size() + "\n"
                         + "height: " + format.format(record.height) + "\n"
         );
