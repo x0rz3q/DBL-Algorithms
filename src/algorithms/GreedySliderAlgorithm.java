@@ -124,6 +124,20 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
 
         if (xMax > label.getPOI().getX()) return false;
 
+        // when the label should be placed completely to the right, check whether this is possible
+        if (xMax == label.getPOI().getX()) {
+            queryArea = new Rectangle(
+                    label.getPOI().getX(),
+                    label.getPOI().getY(),
+                    label.getPOI().getX() + width,
+                    label.getPOI().getY() + width / record.aspectRatio
+            );
+            queryResult = record.collection.query2D(queryArea);
+            for (GeometryInterface entry : queryResult) {
+                if (entry != label) return false;
+            }
+        }
+
         record.collection.remove(label);
         if (xMax == label.getPOI().getX() - width) {
             label.setFieldExtended((int) label.getPOI().getX(), 0, width);
