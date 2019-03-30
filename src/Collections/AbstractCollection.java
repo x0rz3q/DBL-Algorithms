@@ -38,5 +38,5 @@ public abstract class AbstractCollection implements AbstractCollectionInterface 
      */
     protected abstract boolean intersects(Rectangle node);
 
-    protected abstract boolean nodeInRange(Rectangle node);
+    public abstract boolean nodeInRange(Rectangle node);
 }

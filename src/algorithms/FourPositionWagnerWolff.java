@@ -36,7 +36,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
      *
      * @param record the given DataRecord
      * @return conflictSizes[] = (\forall double i; conflictSizes[].contains(i);
-     *                      i is a conflictSize for record)
+     * i is a conflictSize for record)
      */
     double[] findConflictSizes(DataRecord record) {
         FourPositionDistance distanceFunction = new FourPositionDistance();
@@ -102,28 +102,30 @@ public class FourPositionWagnerWolff extends BinarySearcher {
 
             // adding new labels (All id's are 0 for now)
             // add NE square
-            if (record.collection.query2D(new Rectangle(pX, pY, pX + width, pY + height)).size() == 0) {
+            if (!record.collection.nodeInRange(new Rectangle(pX, pY, pX + width, pY + height))) {
                 FourPositionLabel northEastLabel = new FourPositionLabel(height, ratio, 0, point, DirectionEnum.NE);
                 point.addCandidate(northEastLabel);
                 Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX, pY, pX + width, pY + height));
                 preprocessingLabel(northEastLabel, conflictingLabels);
             }
             // add NW
-            if (record.collection.query2D(new Rectangle(pX - width, pY, pX, pY + height)).size() == 0) {
+            if (!record.collection.nodeInRange(new Rectangle(pX - width, pY, pX, pY + height))) {
                 FourPositionLabel northWestLabel = new FourPositionLabel(height, ratio, 0, point, DirectionEnum.NW);
                 point.addCandidate(northWestLabel);
                 Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX - width, pY, pX, pY + height));
                 preprocessingLabel(northWestLabel, conflictingLabels);
             }
+
             // add SE
-            if (record.collection.query2D(new Rectangle(pX, pY - height, pX + width, pY)).size() == 0) {
+            if (!record.collection.nodeInRange(new Rectangle(pX, pY - height, pX + width, pY))) {
                 FourPositionLabel southEastLabel = new FourPositionLabel(height, ratio, 0, point, DirectionEnum.SE);
                 point.addCandidate(southEastLabel);
                 Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX, pY - height, pX + width, pY));
                 preprocessingLabel(southEastLabel, conflictingLabels);
             }
+
             // add SW
-            if (record.collection.query2D(new Rectangle(pX - width, pY - height, pX, pY)).size() == 0) {
+            if (!record.collection.nodeInRange(new Rectangle(pX - width, pY - height, pX, pY))) {
                 FourPositionLabel southWestLabel = new FourPositionLabel(height, ratio, 0, point, DirectionEnum.SW);
                 point.addCandidate(southWestLabel);
                 Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX - width, pY - height, pX, pY));
@@ -585,7 +587,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
                     topRightSearch = new Point(candidate.getXMin() + checkRange * (candidate.getXMax() - candidate.getXMin()), candidate.getYMax());
                     break;
                 case SW:
-                    bottomLeftSearch = new Point(candidate.getXMax() - checkRange * (candidate.getXMax() - candidate.getXMin()),  candidate.getYMax() - checkRange * (candidate.getYMax() - candidate.getYMin()));
+                    bottomLeftSearch = new Point(candidate.getXMax() - checkRange * (candidate.getXMax() - candidate.getXMin()), candidate.getYMax() - checkRange * (candidate.getYMax() - candidate.getYMin()));
                     topRightSearch = candidate.getTopRight();
                     break;
                 default:
@@ -714,7 +716,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         for (FourPositionLabel conflictingLabel : labelsWithConflicts) {
             conflictingPoints.add(conflictingLabel.getPoI());
         }
-        
+
         if (labelsWithConflicts.size() < bruteForceLabels) {
             solvable = bruteForce(conflictingPoints, false);
         } else {

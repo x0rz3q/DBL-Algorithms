@@ -345,7 +345,7 @@ public class KDTree extends AbstractCollection {
     }
 
     @Override
-    protected boolean nodeInRange(Rectangle node) {
+    public boolean nodeInRange(Rectangle node) {
         for (GeometryInterface o : this.nodes) {
             if (node.intersects(o)) {
                 return true;
