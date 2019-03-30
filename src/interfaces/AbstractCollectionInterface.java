@@ -40,4 +40,6 @@ public interface AbstractCollectionInterface {
      * @return int
      */
     int size();
+
+    boolean nodeInRange(Rectangle range);
 }
