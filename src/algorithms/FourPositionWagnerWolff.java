@@ -54,7 +54,6 @@ public class FourPositionWagnerWolff extends BinarySearcher {
                 conflictSizes.add(conflictSize / 2);
             }
         }
-
         double[] conflicts = new double[conflictSizes.size()];
         int i = 0;
         for (double size : conflictSizes) {
@@ -88,7 +87,6 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         labels = new DataRecord();
         labels.collection = new QuadTree(new Rectangle(0, 0, 10000, 10000));
         labels.aspectRatio = record.aspectRatio;
-
         double ratio = record.aspectRatio;
         double height = sigma;
         double width = sigma * ratio;
@@ -97,38 +95,21 @@ public class FourPositionWagnerWolff extends BinarySearcher {
             double pX = p.getXMax();
             double pY = p.getYMax();
 
+            Rectangle[] labelRectangles = FourPositionLabel.getAllDirectionRectangles(pX, pY, width, height);
+            DirectionEnum[] directions = {DirectionEnum.NE, DirectionEnum.NW, DirectionEnum.SE, DirectionEnum.SW};
+
             FourPositionPoint point = new FourPositionPoint((FourPositionLabel) p);
             pointsQueue.add(point);
 
-            // adding new labels (All id's are 0 for now)
-            // add NE square
-            if (record.collection.query2D(new Rectangle(pX, pY, pX + width, pY + height)).size() == 0) {
-                FourPositionLabel northEastLabel = new FourPositionLabel(height, ratio, 0, point, DirectionEnum.NE);
-                point.addCandidate(northEastLabel);
-                Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX, pY, pX + width, pY + height));
-                preprocessingLabel(northEastLabel, conflictingLabels);
+            for (int i = 0; i < directions.length; i++) {
+                if (record.collection.query2D(labelRectangles[i]).size() == 0) {
+                    FourPositionLabel dirLabel = new FourPositionLabel(height, ratio, 0, point, directions[i]);
+                    point.addCandidate(dirLabel);
+                    Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(labelRectangles[i]);
+                    preprocessingLabel(dirLabel, conflictingLabels);
+                }
             }
-            // add NW
-            if (record.collection.query2D(new Rectangle(pX - width, pY, pX, pY + height)).size() == 0) {
-                FourPositionLabel northWestLabel = new FourPositionLabel(height, ratio, 0, point, DirectionEnum.NW);
-                point.addCandidate(northWestLabel);
-                Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX - width, pY, pX, pY + height));
-                preprocessingLabel(northWestLabel, conflictingLabels);
-            }
-            // add SE
-            if (record.collection.query2D(new Rectangle(pX, pY - height, pX + width, pY)).size() == 0) {
-                FourPositionLabel southEastLabel = new FourPositionLabel(height, ratio, 0, point, DirectionEnum.SE);
-                point.addCandidate(southEastLabel);
-                Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX, pY - height, pX + width, pY));
-                preprocessingLabel(southEastLabel, conflictingLabels);
-            }
-            // add SW
-            if (record.collection.query2D(new Rectangle(pX - width, pY - height, pX, pY)).size() == 0) {
-                FourPositionLabel southWestLabel = new FourPositionLabel(height, ratio, 0, point, DirectionEnum.SW);
-                point.addCandidate(southWestLabel);
-                Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX - width, pY - height, pX, pY));
-                preprocessingLabel(southWestLabel, conflictingLabels);
-            }
+
         }
     }
 

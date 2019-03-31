@@ -90,6 +90,16 @@ public class FourPositionLabel extends AbstractLabel {
         throw new IllegalStateException("Has no direction for some fckin reason");
     }
 
+    public static Rectangle[] getAllDirectionRectangles(double pX, double pY, double width, double height) {
+
+        return new Rectangle[] {
+                new Rectangle(pX, pY, pX + width, pY + height),
+                new Rectangle(pX - width, pY, pX, pY + height),
+                new Rectangle(pX, pY - height, pX + width, pY),
+                new Rectangle(pX - width, pY - height, pX, pY)
+        };
+    }
+
     @Override
     public Rectangle getRectangle() {
         return this.rectangle;
