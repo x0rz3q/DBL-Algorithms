@@ -1,11 +1,8 @@
 package visualizer;
 
 import Collections.QuadTree;
-import interfaces.models.GeometryInterface;
 import interfaces.models.LabelInterface;
 import interfaces.models.PointInterface;
-import models.Point;
-import models.Rectangle;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,7 +26,7 @@ public class Interpreter {
     public static int overlapCount(List<LabelInterface> geoms) {
         int count = 0;
 
-        QuadTree tree = new QuadTree(new Rectangle(new Point(-10000, -10000), new Point(10000, 10000)));
+        QuadTree tree = new QuadTree();
 
         for(LabelInterface geom : geoms) {
             count += tree.query2D(geom.getRectangle()).size();

@@ -20,8 +20,8 @@ class Strategy2pos extends GenerationStrategy {
         int counter = 0;
         double width = data.result * data.ratio;
 
-        QuadTree tree = new QuadTree(new Rectangle(0, 0, 100000, 100000, new Point(0, 0)));
-        QuadTree pointsTree = new QuadTree(new Rectangle(0, 0, 100000, 100000));
+        QuadTree tree = new QuadTree();
+        QuadTree pointsTree = new QuadTree();
         for (Rectangle r : rectangles) {
             tree.insert(r);
             pointsTree.insert(new Rectangle(r.getPoI(), r.getPoI(), r.getPoI()));
