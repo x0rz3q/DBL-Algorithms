@@ -9,7 +9,6 @@ import interfaces.AbstractAlgorithmInterface;
 import interfaces.models.GeometryInterface;
 import interfaces.models.LabelInterface;
 import models.FieldExtendedSliderLabel;
-import models.Point;
 import models.Rectangle;
 import models.SliderLabel;
 
@@ -62,9 +61,11 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
             }
 
             if (mid == epsilon) {
-                if (low != mid) solve(record, sortedLabels, low);
+                for (FieldExtendedSliderLabel label : sortedLabels) {
+                    setLabel(record, label, low);
+                }
                 record.height = low / record.aspectRatio;
-                break;
+                return;
             } else {
                 epsilon = mid;
             }
@@ -72,14 +73,13 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
     }
 
     /**
-     * Finds a solution to the DataRecord
+     * Finds a solution to the DataRecord and resets the labels afterwards
      *
      * @param record       {@link DataRecord}
      * @param sortedLabels a List containing all labels sorted by this.comparator
      * @param width        double denoting the width assigned to each label
      * @return whether there exists a solution
      * @pre sortedLabels is sorted by using this.comparator
-     * @modifies record
      * @post if there is a solution record.collection contains it, else record.collection holds an invalid solution
      */
     private boolean solve(DataRecord record, List<FieldExtendedSliderLabel> sortedLabels, double width) {
@@ -93,6 +93,11 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
                 }
                 return false;
             }
+        }
+        for (FieldExtendedSliderLabel l : sortedLabels) {
+            record.collection.remove(l);
+            l.setHeight(0);
+            record.collection.insert(l);
         }
         return true;
     }
@@ -116,9 +121,9 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
         double xMax = label.getPOI().getX() - width;
         FieldExtendedSliderLabel maxLabel = label;
         for (GeometryInterface entry : queryResult) {
-            if (entry != label) {
+            if (entry != label && entry.getXMax() > xMax) {
                 maxLabel = (FieldExtendedSliderLabel) entry;
-                xMax = Math.max(xMax, entry.getXMax());
+                xMax = entry.getXMax();
             }
         }
 
