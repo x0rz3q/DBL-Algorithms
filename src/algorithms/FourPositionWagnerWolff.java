@@ -79,7 +79,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
      * @post (\ forall p ; p \ in record ; p does not have any labels p_i assigned
      *where that p_i of size sigma contains another point in the record)
      */
-    void preprocessing(DataRecord record, Double sigma) {
+    boolean preprocessing(DataRecord record, Double sigma) {
         // initialization
         pointsQueue = new ArrayDeque<>(record.labels.size() * 2);
         labelsWithConflicts = new ArrayList<>(record.labels.size() * 2);
@@ -97,6 +97,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
 
             Rectangle[] labelRectangles = FourPositionLabel.getAllDirectionRectangles(pX, pY, width, height);
             DirectionEnum[] directions = {DirectionEnum.NE, DirectionEnum.NW, DirectionEnum.SE, DirectionEnum.SW};
+            int amountOfConflictingDirections = 0;
 
             FourPositionPoint point = new FourPositionPoint((FourPositionLabel) p);
             pointsQueue.add(point);
@@ -107,10 +108,15 @@ public class FourPositionWagnerWolff extends BinarySearcher {
                     point.addCandidate(dirLabel);
                     Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(labelRectangles[i]);
                     preprocessingLabel(dirLabel, conflictingLabels);
+                } else {
+                    amountOfConflictingDirections ++;
                 }
             }
-
+            if (amountOfConflictingDirections == directions.length) {
+                return false;
+            }
         }
+        return true;
     }
 
     /**
@@ -685,7 +691,9 @@ public class FourPositionWagnerWolff extends BinarySearcher {
 
     @Override
     boolean isSolvable(DataRecord record, double height) {
-        preprocessing(record, height);
+        if (!preprocessing(record, height)) {
+            return false;
+        }
 
         boolean solvable = eliminateImpossibleCandidates();
 
