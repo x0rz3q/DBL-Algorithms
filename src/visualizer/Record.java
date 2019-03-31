@@ -25,7 +25,7 @@ public class Record {
 
     public Record(InputStream stream) {
         this.labels = new HashMap<>();
-        this.tree = new QuadTree(new Rectangle(0, 0, 10000, 10000));
+        this.tree = new QuadTree();
         Scanner scanner = new Scanner(stream).useDelimiter(System.lineSeparator());
 
         PlacementModelEnum model = PlacementModelEnum.fromString(scan("placement model: .*", scanner));

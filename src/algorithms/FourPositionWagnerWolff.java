@@ -17,16 +17,16 @@ public class FourPositionWagnerWolff extends BinarySearcher {
     private ArrayDeque<FourPositionPoint> pointsQueue;
 
     // conflict graph
-    private ArrayList<FourPositionLabel> labelsWithConflicts;
+    private Set<FourPositionLabel> labelsWithConflicts;
 
     // selected candidates
-    private ArrayList<FourPositionLabel> selectedLabels;
+    private Set<FourPositionLabel> selectedLabels;
 
     // DataRecord containing all labels of the current sigma
     // Only used in preprocessing
     private DataRecord labels;
 
-    private final int bruteForceLabels = 20;
+    private final int bruteForceLabels = 0;
 
     /**
      * Calculates all conflict sizes for given DataRecord. It is sufficient for the
@@ -36,7 +36,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
      *
      * @param record the given DataRecord
      * @return conflictSizes[] = (\forall double i; conflictSizes[].contains(i);
-     *                      i is a conflictSize for record)
+     * i is a conflictSize for record)
      */
     double[] findConflictSizes(DataRecord record) {
         FourPositionDistance distanceFunction = new FourPositionDistance();
@@ -54,6 +54,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
                 conflictSizes.add(conflictSize / 2);
             }
         }
+
         double[] conflicts = new double[conflictSizes.size()];
         int i = 0;
         for (double size : conflictSizes) {
@@ -82,10 +83,11 @@ public class FourPositionWagnerWolff extends BinarySearcher {
     boolean preprocessing(DataRecord record, Double sigma) {
         // initialization
         pointsQueue = new ArrayDeque<>(record.labels.size() * 2);
-        labelsWithConflicts = new ArrayList<>(record.labels.size() * 2);
-        selectedLabels = new ArrayList<>(record.labels.size() * 2);
+        labelsWithConflicts = new HashSet<>(record.labels.size() * 2);
+        selectedLabels = new HashSet<>(record.labels.size() * 2);
         labels = new DataRecord();
-        labels.collection = new QuadTree(new Rectangle(0, 0, 10000, 10000));
+
+        labels.collection = new QuadTree();
         labels.aspectRatio = record.aspectRatio;
         double ratio = record.aspectRatio;
         double height = sigma;
@@ -103,7 +105,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
             pointsQueue.add(point);
 
             for (int i = 0; i < directions.length; i++) {
-                if (record.collection.query2D(labelRectangles[i]).size() == 0) {
+                if (!record.collection.nodeInRange(labelRectangles[i])) {
                     FourPositionLabel dirLabel = new FourPositionLabel(height, ratio, 0, point, directions[i]);
                     point.addCandidate(dirLabel);
                     Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(labelRectangles[i]);
@@ -572,7 +574,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
                     topRightSearch = new Point(candidate.getXMin() + checkRange * (candidate.getXMax() - candidate.getXMin()), candidate.getYMax());
                     break;
                 case SW:
-                    bottomLeftSearch = new Point(candidate.getXMax() - checkRange * (candidate.getXMax() - candidate.getXMin()),  candidate.getYMax() - checkRange * (candidate.getYMax() - candidate.getYMin()));
+                    bottomLeftSearch = new Point(candidate.getXMax() - checkRange * (candidate.getXMax() - candidate.getXMin()), candidate.getYMax() - checkRange * (candidate.getYMax() - candidate.getYMin()));
                     topRightSearch = candidate.getTopRight();
                     break;
                 default:
@@ -703,7 +705,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         for (FourPositionLabel conflictingLabel : labelsWithConflicts) {
             conflictingPoints.add(conflictingLabel.getPoI());
         }
-        
+
         if (labelsWithConflicts.size() < bruteForceLabels) {
             solvable = bruteForce(conflictingPoints, false);
         } else {
@@ -798,11 +800,11 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         return pointsQueue;
     }
 
-    ArrayList<FourPositionLabel> getLabelsWithConflicts() {
+    Set<FourPositionLabel> getLabelsWithConflicts() {
         return labelsWithConflicts;
     }
 
-    ArrayList<FourPositionLabel> getSelectedLabels() {
+    Set<FourPositionLabel> getSelectedLabels() {
         return selectedLabels;
     }
 
@@ -812,7 +814,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
 
     public void initializeDataStructures(int numberOfPoints) {
         pointsQueue = new ArrayDeque<>(numberOfPoints * 2);
-        labelsWithConflicts = new ArrayList<>(numberOfPoints * 2);
-        selectedLabels = new ArrayList<>(numberOfPoints * 2);
+        labelsWithConflicts = new HashSet<>(numberOfPoints * 2);
+        selectedLabels = new HashSet<>(numberOfPoints * 2);
     }
 }
