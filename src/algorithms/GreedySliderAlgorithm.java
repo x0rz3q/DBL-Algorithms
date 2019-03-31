@@ -52,7 +52,7 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
 
         double epsilon = 0;
         double low = 0;
-        double high = Integer.MAX_VALUE; //@TODO find a better upper bound if there exists one
+        double high = Double.MAX_VALUE;
         while (true) {
             double mid = (low + high) / 2;
             if (solve(record, sortedLabels, mid)) {
@@ -89,6 +89,7 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
                     record.collection.remove(l);
                     l.setHeight(0);
                     record.collection.insert(l);
+                    if (l == label) break;
                 }
                 return false;
             }
@@ -122,6 +123,22 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
         }
 
         if (xMax > label.getPOI().getX()) return false;
+
+        // when the label should be placed completely to the right, check whether this is possible
+        if (xMax == label.getPOI().getX()) {
+            queryArea = new Rectangle(
+                    label.getPOI().getX(),
+                    label.getPOI().getY(),
+                    label.getPOI().getX() + width,
+                    label.getPOI().getY() + width / record.aspectRatio
+            );
+            queryResult = record.collection.query2D(queryArea);
+            for (GeometryInterface entry : queryResult) {
+                if (entry != label) {
+                    if (((FieldExtendedSliderLabel) entry).getShift() >= 1) return false;
+                }
+            }
+        }
 
         record.collection.remove(label);
         if (xMax == label.getPOI().getX() - width) {

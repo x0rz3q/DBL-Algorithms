@@ -69,7 +69,7 @@ public class AlgorithmTester {
 
     @TestFactory
     public Collection<DynamicTest> FourPosTest() {
-        return readInFiles("tests/algorithms/TestFiles/FourPosTestFiles", new FourPositionWagnerWolff());
+        return readInFiles("tests/algorithms/TestFiles/FourPosTestFiles/BruteForceTests", new FourPositionWagnerWolff());
     }
 
     @TestFactory

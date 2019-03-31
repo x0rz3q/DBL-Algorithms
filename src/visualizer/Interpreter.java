@@ -13,7 +13,7 @@ import java.util.List;
 
 public class Interpreter {
     public static boolean overlap(List<LabelInterface> geoms) {
-        QuadTree tree = new QuadTree(new Rectangle(-10000, -10000, 15000, 15000));
+        QuadTree tree = new QuadTree();
 
         for (LabelInterface geo : geoms) {
             if (tree.query2D(geo.getRectangle()).size() > 0) {
