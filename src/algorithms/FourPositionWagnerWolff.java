@@ -86,7 +86,8 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         labelsWithConflicts = new HashSet<>(record.labels.size() * 2);
         selectedLabels = new HashSet<>(record.labels.size() * 2);
         labels = new DataRecord();
-        labels.collection = new QuadTree(new Rectangle(0, 0, 10000, 10000));
+        //TODO: Maybe find better bound
+        labels.collection = new QuadTree();
         labels.aspectRatio = record.aspectRatio;
 
         double ratio = record.aspectRatio;

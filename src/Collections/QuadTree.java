@@ -16,14 +16,17 @@ public class QuadTree extends AbstractCollection {
     private QuadTree SW = null;
     private Collection<GeometryInterface> data;
 
-    public QuadTree(Rectangle boundary) {
+    private QuadTree(Rectangle boundary) {
         this.boundary = boundary;
         this.data = new ArrayList<>();
     }
 
-    public QuadTree(Rectangle bbox, Collection<? extends GeometryInterface> nodes) {
-        this(bbox);
+    public QuadTree() {
+        this(new Rectangle(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE));
+    }
 
+    public QuadTree(Collection<? extends GeometryInterface> nodes) {
+        this();
         for (GeometryInterface node : nodes) {
             this.insert(node);
         }
