@@ -14,11 +14,6 @@ public abstract class BinarySearcher implements AbstractAlgorithmInterface {
     public void solve(DataRecord record) {
         double[] solutionSpace = getSolutionSpace(record);
 
-        if (isSolvable(record, solutionSpace[solutionSpace.length - 1])) {
-            getSolution(record, solutionSpace[solutionSpace.length - 1]);
-            return;
-        }
-
         int low = 0;
         int high = solutionSpace.length;
 
@@ -30,6 +25,7 @@ public abstract class BinarySearcher implements AbstractAlgorithmInterface {
                 high = mid;
             }
         }
+
         getSolution(record, solutionSpace[low]);
     }
 
