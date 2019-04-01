@@ -1,4 +1,4 @@
-package Collections;
+    package Collections;
 
 import distance.AbstractDistance;
 import interfaces.models.GeometryInterface;
@@ -124,9 +124,9 @@ public class KDTree extends AbstractCollection {
             cn = nearest(t.left, dist, node, cd, cn, ignorables);
             // update cd
             if (cn != null) cd = dist.calculate(getReferencePoint(cn), getReferencePoint(node));
-            /* if node is a splitter of this tree or not (a leaf and no data stored and bounding box further away than current smallest dist) */
+
             if (getReferencePoint(node).equals(t.splitter) ||
-                    ((t.right.isLeaf() || t.right.distanceToSplitter(node, dist) < cd))) {
+                    t.right.isLeaf() || t.right.distanceToSplitter(node, dist) < cd) {
                 cn = nearest(t.right, dist, node, cd, cn, ignorables);
             }
         } else { // node in right
@@ -134,9 +134,9 @@ public class KDTree extends AbstractCollection {
             cn = nearest(t.right, dist, node, cd, cn, ignorables);
             // update cd
             if (cn != null) cd = dist.calculate(getReferencePoint(cn), getReferencePoint(node));
-            /* if node is a splitter of this tree or not (a leaf and no data stored and bounding box further away than current smallest dist) */
+
             if (getReferencePoint(node).equals(t.splitter) ||
-                    ((t.left.isLeaf() || t.left.distanceToSplitter(node, dist) < cd))) {
+                    t.left.isLeaf() || t.left.distanceToSplitter(node, dist) < cd) {
                 cn = nearest(t.left, dist, node, cd, cn, ignorables);
             }
         }
@@ -224,8 +224,13 @@ public class KDTree extends AbstractCollection {
         }
         if (subTree.intersects(range)) { // intersects the splitter line
             // query both children
-            query2D(subTree.left, range, results);
-            query2D(subTree.right, range, results);
+            if (subTree.prioritizeLeft(range)) {
+                query2D(subTree.left, range, results);
+                query2D(subTree.right, range, results);
+            } else {
+                query2D(subTree.right, range, results);
+                query2D(subTree.left, range, results);
+            }
         } else { // otherwise only on one side check which to query
             if (subTree.inLeft(range)) {
                 query2D(subTree.left, range, results);
@@ -354,7 +359,11 @@ public class KDTree extends AbstractCollection {
         if (this.isLeaf()) return false;
 
         if (this.intersects(node)) {
-            return this.left.nodeInRange(node) || this.right.nodeInRange(node);
+            if (this.prioritizeLeft(node)) {
+                return this.left.nodeInRange(node) || this.right.nodeInRange(node);
+            } else {
+                return this.right.nodeInRange(node) || this.left.nodeInRange(node);
+            }
         } else {
             if (this.inLeft(node)) {
                 return this.left.nodeInRange(node);
@@ -362,6 +371,27 @@ public class KDTree extends AbstractCollection {
                 return this.right.nodeInRange(node);
             }
         }
+    }
+
+    /**
+     *  Returns whether to prioritize recursing on the left subtree
+     * @param node  for which a query/search is done
+     * @return true if most of  the node is in left subtree
+     * @throws IllegalArgumentException if node is in one subtree
+     */
+    private boolean prioritizeLeft(Rectangle node) throws IllegalArgumentException {
+        if (!this.intersects(node)) throw new IllegalArgumentException("node is contained in one subtree not both");
+        double leftWidth, rightWidth, height;
+        if (this.depth % 2 == 0) {
+            leftWidth = this.splitter.getX() - node.getXMin();
+            rightWidth = node.getXMax() - node.getXMin() - leftWidth;
+            height = node.getYMax() - node.getYMin();
+        } else {
+            leftWidth = node.getYMax() - this.splitter.getY();
+            rightWidth = node.getYMax() - node.getYMin() - leftWidth;
+            height = node.getXMax() - node.getXMin();
+        }
+        return leftWidth * height > rightWidth * height;
     }
 
     @Override
