@@ -39,6 +39,11 @@ public class ImplicationGraphSolver {
      * @return \return == true iff the implication graph has a valid solution
      */
     public boolean isSolvable(List<Integer>[] adj, List<Integer>[] adjInv) {
+
+        if (!ImplicationGraphSolver.isImplicationGraph(adj, adjInv)) {
+            System.out.println("error. The passed function to ImplicationGraphSolver is not solvable");
+        }
+
         noPoints = adj.length / 2;
 
         createComponents(adj, adjInv);
@@ -191,5 +196,44 @@ public class ImplicationGraphSolver {
                 }
             }
         }
+    }
+
+
+    public static boolean isImplicationGraph(List<Integer>[] adj, List<Integer>[] adjInv) {
+        for (int i = 0; i < adj.length; i++) {
+            for (int j : adj[i]) {
+                // System.out.println(i + " " + j);
+            }
+        }
+
+        for (int i = 0; i < adj.length; i++) {
+            for (int j : adj[i]) {
+                if (!adjInv[j].contains(i)) {
+                    System.out.println("shit 1");
+                    return false;
+                }
+            }
+        }
+
+        for (int i = 0; i < adjInv.length; i++) {
+            for (int j : adjInv[i]) {
+                if (!adj[j].contains(i)) {
+                    System.out.println("shit 2");
+                    return false;
+                }
+            }
+        }
+
+        int noPoints = adj.length / 2;
+
+        for (int i = 0; i < adj.length; i++) {
+            for (int j : adj[i]) {
+                if (!adj[(j + noPoints) % adj.length].contains((i + noPoints) % adj.length)) {
+                    System.out.println(i + " " +  j + " :  " + (i + noPoints) % adj.length + " " + (j + noPoints) % adj.length);
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

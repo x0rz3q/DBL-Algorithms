@@ -27,7 +27,7 @@ public class AlgorithmTester {
 
         if (algorithms instanceof FourPositionWagnerWolff) {
             for (LabelInterface l : record.labels) {
-                ((FourPositionLabel) l).setHeight(record.height);
+                ((FourPositionLabel) l).setHeight(record.height - 0.2);
             }
         } else if (algorithms instanceof TwoPositionBinarySearcher){
             for (LabelInterface l : record.labels) {
@@ -38,9 +38,10 @@ public class AlgorithmTester {
                 ((SliderLabel) l).setHeight(record.height);
             }
         }
+        System.out.println(record.height);
+        assertTrue(!Interpreter.overlap(record.labels), "the solution found is not valid in file: " + fileName);
         assertTrue(record.height >= record.reqHeight, "the height found is too small in file: " + fileName + ", expected min: " + record.reqHeight + " actual value: " + record.height);
         assertTrue(record.height <= record.optHeight, "the height found is too large in file: " + fileName + ", max value: " + record.optHeight + " actual value: " + record.height);
-        assertTrue(!Interpreter.overlap(record.labels), "the solution found is not valid in file: " + fileName);
     }
 
     private Collection<DynamicTest> readInFiles(String filePath, AbstractAlgorithmInterface algorithm) {
@@ -71,7 +72,7 @@ public class AlgorithmTester {
 
     @TestFactory
     public Collection<DynamicTest> FourPosTest() {
-        return readInFiles("tests/algorithms/TestFiles/FourPosTestFiles", new FourPositionWagnerWolff());
+        return readInFiles("tests/algorithms/TestFiles/FourPosTestFiles", new FourPositionWagnerWolff(1));
     }
 
     @TestFactory

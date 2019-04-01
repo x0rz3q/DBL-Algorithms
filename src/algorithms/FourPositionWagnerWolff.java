@@ -28,6 +28,8 @@ public class FourPositionWagnerWolff extends BinarySearcher {
     // selected candidates
     private Set<FourPositionLabel> selectedLabels;
 
+    private int lastSeed;
+
     // DataRecord containing all labels of the current sigma
     // Only used in preprocessing
     private DataRecord labels;
@@ -89,8 +91,8 @@ public class FourPositionWagnerWolff extends BinarySearcher {
     boolean preprocessing(DataRecord record, Double sigma) {
         // initialization
         pointsQueue = new ArrayDeque<>(record.labels.size() * 2);
-        labelsWithConflicts = new HashSet<>(record.labels.size() * 2);
-        selectedLabels = new HashSet<>(record.labels.size() * 2);
+        labelsWithConflicts = new LinkedHashSet<>(record.labels.size() * 2);
+        selectedLabels = new LinkedHashSet<>(record.labels.size() * 2);
         labels = new DataRecord();
 
         labels.aspectRatio = record.aspectRatio;
@@ -298,7 +300,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
     private boolean candidateIntersectsAllRemaining(FourPositionPoint point) {
         List<FourPositionLabel> labelsThatCantExist = new ArrayList<>();
         for (FourPositionLabel candidate : point.getCandidates()) {
-            Set<FourPositionPoint> havingLabelsIntersecting = new HashSet<>();
+            Set<FourPositionPoint> havingLabelsIntersecting = new LinkedHashSet<>();
 
             // get points of the labels that conflict with candidate
             for (FourPositionLabel intersection : candidate.getConflicts()) {
@@ -345,12 +347,13 @@ public class FourPositionWagnerWolff extends BinarySearcher {
      *
      * @post PoI in conflictGraph have at most 2 candidates
      */
-    boolean applyHeuristic() {
-
+    boolean applyHeuristic(int seed) {
         ArrayList<FourPositionPoint> pointsQueuetemp = new ArrayList<>(pointsQueue);
         pointsQueue = new ArrayDeque<>();
+
+        Random currentRandom = new Random(6);
         while (!pointsQueuetemp.isEmpty()) {
-            FourPositionPoint p = pointsQueuetemp.get(random.nextInt(pointsQueuetemp.size()));
+            FourPositionPoint p = pointsQueuetemp.get(currentRandom.nextInt(pointsQueuetemp.size()));
             pointsQueuetemp.remove(p);
             pointsQueue.add(p);
         }
@@ -358,7 +361,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         ArrayList<FourPositionLabel> labelsWithConflictstemp = new ArrayList<>(labelsWithConflicts);
         labelsWithConflicts = new LinkedHashSet<>();
         while (!labelsWithConflictstemp.isEmpty()) {
-            FourPositionLabel l = labelsWithConflictstemp.get(random.nextInt(labelsWithConflictstemp.size()));
+            FourPositionLabel l = labelsWithConflictstemp.get(currentRandom.nextInt(labelsWithConflictstemp.size()));
             labelsWithConflictstemp.remove(l);
             labelsWithConflicts.add(l);
         }
@@ -366,7 +369,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         ArrayList<FourPositionLabel> selectedLabelstemp = new ArrayList<>(selectedLabels);
         selectedLabels = new LinkedHashSet<>();
         while (!selectedLabelstemp.isEmpty()) {
-            FourPositionLabel l = selectedLabelstemp.get(random.nextInt(selectedLabelstemp.size()));
+            FourPositionLabel l = selectedLabelstemp.get(currentRandom.nextInt(selectedLabelstemp.size()));
             selectedLabelstemp.remove(l);
             selectedLabels.add(l);
         }
@@ -521,7 +524,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
 
         if (!solvable) return false;
 
-        Set<FourPositionPoint> conflictingPoints = new HashSet<>();
+        Set<FourPositionPoint> conflictingPoints = new LinkedHashSet<>();
         for (FourPositionLabel conflictingLabel : labelsWithConflicts) {
             conflictingPoints.add(conflictingLabel.getPoI());
         }
@@ -529,7 +532,9 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         if (labelsWithConflicts.size() < bruteForceLabels) {
             solvable = bruteForce(conflictingPoints, false);
         } else {
-            if (!applyHeuristic()) return false;
+            int nextSeed = random.nextInt();
+            if (!applyHeuristic(nextSeed)) return false;
+            lastSeed = nextSeed;
             solvable = doTwoSat(false);
         }
         return solvable;
@@ -545,7 +550,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         //loop through all points
         for (FourPositionPoint point : conflictingPoints) {
             if (point.getCandidates().size() == 3) {
-                Set<FourPositionPoint> newPoints = new HashSet<>(conflictingPoints);
+                Set<FourPositionPoint> newPoints = new LinkedHashSet<>(conflictingPoints);
                 newPoints.remove(point);
 
                 // remove 1 label from point and brute force the other points
@@ -600,7 +605,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         preprocessing(record, height);
         eliminateImpossibleCandidates();
 
-        Set<FourPositionPoint> conflictingPoints = new HashSet<>();
+        Set<FourPositionPoint> conflictingPoints = new LinkedHashSet<>();
         for (FourPositionLabel conflictingLabel : labelsWithConflicts) {
             conflictingPoints.add(conflictingLabel.getPoI());
         }
@@ -609,7 +614,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         if (labelsWithConflicts.size() < bruteForceLabels) {
             bruteForce(conflictingPoints, true);
         } else {
-            applyHeuristic();
+            applyHeuristic(lastSeed);
             doTwoSat(true);
         }
     }
@@ -634,7 +639,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
 
     public void initializeDataStructures(int numberOfPoints) {
         pointsQueue = new ArrayDeque<>(numberOfPoints * 2);
-        labelsWithConflicts = new HashSet<>(numberOfPoints * 2);
-        selectedLabels = new HashSet<>(numberOfPoints * 2);
+        labelsWithConflicts = new LinkedHashSet<>(numberOfPoints * 2);
+        selectedLabels = new LinkedHashSet<>(numberOfPoints * 2);
     }
 }
