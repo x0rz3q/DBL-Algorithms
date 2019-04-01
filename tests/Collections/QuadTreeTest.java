@@ -1,7 +1,6 @@
 package Collections;
 
 import interfaces.models.GeometryInterface;
-import interfaces.models.PointInterface;
 import models.Point;
 import models.Rectangle;
 import org.junit.jupiter.api.Test;
@@ -14,8 +13,7 @@ class QuadTreeTest extends AbstractCollectionTest {
 
     @Override
     protected void setInstance() {
-        Rectangle boundary = new Rectangle(0,0, 10000, 10000);
-        this.instance = new QuadTree(boundary);
+        this.instance = new QuadTree();
         this.instance.setDataLimit(1);
     }
 

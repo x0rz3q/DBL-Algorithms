@@ -124,9 +124,9 @@ public class KDTree extends AbstractCollection {
             cn = nearest(t.left, dist, node, cd, cn, ignorables);
             // update cd
             if (cn != null) cd = dist.calculate(getReferencePoint(cn), getReferencePoint(node));
-            /* if node is a splitter of this tree or not (a leaf and no data stored and bounding box further away than current smallest dist) */
+
             if (getReferencePoint(node).equals(t.splitter) ||
-                    ((t.right.isLeaf() || t.right.distanceToSplitter(node, dist) < cd))) {
+                    t.right.isLeaf() || t.right.distanceToSplitter(node, dist) < cd) {
                 cn = nearest(t.right, dist, node, cd, cn, ignorables);
             }
         } else { // node in right
@@ -134,9 +134,9 @@ public class KDTree extends AbstractCollection {
             cn = nearest(t.right, dist, node, cd, cn, ignorables);
             // update cd
             if (cn != null) cd = dist.calculate(getReferencePoint(cn), getReferencePoint(node));
-            /* if node is a splitter of this tree or not (a leaf and no data stored and bounding box further away than current smallest dist) */
+
             if (getReferencePoint(node).equals(t.splitter) ||
-                    ((t.left.isLeaf() || t.left.distanceToSplitter(node, dist) < cd))) {
+                    t.left.isLeaf() || t.left.distanceToSplitter(node, dist) < cd) {
                 cn = nearest(t.left, dist, node, cd, cn, ignorables);
             }
         }
@@ -354,7 +354,21 @@ public class KDTree extends AbstractCollection {
         if (this.isLeaf()) return false;
 
         if (this.intersects(node)) {
-            return this.left.nodeInRange(node) || this.right.nodeInRange(node);
+            double leftWidth, rightWidth, height;
+            if (this.depth % 2 == 0) {
+                leftWidth = this.splitter.getX() - node.getXMin();
+                rightWidth = node.getXMax() - node.getXMin() - leftWidth;
+                height = node.getYMax() - node.getYMin();
+            } else {
+                leftWidth = node.getYMax() - this.splitter.getY();
+                rightWidth = node.getYMax() - node.getYMin() - leftWidth;
+                height = node.getXMax() - node.getXMin();
+            }
+            if (leftWidth * height > rightWidth * height) {
+                return this.left.nodeInRange(node) || this.right.nodeInRange(node);
+            } else {
+                return this.right.nodeInRange(node) || this.left.nodeInRange(node);
+            }
         } else {
             if (this.inLeft(node)) {
                 return this.left.nodeInRange(node);
