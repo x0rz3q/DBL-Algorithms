@@ -1,7 +1,8 @@
 package models;
 
 import interfaces.models.PointInterface;
-
+import java.util.Map;
+import java.util.HashMap;
 import java.util.ArrayList;
 
 public class FourPositionLabel extends AbstractLabel {
@@ -90,14 +91,13 @@ public class FourPositionLabel extends AbstractLabel {
         throw new IllegalStateException("Has no direction for some fckin reason");
     }
 
-    public static Rectangle[] getAllDirectionRectangles(double pX, double pY, double width, double height) {
-
-        return new Rectangle[] {
-                new Rectangle(pX, pY, pX + width, pY + height),
-                new Rectangle(pX - width, pY, pX, pY + height),
-                new Rectangle(pX, pY - height, pX + width, pY),
-                new Rectangle(pX - width, pY - height, pX, pY)
-        };
+    public static Map<DirectionEnum, Rectangle> getAllDirectionRectangles(double pX, double pY, double width, double height) {
+        Map<DirectionEnum, Rectangle> directionToRectangle = new HashMap<>();
+        directionToRectangle.put(DirectionEnum.NE, new Rectangle(pX, pY, pX + width, pY + height));
+        directionToRectangle.put(DirectionEnum.NW, new Rectangle(pX - width, pY, pX, pY + height));
+        directionToRectangle.put(DirectionEnum.SE, new Rectangle(pX, pY - height, pX + width, pY));
+        directionToRectangle.put(DirectionEnum.SW, new Rectangle(pX - width, pY - height, pX, pY));
+        return directionToRectangle;
     }
 
     @Override

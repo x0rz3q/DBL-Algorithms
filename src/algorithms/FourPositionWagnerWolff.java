@@ -97,24 +97,23 @@ public class FourPositionWagnerWolff extends BinarySearcher {
             double pX = p.getXMax();
             double pY = p.getYMax();
 
-            Rectangle[] labelRectangles = FourPositionLabel.getAllDirectionRectangles(pX, pY, width, height);
-            DirectionEnum[] directions = {DirectionEnum.NE, DirectionEnum.NW, DirectionEnum.SE, DirectionEnum.SW};
+            Map<DirectionEnum, Rectangle> labelRectangles = FourPositionLabel.getAllDirectionRectangles(pX, pY, width, height);
             int amountOfConflictingDirections = 0;
 
             FourPositionPoint point = new FourPositionPoint((FourPositionLabel) p);
             pointsQueue.add(point);
 
-            for (int i = 0; i < directions.length; i++) {
-                if (!record.collection.nodeInRange(labelRectangles[i])) {
-                    FourPositionLabel dirLabel = new FourPositionLabel(height, ratio, 0, point, directions[i]);
+            for (Map.Entry<DirectionEnum, Rectangle> entry : labelRectangles.entrySet()) {
+                if (!record.collection.nodeInRange(entry.getValue())) {
+                    FourPositionLabel dirLabel = new FourPositionLabel(height, ratio, 0, point, entry.getKey());
                     point.addCandidate(dirLabel);
-                    Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(labelRectangles[i]);
+                    Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(entry.getValue());
                     preprocessingLabel(dirLabel, conflictingLabels);
                 } else {
                     amountOfConflictingDirections ++;
                 }
             }
-            if (amountOfConflictingDirections == directions.length) {
+            if (amountOfConflictingDirections == labelRectangles.keySet().size()) {
                 return false;
             }
         }
