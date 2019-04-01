@@ -1,4 +1,4 @@
-package Collections;
+    package Collections;
 
 import distance.AbstractDistance;
 import interfaces.models.GeometryInterface;
@@ -224,8 +224,13 @@ public class KDTree extends AbstractCollection {
         }
         if (subTree.intersects(range)) { // intersects the splitter line
             // query both children
-            query2D(subTree.left, range, results);
-            query2D(subTree.right, range, results);
+            if (subTree.prioritizeLeft(range)) {
+                query2D(subTree.left, range, results);
+                query2D(subTree.right, range, results);
+            } else {
+                query2D(subTree.right, range, results);
+                query2D(subTree.left, range, results);
+            }
         } else { // otherwise only on one side check which to query
             if (subTree.inLeft(range)) {
                 query2D(subTree.left, range, results);
@@ -354,17 +359,7 @@ public class KDTree extends AbstractCollection {
         if (this.isLeaf()) return false;
 
         if (this.intersects(node)) {
-            double leftWidth, rightWidth, height;
-            if (this.depth % 2 == 0) {
-                leftWidth = this.splitter.getX() - node.getXMin();
-                rightWidth = node.getXMax() - node.getXMin() - leftWidth;
-                height = node.getYMax() - node.getYMin();
-            } else {
-                leftWidth = node.getYMax() - this.splitter.getY();
-                rightWidth = node.getYMax() - node.getYMin() - leftWidth;
-                height = node.getXMax() - node.getXMin();
-            }
-            if (leftWidth * height > rightWidth * height) {
+            if (this.prioritizeLeft(node)) {
                 return this.left.nodeInRange(node) || this.right.nodeInRange(node);
             } else {
                 return this.right.nodeInRange(node) || this.left.nodeInRange(node);
@@ -376,6 +371,27 @@ public class KDTree extends AbstractCollection {
                 return this.right.nodeInRange(node);
             }
         }
+    }
+
+    /**
+     *  Returns whether to prioritize recursing on the left subtree
+     * @param node  for which a query/search is done
+     * @return true if most of  the node is in left subtree
+     * @throws IllegalArgumentException if node is in one subtree
+     */
+    private boolean prioritizeLeft(Rectangle node) throws IllegalArgumentException {
+        if (!this.intersects(node)) throw new IllegalArgumentException("node is contained in one subtree not both");
+        double leftWidth, rightWidth, height;
+        if (this.depth % 2 == 0) {
+            leftWidth = this.splitter.getX() - node.getXMin();
+            rightWidth = node.getXMax() - node.getXMin() - leftWidth;
+            height = node.getYMax() - node.getYMin();
+        } else {
+            leftWidth = node.getYMax() - this.splitter.getY();
+            rightWidth = node.getYMax() - node.getYMin() - leftWidth;
+            height = node.getXMax() - node.getXMin();
+        }
+        return leftWidth * height > rightWidth * height;
     }
 
     @Override
