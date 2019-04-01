@@ -16,8 +16,8 @@ import java.util.*;
 
 public class TwoPositionBinarySearcher extends BinarySearcher {
     // edges of implication graph and its inverse
-    private List<Integer>[] adj;
-    private List<Integer>[] adjInv;
+    private ArrayList[] adj;
+    private ArrayList[] adjInv;
 
     private ImplicationGraphSolver solver;
 

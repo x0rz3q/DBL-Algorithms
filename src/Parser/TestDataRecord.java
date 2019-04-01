@@ -12,5 +12,9 @@ public class TestDataRecord extends DataRecord {
         this.height = dataRecord.height;
         this.optHeight = optHeight;
         this.reqHeight = reqHeight;
+        this.xMin = dataRecord.xMin;
+        this.yMin = dataRecord.yMin;
+        this.yMax = dataRecord.yMax;
+        this.xMax = dataRecord.xMax;
     }
 }

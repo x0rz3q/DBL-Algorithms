@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class QuadTree extends AbstractCollection {
-    private static final int QT_NODE_CAPACITY = 4;
+    private static final int QT_NODE_CAPACITY = 16;
 
     private Rectangle boundary;
     private QuadTree NW = null;
@@ -16,7 +16,7 @@ public class QuadTree extends AbstractCollection {
     private QuadTree SW = null;
     private Collection<GeometryInterface> data;
 
-    private QuadTree(Rectangle boundary) {
+    public QuadTree(Rectangle boundary) {
         this.boundary = boundary;
         this.data = new ArrayList<>();
     }

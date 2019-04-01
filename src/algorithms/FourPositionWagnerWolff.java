@@ -87,11 +87,18 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         selectedLabels = new HashSet<>(record.labels.size() * 2);
         labels = new DataRecord();
 
-        labels.collection = new QuadTree();
         labels.aspectRatio = record.aspectRatio;
+
         double ratio = record.aspectRatio;
         double height = sigma;
         double width = sigma * ratio;
+
+        labels.collection = new QuadTree(new Rectangle(
+                record.xMin - width -1,
+                record.yMin - height -1,
+                record.xMax + width + 1,
+                record.yMax + height + 1
+        ));
 
         for (LabelInterface p : record.labels) {
             double pX = p.getXMax();

@@ -51,10 +51,10 @@ public class Parser implements ParserInterface {
             throw new IOException("parser.input: no aspect ratio found");
         }
 
-        double xMin = 10001;
-        double yMin = 10001;
-        double xMax = -1;
-        double yMax = -1;
+        int xMin = 10001;
+        int yMin = 10001;
+        int xMax = -1;
+        int yMax = -1;
 
         List<PointInterface> points = new ArrayList<>();
 
@@ -96,6 +96,12 @@ public class Parser implements ParserInterface {
         } catch (NoSuchElementException e) {
             throw new IOException("parser.input: number of labels does not correspond to found coordinates");
         }
+
+        rec.xMin = xMin;
+        rec.xMax = xMax;
+
+        rec.yMin = yMin;
+        rec.yMax = yMax;
 
         rec.labels = Collections.unmodifiableList(rec.labels);
         switch (rec.placementModel) {
@@ -139,7 +145,6 @@ public class Parser implements ParserInterface {
      * Parse a test input to program structure retrieving a parsed DataRecord and the optimal height value.
      *
      * @param source          {@link Readable}
-     * @param collectionClass {@link interfaces.AbstractAlgorithmInterface}
      * @return {@link TestDataRecord}
      * @throws NullPointerException if {@code source == null}
      * @throws IOException          if read error occurs
@@ -171,7 +176,7 @@ public class Parser implements ParserInterface {
                 throw new NoSuchElementException("parser.output placement model unknown");
         }
 
-        DecimalFormat format = new DecimalFormat("0.000000");
+        DecimalFormat format = new DecimalFormat("0.0000000000000000000000000000");
         format.setRoundingMode(RoundingMode.FLOOR);
 
         writer.write(
