@@ -13,6 +13,12 @@ import java.util.*;
 
 public class FourPositionWagnerWolff extends BinarySearcher {
 
+    public FourPositionWagnerWolff (int seed) {
+        random = new Random(seed);
+    }
+
+    private Random random;
+
     // phase 2 queue
     private ArrayDeque<FourPositionPoint> pointsQueue;
 
@@ -340,146 +346,31 @@ public class FourPositionWagnerWolff extends BinarySearcher {
      * @post PoI in conflictGraph have at most 2 candidates
      */
     boolean applyHeuristic() {
-        // select Heuristic to be used
 
-        // return numberOfConflictsHeuristic();
-        // return numberOfConflictsHeuristicVariation();
-        // return ratioPointsLabelsHeuristic();
+        ArrayList<FourPositionPoint> pointsQueuetemp = new ArrayList<>(pointsQueue);
+        pointsQueue = new ArrayDeque<>();
+        while (!pointsQueuetemp.isEmpty()) {
+            FourPositionPoint p = pointsQueuetemp.get(random.nextInt(pointsQueuetemp.size()));
+            pointsQueuetemp.remove(p);
+            pointsQueue.add(p);
+        }
+
+        ArrayList<FourPositionLabel> labelsWithConflictstemp = new ArrayList<>(labelsWithConflicts);
+        labelsWithConflicts = new LinkedHashSet<>();
+        while (!labelsWithConflictstemp.isEmpty()) {
+            FourPositionLabel l = labelsWithConflictstemp.get(random.nextInt(labelsWithConflictstemp.size()));
+            labelsWithConflictstemp.remove(l);
+            labelsWithConflicts.add(l);
+        }
+
+        ArrayList<FourPositionLabel> selectedLabelstemp = new ArrayList<>(selectedLabels);
+        selectedLabels = new LinkedHashSet<>();
+        while (!selectedLabelstemp.isEmpty()) {
+            FourPositionLabel l = selectedLabelstemp.get(random.nextInt(selectedLabelstemp.size()));
+            selectedLabelstemp.remove(l);
+            selectedLabels.add(l);
+        }
         return intermediateEliminateHeuristic();
-        // return densityHeuristic();
-    }
-
-    /**
-     * Concrete Heuristic (I from paper)
-     * Runs through all points twice:
-     * Run 1 - For every point with 4 candidates, remove candidate with largest number of conflicts
-     * Run 2 - For every point with 3 candidates, remove candidate with largest number of conflicts
-     *
-     * @modifies selectedLabels
-     * @modifies labelsWithConflicts
-     * @post all points have at most two candidates
-     */
-    private boolean numberOfConflictsHeuristic() {
-        // select points
-        Set<FourPositionPoint> conflictPoints = new HashSet<>();
-        for (FourPositionLabel candidate : labelsWithConflicts) {
-            conflictPoints.add(candidate.getPoI());
-        }
-
-        // remove highest conflict candidate for points with 4 candidates
-        for (FourPositionPoint conflictPoint : conflictPoints) {
-            if (conflictPoint.getCandidates().size() == 4) {
-                chooseLabelsNumberOfConflictsHeuristic(conflictPoint);
-            }
-        }
-
-        // remove highest conflict candidate for points with 3 candidates
-        for (FourPositionPoint conflictPoint : conflictPoints) {
-            if (conflictPoint.getCandidates().size() == 3) {
-                chooseLabelsNumberOfConflictsHeuristic(conflictPoint);
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Second Concrete Heuristic (adaptation of I from paper)
-     * Runs through all points twice:
-     * Run 1 - For every point with 4 candidates, remove 2 candidates with largest number of conflicts
-     * Run 2 - For every point with 3 candidates, remove candidate with largest number of conflicts
-     *
-     * @modifies selectedLabels
-     * @modifies labelsWithConflicts
-     * @post all points have at most two candidates
-     */
-    private boolean numberOfConflictsHeuristicVariation() {
-        // select points
-        Set<FourPositionPoint> conflictPoints = new HashSet<>();
-        for (FourPositionLabel candidate : labelsWithConflicts) {
-            conflictPoints.add(candidate.getPoI());
-        }
-
-        // remove highest conflict candidate for points with 4 candidates
-        for (FourPositionPoint conflictPoint : conflictPoints) {
-            if (conflictPoint.getCandidates().size() == 4) {
-                chooseLabelsNumberOfConflictsHeuristic(conflictPoint);
-                chooseLabelsNumberOfConflictsHeuristic(conflictPoint);
-            }
-        }
-
-        // remove highest conflict candidate for points with 3 candidates
-        for (FourPositionPoint conflictPoint : conflictPoints) {
-            if (conflictPoint.getCandidates().size() == 3) {
-                chooseLabelsNumberOfConflictsHeuristic(conflictPoint);
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Concrete Heuristic (adaptation of I from paper)
-     * Calculates for every candidate label the ratio (# of intersecting labels / # of associated intersecting points)
-     * Runs through all points twice:
-     * Run 1 - For every point with 4 candidates, remove candidate with highest ratio
-     * Run 2 - For every point with 3 candidates, remove candidate with highest ratio
-     *
-     * @modifies selectedLabels
-     * @modifies labelsWithConflicts
-     * @post all points have at most two candidates
-     */
-    private boolean ratioPointsLabelsHeuristic() {
-        // Create HashMap mapping labels to their ratio
-        HashMap<FourPositionLabel, Double> ratioMap = new HashMap<>();
-        for (FourPositionLabel candidate : labelsWithConflicts) {
-            HashSet<FourPositionPoint> intersections = new HashSet<>();
-            for (FourPositionLabel conflict : candidate.getConflicts()) {
-                intersections.add(conflict.getPoI());
-            }
-            double ratio = (double) candidate.getConflicts().size() / (double) intersections.size();
-
-            ratioMap.put(candidate, ratio);
-        }
-
-        // select points
-        Set<FourPositionPoint> conflictPoints = new HashSet<>();
-        for (FourPositionLabel candidate : labelsWithConflicts) {
-            conflictPoints.add(candidate.getPoI());
-        }
-
-        // remove highest conflict candidate for points with 4 candidates
-        for (FourPositionPoint conflictPoint : conflictPoints) {
-            if (conflictPoint.getCandidates().size() == 4) {
-                chooseLabelsRatioPointsLabelsHeuristic(conflictPoint, ratioMap);
-            }
-        }
-
-        // remove highest conflict candidate for points with 3 candidates
-        for (FourPositionPoint conflictPoint : conflictPoints) {
-            if (conflictPoint.getCandidates().size() == 3) {
-                chooseLabelsRatioPointsLabelsHeuristic(conflictPoint, ratioMap);
-            }
-        }
-
-        return true;
-    }
-
-    private void chooseLabelsRatioPointsLabelsHeuristic(FourPositionPoint conflictPoint, HashMap<FourPositionLabel, Double> ratioMap) {
-        // select conflict candidate with highest ratio
-        FourPositionLabel maxConflictCandidate = conflictPoint.getCandidates().get(0);
-        for (FourPositionLabel candidate : conflictPoint.getCandidates()) {
-            if (ratioMap.get(candidate) > ratioMap.get(maxConflictCandidate)) {
-                maxConflictCandidate = candidate;
-            }
-        }
-
-        // remove conflict candidate with highest ratio
-        for (FourPositionLabel conflict : maxConflictCandidate.getConflicts()) {
-            conflict.removeConflict(maxConflictCandidate);
-        }
-        maxConflictCandidate.getPoI().removeCandidate(maxConflictCandidate);
-        labelsWithConflicts.remove(maxConflictCandidate);
     }
 
     private void chooseLabelsNumberOfConflictsHeuristic(FourPositionPoint conflictPoint) {
@@ -525,83 +416,6 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         }
 
         return true;
-    }
-
-    private boolean densityHeuristic() {
-        // select points
-        Set<FourPositionPoint> conflictPoints = new HashSet<>();
-        for (FourPositionLabel candidate : labelsWithConflicts) {
-            conflictPoints.add(candidate.getPoI());
-        }
-
-        pointsQueue.addAll(conflictPoints);
-
-        // remove highest conflict candidate for points with 4 candidates
-        for (FourPositionPoint conflictPoint : conflictPoints) {
-            if (conflictPoint.getCandidates().size() == 4) {
-                chooseLabelsDensityHeuristic(conflictPoint);
-            }
-        }
-
-        if (!eliminateImpossibleCandidates()) return false;
-
-        // remove highest conflict candidate for points with 3 candidates
-        for (FourPositionPoint conflictPoint : conflictPoints) {
-            if (conflictPoint.getCandidates().size() == 3) {
-                chooseLabelsDensityHeuristic(conflictPoint);
-            }
-        }
-
-        return true;
-    }
-
-    private void chooseLabelsDensityHeuristic(FourPositionPoint conflictPoint) {
-        // select highest conflict candidate
-        FourPositionLabel maxConflictCandidate = conflictPoint.getCandidates().get(0);
-        int maxDensity = 0;
-        int density;
-        final int checkRange = 3; // determines the range at which the density is determined
-
-        for (FourPositionLabel candidate : conflictPoint.getCandidates()) {
-            PointInterface bottomLeftSearch;
-            PointInterface topRightSearch;
-
-            switch (candidate.getDirection()) {
-                case NE:
-                    bottomLeftSearch = candidate.getBottomLeft();
-                    topRightSearch = new Point(candidate.getXMin() + checkRange * (candidate.getXMax() - candidate.getXMin()), candidate.getYMin() + checkRange * (candidate.getYMax() - candidate.getYMin()));
-                    break;
-                case NW:
-                    bottomLeftSearch = new Point(candidate.getXMax() - checkRange * (candidate.getXMax() - candidate.getXMin()), candidate.getYMin());
-                    topRightSearch = new Point(candidate.getXMax(), candidate.getYMin() + checkRange * (candidate.getYMax() - candidate.getYMin()));
-                    break;
-                case SE:
-                    bottomLeftSearch = new Point(candidate.getXMin(), candidate.getYMax() - checkRange * (candidate.getYMax() - candidate.getYMin()));
-                    topRightSearch = new Point(candidate.getXMin() + checkRange * (candidate.getXMax() - candidate.getXMin()), candidate.getYMax());
-                    break;
-                case SW:
-                    bottomLeftSearch = new Point(candidate.getXMax() - checkRange * (candidate.getXMax() - candidate.getXMin()), candidate.getYMax() - checkRange * (candidate.getYMax() - candidate.getYMin()));
-                    topRightSearch = candidate.getTopRight();
-                    break;
-                default:
-                    bottomLeftSearch = new Point(0, 0);
-                    topRightSearch = new Point(0, 0);
-                    break;
-            }
-
-            density = labels.collection.query2D(new Rectangle(bottomLeftSearch, topRightSearch)).size();
-            if (density > maxDensity) {
-                maxConflictCandidate = candidate;
-                maxDensity = density;
-            }
-        }
-
-        // remove highest conflict candidate
-        for (FourPositionLabel conflict : maxConflictCandidate.getConflicts()) {
-            conflict.removeConflict(maxConflictCandidate);
-        }
-        maxConflictCandidate.getPoI().removeCandidate(maxConflictCandidate);
-        labelsWithConflicts.remove(maxConflictCandidate);
     }
 
     /**

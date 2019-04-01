@@ -37,11 +37,17 @@ public class Controller {
                 (new TwoPositionBinarySearcher()).solve(record);
                 break;
             case FOUR_POS:
-                (new FourPositionWagnerWolff()).solve(record);
-                break;
+                (new FourPositionWagnerWolff(3)).solve(record);
+                System.err.println(record.height);
+//                int i = 0;
+//                while(true) {
+//                    (new FourPositionWagnerWolff(i++)).solve(record);
+//                    System.err.println(i + "," + record.height);
+//                }
+//                break;
             default:
                 throw new ExportException("Not implemented yet");
         }
-        this.parser.output(record, System.out);
+//        this.parser.output(record, System.out);
     }
 }
