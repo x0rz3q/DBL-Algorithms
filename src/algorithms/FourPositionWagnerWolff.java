@@ -80,16 +80,15 @@ public class FourPositionWagnerWolff extends BinarySearcher {
      * @post (\ forall p ; p \ in record ; p does not have any labels p_i assigned
      *where that p_i of size sigma contains another point in the record)
      */
-    void preprocessing(DataRecord record, Double sigma) {
+    boolean preprocessing(DataRecord record, Double sigma) {
         // initialization
         pointsQueue = new ArrayDeque<>(record.labels.size() * 2);
         labelsWithConflicts = new HashSet<>(record.labels.size() * 2);
         selectedLabels = new HashSet<>(record.labels.size() * 2);
         labels = new DataRecord();
-        //TODO: Maybe find better bound
+
         labels.collection = new QuadTree();
         labels.aspectRatio = record.aspectRatio;
-
         double ratio = record.aspectRatio;
         double height = sigma;
         double width = sigma * ratio;
@@ -98,41 +97,27 @@ public class FourPositionWagnerWolff extends BinarySearcher {
             double pX = p.getXMax();
             double pY = p.getYMax();
 
+            Map<DirectionEnum, Rectangle> labelRectangles = FourPositionLabel.getAllDirectionRectangles(pX, pY, width, height);
+            int amountOfConflictingDirections = 0;
+
             FourPositionPoint point = new FourPositionPoint((FourPositionLabel) p);
             pointsQueue.add(point);
 
-            // adding new labels (All id's are 0 for now)
-            // add NE square
-            if (!record.collection.nodeInRange(new Rectangle(pX, pY, pX + width, pY + height))) {
-                FourPositionLabel northEastLabel = new FourPositionLabel(height, ratio, 0, point, DirectionEnum.NE);
-                point.addCandidate(northEastLabel);
-                Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX, pY, pX + width, pY + height));
-                preprocessingLabel(northEastLabel, conflictingLabels);
+            for (Map.Entry<DirectionEnum, Rectangle> entry : labelRectangles.entrySet()) {
+                if (!record.collection.nodeInRange(entry.getValue())) {
+                    FourPositionLabel dirLabel = new FourPositionLabel(height, ratio, 0, point, entry.getKey());
+                    point.addCandidate(dirLabel);
+                    Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(entry.getValue());
+                    preprocessingLabel(dirLabel, conflictingLabels);
+                } else {
+                    amountOfConflictingDirections ++;
+                }
             }
-            // add NW
-            if (!record.collection.nodeInRange(new Rectangle(pX - width, pY, pX, pY + height))) {
-                FourPositionLabel northWestLabel = new FourPositionLabel(height, ratio, 0, point, DirectionEnum.NW);
-                point.addCandidate(northWestLabel);
-                Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX - width, pY, pX, pY + height));
-                preprocessingLabel(northWestLabel, conflictingLabels);
-            }
-
-            // add SE
-            if (!record.collection.nodeInRange(new Rectangle(pX, pY - height, pX + width, pY))) {
-                FourPositionLabel southEastLabel = new FourPositionLabel(height, ratio, 0, point, DirectionEnum.SE);
-                point.addCandidate(southEastLabel);
-                Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX, pY - height, pX + width, pY));
-                preprocessingLabel(southEastLabel, conflictingLabels);
-            }
-
-            // add SW
-            if (!record.collection.nodeInRange(new Rectangle(pX - width, pY - height, pX, pY))) {
-                FourPositionLabel southWestLabel = new FourPositionLabel(height, ratio, 0, point, DirectionEnum.SW);
-                point.addCandidate(southWestLabel);
-                Collection<GeometryInterface> conflictingLabels = labels.collection.query2D(new Rectangle(pX - width, pY - height, pX, pY));
-                preprocessingLabel(southWestLabel, conflictingLabels);
+            if (amountOfConflictingDirections == labelRectangles.keySet().size()) {
+                return false;
             }
         }
+        return true;
     }
 
     /**
@@ -707,7 +692,9 @@ public class FourPositionWagnerWolff extends BinarySearcher {
 
     @Override
     boolean isSolvable(DataRecord record, double height) {
-        preprocessing(record, height);
+        if (!preprocessing(record, height)) {
+            return false;
+        }
 
         boolean solvable = eliminateImpossibleCandidates();
 
