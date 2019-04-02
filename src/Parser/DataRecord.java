@@ -13,4 +13,8 @@ public class DataRecord {
     public PlacementModelEnum placementModel;
     public double height = 0.0d;
     public String aspectRatioString = "";
+    public int xMin = 0;
+    public int xMax = 0;
+    public int yMin = 0;
+    public int yMax = 0;
 }

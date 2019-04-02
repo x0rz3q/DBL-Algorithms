@@ -13,20 +13,16 @@ public abstract class BinarySearcher implements AbstractAlgorithmInterface {
     @Override
     public void solve(DataRecord record) {
         double[] solutionSpace = getSolutionSpace(record);
-
-        int low = 0;
-        int high = solutionSpace.length;
-
-        while (low < high - 1) {
-            int mid = (high + low) / 2;
-            if (isSolvable(record, solutionSpace[mid])) {
-                low = mid;
-            } else {
-                high = mid;
+        double height = solutionSpace[0];
+        for (int i = 1; i < solutionSpace.length; i++) {
+            if (!isSolvable(record, solutionSpace[i])) {
+                break;
             }
+
+            height = solutionSpace[i];
         }
 
-        getSolution(record, solutionSpace[low]);
+        getSolution(record, height);
     }
 
 
