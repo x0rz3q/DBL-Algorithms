@@ -3,15 +3,13 @@
  */
 
 package algorithms;
+
 import Parser.DataRecord;
 import interfaces.AbstractAlgorithmInterface;
 import interfaces.models.GeometryInterface;
-import interfaces.models.LabelInterface;
 import models.FieldExtendedSliderLabel;
-import models.Point;
 import models.Rectangle;
 import models.SliderLabel;
-
 import java.util.*;
 
 public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
