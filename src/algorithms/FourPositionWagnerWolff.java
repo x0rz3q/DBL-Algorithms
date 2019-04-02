@@ -814,7 +814,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
                 leftPoints.add(conflictingLabel.getPoI());
             }
             ArrayDeque<FourPositionPoint> conflictingPoints = new ArrayDeque<>(leftPoints);
-            bruteForce(conflictingPoints, conflictingPoints, true);
+            bruteForce(conflictingPoints, new ArrayDeque<>(conflictingPoints), true);
         } else {
             applyHeuristic();
             doTwoSat(true);
