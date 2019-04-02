@@ -7,6 +7,7 @@ package algorithms;
 import Parser.DataRecord;
 import interfaces.AbstractAlgorithmInterface;
 import interfaces.models.GeometryInterface;
+import interfaces.models.LabelInterface;
 import models.Rectangle;
 import models.SliderLabel;
 import java.util.*;
@@ -80,7 +81,6 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
         for (int j = 0; j < i; j++) {
             record.collection.remove(sortedLabels[j]);
             sortedLabels[j].reset();
-            record.collection.insert(sortedLabels[j]);
         }
 
         // returns whether are labels were set
@@ -123,7 +123,6 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
         if (xMax == x && !record.collection.query2D(new Rectangle(x,y,x+w,y+h)).isEmpty()) return false;
 
         // else insert the label aligned to the right of xMax
-        record.collection.remove(label);
         if (maxLabel == null) {
             label.setLabel(x, 0, w);
         } else {
