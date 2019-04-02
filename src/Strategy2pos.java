@@ -35,7 +35,8 @@ class Strategy2pos extends GenerationStrategy {
                 candidate = new Point(data.xGenerator.sample((int) ceil(width), (int) (10000 - ceil(width))), data.yGenerator.sample((int) ceil(width), (int) (10000 - ceil(width))));
             }
             boolean useLeft = rand.nextBoolean();
-            if (useLeft) {
+
+            /*if (useLeft) {
                 // Check left
                 Rectangle candidateRectangle = new Rectangle(new Point(candidate.getX() - width, candidate.getY()), new Point(candidate.getX(), candidate.getY() + data.result), candidate);
 
@@ -64,6 +65,19 @@ class Strategy2pos extends GenerationStrategy {
                 if (checkCandidateRectangle(candidateRectangle, candidate, rectangles, tree, pointsTree)) {
                     continue;
                 }
+            } */
+
+            Rectangle candidateRectangle;
+            if (useLeft) {
+                candidateRectangle = new Rectangle(candidate.getX() - width, candidate.getY(), candidate.getX(), candidate.getY() + height, candidate);
+            } else {
+                candidateRectangle = new Rectangle(candidate.getX(), candidate.getY(), candidate.getX() + width, candidate.getY() + height, candidate);
+            }
+
+            if (tree.query2D(candidateRectangle).size() == 0) {
+                rectangles.add(candidateRectangle);
+                tree.insert(candidateRectangle);
+                pointsTree.insert(candidate);
             }
         }
 
@@ -75,7 +89,7 @@ class Strategy2pos extends GenerationStrategy {
         return associatedPoints;
     }
 
-    boolean checkCandidateRectangle(Rectangle candidate, Point candidatePoint, ArrayList<Rectangle> rectangles, QuadTree tree, QuadTree pointsTree) {
+    /*boolean checkCandidateRectangle(Rectangle candidate, Point candidatePoint, ArrayList<Rectangle> rectangles, QuadTree tree, QuadTree pointsTree) {
         if (tree.query2D(candidate).size() != 0) {
             return false;
         }
@@ -83,7 +97,7 @@ class Strategy2pos extends GenerationStrategy {
         tree.insert(candidate);
         pointsTree.insert(new Rectangle(candidatePoint, candidatePoint, candidatePoint));
         return true;
-    }
+    }*/
 
     @Override
     Rectangle[] generateStart() {
