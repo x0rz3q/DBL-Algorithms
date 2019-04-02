@@ -26,6 +26,8 @@ public class FourPositionWagnerWolff extends BinarySearcher {
     // Only used in preprocessing
     private DataRecord labels;
 
+    private int lastSeed = 0;
+
     private final int bruteForceLabels = 20;
 
     /**
@@ -339,14 +341,34 @@ public class FourPositionWagnerWolff extends BinarySearcher {
      *
      * @post PoI in conflictGraph have at most 2 candidates
      */
-    boolean applyHeuristic() {
-        // select Heuristic to be used
+    boolean applyHeuristic(int seed) {
+        ArrayList<FourPositionPoint> pointsQueuetemp = new ArrayList<>(pointsQueue);
+        pointsQueue = new ArrayDeque<>();
 
-        // return numberOfConflictsHeuristic();
-        // return numberOfConflictsHeuristicVariation();
-        // return ratioPointsLabelsHeuristic();
+        Random currentRandom = new Random(seed);
+        while (!pointsQueuetemp.isEmpty()) {
+            FourPositionPoint p = pointsQueuetemp.get(currentRandom.nextInt(pointsQueuetemp.size()));
+            pointsQueuetemp.remove(p);
+            pointsQueue.add(p);
+        }
+
+        ArrayList<FourPositionLabel> labelsWithConflictstemp = new ArrayList<>(labelsWithConflicts);
+        labelsWithConflicts = new LinkedHashSet<>();
+        while (!labelsWithConflictstemp.isEmpty()) {
+            FourPositionLabel l = labelsWithConflictstemp.get(currentRandom.nextInt(labelsWithConflictstemp.size()));
+            labelsWithConflictstemp.remove(l);
+            labelsWithConflicts.add(l);
+        }
+
+        ArrayList<FourPositionLabel> selectedLabelstemp = new ArrayList<>(selectedLabels);
+        selectedLabels = new LinkedHashSet<>();
+        while (!selectedLabelstemp.isEmpty()) {
+            FourPositionLabel l = selectedLabelstemp.get(currentRandom.nextInt(selectedLabelstemp.size()));
+            selectedLabelstemp.remove(l);
+            selectedLabels.add(l);
+        }
+
         return intermediateEliminateHeuristic();
-        // return densityHeuristic();
     }
 
     /**
@@ -699,26 +721,30 @@ public class FourPositionWagnerWolff extends BinarySearcher {
 
     @Override
     boolean isSolvable(DataRecord record, double height) {
-        if (!preprocessing(record, height)) {
-            return false;
-        }
+        for (int seed = 0; seed < 5; seed++) {
+            if (!preprocessing(record, height))
+                return false;
 
-        boolean solvable = eliminateImpossibleCandidates();
+            boolean solvable = eliminateImpossibleCandidates();
+            if (!solvable)
+                return false;
 
-        if (!solvable) return false;
-
-        if (labelsWithConflicts.size() < bruteForceLabels) {
-            Set<FourPositionPoint> leftPoints = new LinkedHashSet<>();
-            for (FourPositionLabel conflictingLabel : labelsWithConflicts) {
-                leftPoints.add(conflictingLabel.getPoI());
+            if (labelsWithConflicts.size() < bruteForceLabels) {
+                Set<FourPositionPoint> leftPoints = new LinkedHashSet<>();
+                for (FourPositionLabel conflictingLabel : labelsWithConflicts) {
+                    leftPoints.add(conflictingLabel.getPoI());
+                }
+                ArrayDeque<FourPositionPoint> conflictingPoints = new ArrayDeque<>(leftPoints);
+                return bruteForce(conflictingPoints, new ArrayDeque<>(conflictingPoints), false);
+            } else {
+                if (applyHeuristic(seed) && doTwoSat(false)) {
+                    this.lastSeed = seed;
+                    return true;
+                }
             }
-            ArrayDeque<FourPositionPoint> conflictingPoints = new ArrayDeque<>(leftPoints);
-            solvable = bruteForce(conflictingPoints, new ArrayDeque<>(conflictingPoints), false);
-        } else {
-            if (!applyHeuristic()) return false;
-            solvable = doTwoSat(false);
         }
-        return solvable;
+
+        return false;
     }
 
     private boolean bruteForce(ArrayDeque<FourPositionPoint> conflictingPoints, ArrayDeque<FourPositionPoint> allPoints, final boolean returnSolution) {
@@ -816,7 +842,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
             ArrayDeque<FourPositionPoint> conflictingPoints = new ArrayDeque<>(leftPoints);
             bruteForce(conflictingPoints, new ArrayDeque<>(conflictingPoints), true);
         } else {
-            applyHeuristic();
+            applyHeuristic(this.lastSeed);
             doTwoSat(true);
         }
     }
