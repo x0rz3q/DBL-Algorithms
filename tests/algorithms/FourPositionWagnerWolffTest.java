@@ -248,7 +248,7 @@ class FourPositionWagnerWolffTest {
         algo.getLabelsWithConflicts().add(label1);
         algo.getLabelsWithConflicts().add(label2);
         algo.getLabelsWithConflicts().add(label3);
-        algo.applyHeuristic();
+        algo.applyHeuristic(10);
 
         for (FourPositionLabel label : algo.getLabelsWithConflicts()) {
             assertTrue(label.getPoI().getCandidates().size() == 2);
@@ -271,7 +271,7 @@ class FourPositionWagnerWolffTest {
         algo.getLabelsWithConflicts().add(label2);
         algo.getLabelsWithConflicts().add(label3);
         algo.getLabelsWithConflicts().add(label4);
-        algo.applyHeuristic();
+        algo.applyHeuristic(10);
 
         for (FourPositionLabel label : algo.getLabelsWithConflicts()) {
             assertTrue(label.getPoI().getCandidates().size() == 2);
@@ -308,7 +308,7 @@ class FourPositionWagnerWolffTest {
         algo.getLabelsWithConflicts().add(point2label3);
         algo.getLabelsWithConflicts().add(point2label4);
 
-        algo.applyHeuristic();
+        algo.applyHeuristic(10);
 
         for (FourPositionLabel label : algo.getLabelsWithConflicts()) {
             assertTrue(label.getPoI().getCandidates().size() <= 2);
@@ -413,7 +413,7 @@ class FourPositionWagnerWolffTest {
         algo.getLabelsWithConflicts().add(pointSWlabelNE);
         algo.getLabelsWithConflicts().add(pointSWlabelSE);
 
-        algo.applyHeuristic();
+        algo.applyHeuristic(10);
 
         for (FourPositionLabel label : algo.getLabelsWithConflicts()) {
             assertTrue(label.getPoI().getCandidates().size() == 2);

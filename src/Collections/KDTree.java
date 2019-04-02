@@ -154,18 +154,20 @@ public class KDTree extends AbstractCollection {
             this.nodes.addAll(nodes);
             this.depth = depth;
         } else {
+            List<GeometryInterface> geoms = new ArrayList<>(nodes);
+
             if (depth % 2 == 0) { // even depth
                 // split vertically
-                java.util.Collections.sort(nodes, verticalC);
+                geoms.sort(verticalC);
             } else { // odd depth
-
                 // split horizontally
-                java.util.Collections.sort(nodes, horizontalC);
+                geoms.sort(horizontalC);
             }
-            int medianIndex = (int) Math.floor(nodes.size() / 2.0);
-            splitter = getReferencePoint(nodes.get(medianIndex));
-            left = new KDTree(nodes.subList(0, medianIndex), depth + 1, this.dataLimit);
-            right = new KDTree(nodes.subList(medianIndex, nodes.size()), depth + 1, this.dataLimit);
+
+            int medianIndex = (int) Math.floor(geoms.size() / 2.0);
+            splitter = getReferencePoint(geoms.get(medianIndex));
+            left = new KDTree(geoms.subList(0, medianIndex), depth + 1, this.dataLimit);
+            right = new KDTree(geoms.subList(medianIndex, geoms.size()), depth + 1, this.dataLimit);
         }
     }
 
