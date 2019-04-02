@@ -1,4 +1,4 @@
-    package Collections;
+package Collections;
 
 import distance.AbstractDistance;
 import interfaces.models.GeometryInterface;
@@ -214,11 +214,20 @@ public class KDTree extends AbstractCollection {
      * @return collection of SquareInterfaces such that range.intersects(element)
      */
     private Collection<GeometryInterface> query2D(KDTree subTree, Rectangle range, Collection<GeometryInterface> results) {
-        for (GeometryInterface d : subTree.nodes) { // add the data which intersects
-            if (range.intersects(d)) {
-                results.add(d);
+        if (subTree.prioritizeTop(range)) {
+            for (int i = subTree.nodes.size() - 1; i >= 0; i--) { // reverse iteration
+                if (range.intersects(subTree.nodes.get(i))) {
+                    results.add(subTree.nodes.get(i));
+                }
+            }
+        } else {
+            for (GeometryInterface d : subTree.nodes) { // regular iteration
+                if (range.intersects(d)) {
+                    results.add(d);
+                }
             }
         }
+
         if (subTree.isLeaf()) { // leaf, nowhere to go
             return results; // return what we have
         }
@@ -323,6 +332,9 @@ public class KDTree extends AbstractCollection {
         return dist.calculate(projection, nodeReference);
     }
 
+    /**
+     * Definition of a reference point for a geometry interface
+     */
     private static PointInterface getReferencePoint(GeometryInterface node) {
         if (node instanceof LabelInterface) {
             return ((LabelInterface) node).getPOI();
@@ -351,15 +363,23 @@ public class KDTree extends AbstractCollection {
 
     @Override
     public boolean nodeInRange(Rectangle node) {
-        for (GeometryInterface o : this.nodes) {
-            if (node.intersects(o)) {
-                return true;
+        if (this.prioritizeTop(node)) { // rectangle is above the splitter point
+            for (int i = this.nodes.size() - 1; i >= 0; i--) { // iterate in reverse
+                if (node.intersects(this.nodes.get(i))) {
+                    return true;
+                }
+            }
+        } else {
+            for (GeometryInterface o : this.nodes) { // regular iteration
+                if (node.intersects(o)) {
+                    return true;
+                }
             }
         }
         if (this.isLeaf()) return false;
 
-        if (this.intersects(node)) {
-            if (this.prioritizeLeft(node)) {
+        if (this.intersects(node)) { // intersects splitter line
+            if (this.prioritizeLeft(node)) { // bigger area in left, check left first
                 return this.left.nodeInRange(node) || this.right.nodeInRange(node);
             } else {
                 return this.right.nodeInRange(node) || this.left.nodeInRange(node);
@@ -374,24 +394,43 @@ public class KDTree extends AbstractCollection {
     }
 
     /**
-     *  Returns whether to prioritize recursing on the left subtree
-     * @param node  for which a query/search is done
+     * Returns whether to prioritize recursing on the left subtree
+     *
+     * @param node for which a query/search is done
      * @return true if most of  the node is in left subtree
      * @throws IllegalArgumentException if node is in one subtree
      */
     private boolean prioritizeLeft(Rectangle node) throws IllegalArgumentException {
         if (!this.intersects(node)) throw new IllegalArgumentException("node is contained in one subtree not both");
         double leftWidth, rightWidth, height;
-        if (this.depth % 2 == 0) {
+
+        if (this.depth % 2 != 0) { // if split on y
             leftWidth = this.splitter.getX() - node.getXMin();
             rightWidth = node.getXMax() - node.getXMin() - leftWidth;
             height = node.getYMax() - node.getYMin();
-        } else {
+        } else { // split on x
             leftWidth = node.getYMax() - this.splitter.getY();
             rightWidth = node.getYMax() - node.getYMin() - leftWidth;
             height = node.getXMax() - node.getXMin();
         }
-        return leftWidth * height > rightWidth * height;
+        return leftWidth * height > rightWidth * height; // is left area bigger than right
+    }
+
+    /**
+     * Returns whether to prioritize the top of the subtree by utilizing the fact that KDtrees have sorted nodes by
+     * x or y coordinates, depending on the depth.
+     *
+     * @param node rectangle which the priority is calculated for
+     */
+    private boolean prioritizeTop(Rectangle node) {
+        if (this.isLeaf()) {
+            return false;
+        }
+        if (this.depth % 2 == 0) { // split on y
+            return node.getXMin() > this.splitter.getX();
+        } else {
+            return node.getYMax() < this.splitter.getY();
+        }
     }
 
     @Override
