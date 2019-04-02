@@ -402,23 +402,20 @@ public class KDTree extends AbstractCollection {
      */
     private boolean prioritizeLeft(Rectangle node) throws IllegalArgumentException {
         if (!this.intersects(node)) throw new IllegalArgumentException("node is contained in one subtree not both");
-        double leftWidth, rightWidth, height;
+        double leftWidth, rightWidth;
 
-        if (this.depth % 2 != 0) { // if split on y
-            leftWidth = this.splitter.getX() - node.getXMin();
-            rightWidth = node.getXMax() - node.getXMin() - leftWidth;
-            height = node.getYMax() - node.getYMin();
-        } else { // split on x
+        if (this.depth % 2 == 0) { // if split on y
             leftWidth = node.getYMax() - this.splitter.getY();
             rightWidth = node.getYMax() - node.getYMin() - leftWidth;
-            height = node.getXMax() - node.getXMin();
+        } else { // split on x
+            leftWidth = this.splitter.getX() - node.getXMin();
+            rightWidth = node.getXMax() - node.getXMin() - leftWidth;
         }
-        return leftWidth * height > rightWidth * height; // is left area bigger than right
+        return leftWidth > rightWidth ; // is left area bigger than right
     }
 
     /**
-     * Returns whether to prioritize the top of the subtree by utilizing the fact that KDtrees have sorted nodes by
-     * x or y coordinates, depending on the depth.
+     * Returns whether to prioritize the top of the subtree relative to the splitter
      *
      * @param node rectangle which the priority is calculated for
      */
@@ -426,11 +423,30 @@ public class KDTree extends AbstractCollection {
         if (this.isLeaf()) {
             return false;
         }
-        if (this.depth % 2 == 0) { // split on y
-            return node.getXMin() > this.splitter.getX();
+        // base cases if there is no overlap
+        if (this.depth % 2 == 0) {
+            if (node.getXMax() < this.splitter.getX()) {
+                return false;
+            } else if (node.getXMin() > this.splitter.getX()) {
+                return true;
+            }
         } else {
-            return node.getYMax() < this.splitter.getY();
+            if (node.getYMax() < this.splitter.getY()) {
+                return false;
+            } else if (node.getYMin() > this.splitter.getY()) {
+                return true;
+            }
         }
+        // if there is overlap calculate area
+        double botHeight, topHeight;
+        if (this.depth % 2 == 0) { // split on y
+            botHeight = this.splitter.getX() - node.getXMin();
+            topHeight = node.getXMax() - node.getXMin() - botHeight;
+        } else {
+            botHeight = this.splitter.getY() - node.getYMin();
+            topHeight = node.getYMax() - node.getYMin() - botHeight;
+        }
+        return topHeight > botHeight;
     }
 
     @Override
