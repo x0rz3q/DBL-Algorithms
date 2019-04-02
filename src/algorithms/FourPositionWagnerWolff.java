@@ -1,13 +1,13 @@
 package algorithms;
 
+import Collections.KDTree;
+import Collections.QuadTree;
 import Parser.DataRecord;
 import distance.FourPositionDistance;
 import interfaces.models.GeometryInterface;
 import interfaces.models.LabelInterface;
 import interfaces.models.PointInterface;
 import models.*;
-import Collections.KDTree;
-import Collections.QuadTree;
 
 import java.util.*;
 
@@ -26,7 +26,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
     // Only used in preprocessing
     private DataRecord labels;
 
-    private final int bruteForceLabels = 0;
+    private final int bruteForceLabels = 20;
 
     /**
      * Calculates all conflict sizes for given DataRecord. It is sufficient for the
@@ -83,7 +83,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
     boolean preprocessing(DataRecord record, Double sigma) {
         // initialization
         pointsQueue = new ArrayDeque<>(record.labels.size() * 2);
-        labelsWithConflicts = new HashSet<>(record.labels.size() * 2);
+        labelsWithConflicts = new LinkedHashSet<>(record.labels.size() * 2);
         selectedLabels = new HashSet<>(record.labels.size() * 2);
         labels = new DataRecord();
 
@@ -292,7 +292,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
     private boolean candidateIntersectsAllRemaining(FourPositionPoint point) {
         List<FourPositionLabel> labelsThatCantExist = new ArrayList<>();
         for (FourPositionLabel candidate : point.getCandidates()) {
-            Set<FourPositionPoint> havingLabelsIntersecting = new HashSet<>();
+            Set<FourPositionPoint> havingLabelsIntersecting = new LinkedHashSet<>();
 
             // get points of the labels that conflict with candidate
             for (FourPositionLabel intersection : candidate.getConflicts()) {
@@ -707,13 +707,13 @@ public class FourPositionWagnerWolff extends BinarySearcher {
 
         if (!solvable) return false;
 
-        Set<FourPositionPoint> conflictingPoints = new HashSet<>();
-        for (FourPositionLabel conflictingLabel : labelsWithConflicts) {
-            conflictingPoints.add(conflictingLabel.getPoI());
-        }
-
         if (labelsWithConflicts.size() < bruteForceLabels) {
-            solvable = bruteForce(conflictingPoints, false);
+            Set<FourPositionPoint> leftPoints = new LinkedHashSet<>();
+            for (FourPositionLabel conflictingLabel : labelsWithConflicts) {
+                leftPoints.add(conflictingLabel.getPoI());
+            }
+            ArrayDeque<FourPositionPoint> conflictingPoints = new ArrayDeque<>(leftPoints);
+            solvable = bruteForce(conflictingPoints, new ArrayDeque<>(conflictingPoints), false);
         } else {
             if (!applyHeuristic()) return false;
             solvable = doTwoSat(false);
@@ -721,39 +721,61 @@ public class FourPositionWagnerWolff extends BinarySearcher {
         return solvable;
     }
 
-    private boolean bruteForce(Set<FourPositionPoint> conflictingPoints, final boolean returnSolution) {
+    private boolean bruteForce(ArrayDeque<FourPositionPoint> conflictingPoints, ArrayDeque<FourPositionPoint> allPoints, final boolean returnSolution) {
         // brute force 'heuristic'
-        // Remove labels s.t. maximally 2 labels per point are left in brute force manner and check for 2sat solution each time
-        if (twoSatReady(conflictingPoints)) {
-            return doTwoSat(returnSolution);
+        // recursive base case
+        if (conflictingPoints.size() == 0) {
+            if (validSolution(allPoints)) {
+                if (returnSolution) {
+                    labelsWithConflicts.clear();
+                    for (FourPositionPoint point : allPoints) {
+                        selectedLabels.add(point.getCandidates().get(0));
+                    }
+                    doTwoSat(true);
+                }
+                return true;
+            }
+            return false;
         }
 
-        //loop through all points
-        for (FourPositionPoint point : conflictingPoints) {
-            if (point.getCandidates().size() == 3) {
-                Set<FourPositionPoint> newPoints = new HashSet<>(conflictingPoints);
-                newPoints.remove(point);
-
-                // remove 1 label from point and brute force the other points
-                for (int i = 0; i < 3; i++) {
-                    FourPositionLabel removingLabel = point.getCandidates().get(0);
-                    ArrayList<FourPositionLabel> conflicts = removeLabel(removingLabel);
-                    boolean option = bruteForce(newPoints, returnSolution);
-                    if (option) return true;
-                    addLabel(removingLabel, point, conflicts);
-                }
-            } else if (point.getCandidates().size() == 4) {
-                // remove 1 label from point and brute force all points (including this one since it has 3 labels)
-                for (int i = 0; i < 4; i++) {
-                    FourPositionLabel removingLabel = point.getCandidates().get(0);
-                    ArrayList<FourPositionLabel> conflicts = removeLabel(removingLabel);
-                    boolean option = bruteForce(conflictingPoints, returnSolution);
-                    if (option) return true;
-                    addLabel(removingLabel, point, conflicts);
-                }
+        FourPositionPoint point = conflictingPoints.pollFirst(); //also removes element
+        ArrayList<FourPositionLabel> originalPointLabels = new ArrayList<>(point.getCandidates());
+        for (FourPositionLabel label : originalPointLabels) {
+            // select label
+            ArrayList<ArrayList<FourPositionLabel>> backup = selectLabelForBruteForce(label);
+            // brute force remaining
+            boolean option = bruteForce(conflictingPoints, allPoints, returnSolution);
+            // if valid solution return true;
+            if (option) return true;
+            // else add labels again
+            for (ArrayList<FourPositionLabel> labelWithConflicts : backup) {
+                addLabel(labelWithConflicts.get(0), point, new ArrayList<>(labelWithConflicts.subList(1, labelWithConflicts.size())));
             }
         }
+        conflictingPoints.addFirst(point);
         return false;
+    }
+
+    private boolean validSolution(ArrayDeque<FourPositionPoint> points) {
+        for (FourPositionPoint point : points) {
+            if (point.getCandidates().size() != 1 || point.getCandidates().get(0).getConflicts().size() != 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private ArrayList<ArrayList<FourPositionLabel>> selectLabelForBruteForce(FourPositionLabel label) {
+        ArrayList<ArrayList<FourPositionLabel>> labelsWithConflicts = new ArrayList<>();
+        ArrayList<FourPositionLabel> loop = new ArrayList<>(label.getPoI().getCandidates());
+        for (FourPositionLabel other : loop) {
+            if (!label.equals(other)) {
+                labelsWithConflicts.add(new ArrayList<>());
+                labelsWithConflicts.get(labelsWithConflicts.size()-1).add(other);
+                labelsWithConflicts.get(labelsWithConflicts.size()-1).addAll(removeLabel(other));
+            }
+        }
+        return labelsWithConflicts;
     }
 
     private ArrayList<FourPositionLabel> removeLabel(FourPositionLabel label) {
@@ -785,15 +807,14 @@ public class FourPositionWagnerWolff extends BinarySearcher {
     void getSolution(DataRecord record, double height) {
         preprocessing(record, height);
         eliminateImpossibleCandidates();
-
-        Set<FourPositionPoint> conflictingPoints = new HashSet<>();
-        for (FourPositionLabel conflictingLabel : labelsWithConflicts) {
-            conflictingPoints.add(conflictingLabel.getPoI());
-        }
-
         record.height = height;
         if (labelsWithConflicts.size() < bruteForceLabels) {
-            bruteForce(conflictingPoints, true);
+            Set<FourPositionPoint> leftPoints = new LinkedHashSet<>();
+            for (FourPositionLabel conflictingLabel : labelsWithConflicts) {
+                leftPoints.add(conflictingLabel.getPoI());
+            }
+            ArrayDeque<FourPositionPoint> conflictingPoints = new ArrayDeque<>(leftPoints);
+            bruteForce(conflictingPoints, conflictingPoints, true);
         } else {
             applyHeuristic();
             doTwoSat(true);
