@@ -214,20 +214,11 @@ public class KDTree extends AbstractCollection {
      * @return collection of SquareInterfaces such that range.intersects(element)
      */
     private Collection<GeometryInterface> query2D(KDTree subTree, Rectangle range, Collection<GeometryInterface> results) {
-        if (subTree.prioritizeTop(range)) {
-            for (int i = subTree.nodes.size() - 1; i >= 0; i--) { // reverse iteration
-                if (range.intersects(subTree.nodes.get(i))) {
-                    results.add(subTree.nodes.get(i));
-                }
-            }
-        } else {
-            for (GeometryInterface d : subTree.nodes) { // regular iteration
-                if (range.intersects(d)) {
-                    results.add(d);
-                }
+        for (GeometryInterface d : subTree.nodes) { // regular iteration
+            if (range.intersects(d)) {
+                results.add(d);
             }
         }
-
         if (subTree.isLeaf()) { // leaf, nowhere to go
             return results; // return what we have
         }
