@@ -1,4 +1,4 @@
-placement model: 2pos
+placement model: 4pos
 aspect ratio: 1.500000
 number of points: 25
 6102 6756

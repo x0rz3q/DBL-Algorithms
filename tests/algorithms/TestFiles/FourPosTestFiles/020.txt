@@ -1,5 +1,5 @@
 placement model: 4pos
-aspect ratio: 1.500000
+aspect ratio: 404
 number of points: 10000
 2 1005
 2 1116

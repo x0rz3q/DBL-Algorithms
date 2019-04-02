@@ -1,13 +1,13 @@
-package main;
 
-import Collections.KDTree;
-import Collections.QuadTree;
-import Parser.DataRecord;
-import Parser.Parser;
-import algorithms.FourPositionWagnerWolff;
-import algorithms.GreedySliderAlgorithm;
-import algorithms.TwoPositionBinarySearcher;
-import interfaces.ParserInterface;
+
+
+
+
+
+
+
+
+
 
 import java.io.IOException;
 import java.rmi.server.ExportException;
