@@ -82,9 +82,9 @@ public class FourPositionWagnerWolff extends BinarySearcher {
      */
     boolean preprocessing(DataRecord record, Double sigma) {
         // initialization
-        pointsQueue = new ArrayDeque<>();
-        labelsWithConflicts = new LinkedHashSet<>();
-        selectedLabels = new LinkedHashSet<>();
+        pointsQueue = new ArrayDeque<>(record.labels.size() * 2);
+        labelsWithConflicts = new LinkedHashSet<>(record.labels.size() * 2);
+        selectedLabels = new HashSet<>(record.labels.size() * 2);
         labels = new DataRecord();
 
         labels.aspectRatio = record.aspectRatio;
@@ -814,7 +814,7 @@ public class FourPositionWagnerWolff extends BinarySearcher {
                 leftPoints.add(conflictingLabel.getPoI());
             }
             ArrayDeque<FourPositionPoint> conflictingPoints = new ArrayDeque<>(leftPoints);
-            bruteForce(conflictingPoints, new ArrayDeque<>(conflictingPoints), true);
+            bruteForce(conflictingPoints, conflictingPoints, true);
         } else {
             applyHeuristic();
             doTwoSat(true);
