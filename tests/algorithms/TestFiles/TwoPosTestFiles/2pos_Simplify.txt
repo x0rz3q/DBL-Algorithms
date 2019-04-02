@@ -1,0 +1,9 @@
+placement model: 2pos
+aspect ratio: 2.0
+number of points: 4
+13 51
+72 48
+55 57
+16 53
+label height: 10.0
+minimum expected result: 10.0
