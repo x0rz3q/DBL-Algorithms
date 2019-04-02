@@ -7,7 +7,6 @@ package algorithms;
 import Parser.DataRecord;
 import interfaces.AbstractAlgorithmInterface;
 import interfaces.models.GeometryInterface;
-import models.FieldExtendedSliderLabel;
 import models.Rectangle;
 import models.SliderLabel;
 import java.util.*;
@@ -36,7 +35,7 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
     public void solve(DataRecord record) {
 
         // casts labels to sliderlabels in a new sorted array
-        FieldExtendedSliderLabel[] sortedLabels = new FieldExtendedSliderLabel[record.labels.size()];
+        SliderLabel[] sortedLabels = new SliderLabel[record.labels.size()];
         record.labels.toArray(sortedLabels);
         Arrays.sort(sortedLabels, comparator);
 
@@ -56,7 +55,7 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
         } while (mid != prev); // when difference between low-high becomes neglible, mid == prev
 
         // set the labels to the found optimal width
-        for (FieldExtendedSliderLabel label : sortedLabels) setLabel(record, label, low);
+        for (SliderLabel label : sortedLabels) setLabel(record, label, low);
         record.height = low / record.aspectRatio;
     }
 
@@ -70,7 +69,7 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
      * @pre sortedLabels is sorted by using this.comparator
      * @post all points have a label of width and height 0
      */
-    private boolean solve(DataRecord record, FieldExtendedSliderLabel[] sortedLabels, double width) {
+    private boolean solve(DataRecord record, SliderLabel[] sortedLabels, double width) {
         int i = 0;
 
         // tries to set the labels in sorted order
@@ -80,7 +79,7 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
         // removes all labels that were set
         for (int j = 0; j < i; j++) {
             record.collection.remove(sortedLabels[j]);
-            sortedLabels[j].setHeight(0);
+            sortedLabels[j].reset();
             record.collection.insert(sortedLabels[j]);
         }
 
@@ -98,7 +97,7 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
      * @pre all previous set labels are labels with a smaller index when sorted with this.comparator
      * @post
      */
-    private boolean setLabel(DataRecord record, FieldExtendedSliderLabel label, double w) {
+    private boolean setLabel(DataRecord record, SliderLabel label, double w) {
 
         int x = (int) label.getPOI().getX();
         int y = (int) label.getPOI().getY();
@@ -108,11 +107,11 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
         Collection<GeometryInterface> queryResult = record.collection.query2D(new Rectangle(x - w, y, x,y + h));
 
         // sets maxLabel to be the label most to the right of the queried area
-        FieldExtendedSliderLabel maxLabel = null;
+        SliderLabel maxLabel = null;
         double xMax = x - w;
         for (GeometryInterface entry : queryResult) {
             if (entry.getXMax() > xMax) {
-                maxLabel = (FieldExtendedSliderLabel) entry;
+                maxLabel = (SliderLabel) entry;
                 xMax = entry.getXMax();
             }
         }
@@ -126,9 +125,9 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
         // else insert the label aligned to the right of xMax
         record.collection.remove(label);
         if (maxLabel == null) {
-            label.setFieldExtended(x, 0, w);
+            label.setLabel(x, 0, w);
         } else {
-            label.setFieldExtended(maxLabel.getSequenceStartX(), maxLabel.getSequenceIndex() + 1, w);
+            label.setLabel(maxLabel.getSeqStartX(), maxLabel.getSeqIndex() + 1, w);
         }
         record.collection.insert(label);
 
