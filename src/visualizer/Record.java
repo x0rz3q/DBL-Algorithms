@@ -48,7 +48,7 @@ public class Record {
             switch (model) {
                 case ONE_SLIDER:
                     double shift = scanner.nextDouble();
-                    label = new SliderLabel(x, y, height,ratio, shift, 0);
+                    label = new SliderLabel(x, y, height, ratio, 0);
                     break;
                 case TWO_POS:
                     label = new PositionLabel(x, y, height, ratio, 0, DirectionEnum.fromString(scanner.next()));
