@@ -1,21 +1,18 @@
-package algorithms;
-
 /*
  * @author = Jeroen Schols
  */
 
+package algorithms;
 import Parser.DataRecord;
 import interfaces.AbstractAlgorithmInterface;
 import interfaces.models.GeometryInterface;
 import interfaces.models.LabelInterface;
 import models.FieldExtendedSliderLabel;
+import models.Point;
 import models.Rectangle;
 import models.SliderLabel;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
 
@@ -33,123 +30,107 @@ public class GreedySliderAlgorithm implements AbstractAlgorithmInterface {
         else if (x1 > x2) return 1;
         else if (y1 < y2) return 1;
         else if (y1 > y2) return -1;
-        else
-            throw new IllegalArgumentException("GreedySliderAlgorithm.comparator.compare() compares 2 labels with an overlapping POI");
+        else throw new IllegalArgumentException("GreedySliderAlgorithm.comparator.compare() compares 2 labels with an overlapping POI");
     };
+
 
     @Override
     public void solve(DataRecord record) {
 
-        // casts labels to sliderlabels in an new sorted List
-        List<FieldExtendedSliderLabel> sortedLabels = new ArrayList<>();
-        for (LabelInterface label : record.labels) {
-            if (label.getClass() != FieldExtendedSliderLabel.class)
-                throw new IllegalArgumentException("GreedySliderAlgorithm.solve() input record does not provide SliderLabels");
-            else sortedLabels.add((FieldExtendedSliderLabel) label);
-        }
-        sortedLabels.sort(comparator);
+        // casts labels to sliderlabels in a new sorted array
+        FieldExtendedSliderLabel[] sortedLabels = new FieldExtendedSliderLabel[record.labels.size()];
+        record.labels.toArray(sortedLabels);
+        Arrays.sort(sortedLabels, comparator);
 
-        double epsilon = 0;
+        // binary search over range [low, high]
         double low = 0;
         double high = Double.MAX_VALUE;
-        while (true) {
-            double mid = (low + high) / 2;
+        double mid = (low + high) / 2;
+        double prev; // value from previous binary search iteration
+        do {
+            prev = mid;
             if (solve(record, sortedLabels, mid)) {
                 low = mid;
             } else {
                 high = mid;
             }
+            mid = (low + high) / 2;
+        } while (mid != prev); // when difference between low-high becomes neglible, mid == prev
 
-            if (mid == epsilon) {
-                for (FieldExtendedSliderLabel label : sortedLabels) {
-                    setLabel(record, label, low);
-                }
-                record.height = low / record.aspectRatio;
-                return;
-            } else {
-                epsilon = mid;
-            }
-        }
+        // set the labels to the found optimal width
+        for (FieldExtendedSliderLabel label : sortedLabels) setLabel(record, label, low);
+        record.height = low / record.aspectRatio;
     }
 
     /**
-     * Finds a solution to the DataRecord and resets the labels afterwards
+     * Finds a solution of assigning labels with given width to the DataRecord problem and resets the labels afterwards
      *
      * @param record       {@link DataRecord}
-     * @param sortedLabels a List containing all labels sorted by this.comparator
+     * @param sortedLabels an array containing all labels sorted by this.comparator
      * @param width        double denoting the width assigned to each label
-     * @return whether there exists a solution
+     * @return whether there exists a solution assigning labels of given width
      * @pre sortedLabels is sorted by using this.comparator
-     * @post if there is a solution record.collection contains it, else record.collection holds an invalid solution
+     * @post all points have a label of width and height 0
      */
-    private boolean solve(DataRecord record, List<FieldExtendedSliderLabel> sortedLabels, double width) {
-        for (FieldExtendedSliderLabel label : sortedLabels) {
-            if (!setLabel(record, label, width)) {
-                for (SliderLabel l : sortedLabels) {
-                    record.collection.remove(l);
-                    l.setHeight(0);
-                    record.collection.insert(l);
-                    if (l == label) break;
-                }
-                return false;
-            }
+    private boolean solve(DataRecord record, FieldExtendedSliderLabel[] sortedLabels, double width) {
+        int i = 0;
+
+        // tries to set the labels in sorted order
+        // postcondition all labels that are set have an index strictly smaller than i
+        while (i < sortedLabels.length && setLabel(record, sortedLabels[i], width)) i++;
+
+        // removes all labels that were set
+        for (int j = 0; j < i; j++) {
+            record.collection.remove(sortedLabels[j]);
+            sortedLabels[j].setHeight(0);
+            record.collection.insert(sortedLabels[j]);
         }
-        for (FieldExtendedSliderLabel l : sortedLabels) {
-            record.collection.remove(l);
-            l.setHeight(0);
-            record.collection.insert(l);
-        }
-        return true;
+
+        // returns whether are labels were set
+        return i == sortedLabels.length;
     }
 
     /**
      * Makes a greedy choice for setting label to given width with a minimum slidervalue
      *
      * @param record {@link DataRecord}
-     * @param label  {@link SliderLabel}
-     * @param width  double denoting the width assigned to label
+     * @param label  {@link SliderLabel} the label to be set
+     * @param w      double denoting the width assigned to label
      * @return whether it is possible to have label be placeable in collection with given width
+     * @pre all previous set labels are labels with a smaller index when sorted with this.comparator
+     * @post
      */
-    private boolean setLabel(DataRecord record, FieldExtendedSliderLabel label, double width) {
-        Rectangle queryArea = new Rectangle(
-                label.getPOI().getX() - width,
-                label.getPOI().getY(),
-                label.getPOI().getX(),
-                label.getPOI().getY() + width / record.aspectRatio);
-        Collection<GeometryInterface> queryResult = record.collection.query2D(queryArea);
+    private boolean setLabel(DataRecord record, FieldExtendedSliderLabel label, double w) {
 
-        double xMax = label.getPOI().getX() - width;
-        FieldExtendedSliderLabel maxLabel = label;
+        int x = (int) label.getPOI().getX();
+        int y = (int) label.getPOI().getY();
+        double h = w / record.aspectRatio;
+
+        // queries the area covered when this label is placed completely to the left
+        Collection<GeometryInterface> queryResult = record.collection.query2D(new Rectangle(x - w, y, x,y + h));
+
+        // sets maxLabel to be the label most to the right of the queried area
+        FieldExtendedSliderLabel maxLabel = null;
+        double xMax = x - w;
         for (GeometryInterface entry : queryResult) {
-            if (entry != label && entry.getXMax() > xMax) {
+            if (entry.getXMax() > xMax) {
                 maxLabel = (FieldExtendedSliderLabel) entry;
                 xMax = entry.getXMax();
             }
         }
 
-        if (xMax > label.getPOI().getX()) return false;
+        // when maxLabel covers the POI, the label can not be placed
+        if (xMax > x) return false;
 
         // when the label should be placed completely to the right, check whether this is possible
-        if (xMax == label.getPOI().getX()) {
-            queryArea = new Rectangle(
-                    label.getPOI().getX(),
-                    label.getPOI().getY(),
-                    label.getPOI().getX() + width,
-                    label.getPOI().getY() + width / record.aspectRatio
-            );
-            queryResult = record.collection.query2D(queryArea);
-            for (GeometryInterface entry : queryResult) {
-                if (entry != label) {
-                    if (((FieldExtendedSliderLabel) entry).getShift() >= 1) return false;
-                }
-            }
-        }
+        if (xMax == x && !record.collection.query2D(new Rectangle(x,y,x+w,y+h)).isEmpty()) return false;
 
+        // else insert the label aligned to the right of xMax
         record.collection.remove(label);
-        if (xMax == label.getPOI().getX() - width) {
-            label.setFieldExtended((int) label.getPOI().getX(), 0, width);
+        if (maxLabel == null) {
+            label.setFieldExtended(x, 0, w);
         } else {
-            label.setFieldExtended(maxLabel.getSequenceStartX(), maxLabel.getSequenceIndex() + 1, width);
+            label.setFieldExtended(maxLabel.getSequenceStartX(), maxLabel.getSequenceIndex() + 1, w);
         }
         record.collection.insert(label);
 
