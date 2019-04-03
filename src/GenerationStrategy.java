@@ -40,9 +40,7 @@ abstract class GenerationStrategy {
 
             // check whether candidate is possible
             if (tree.query2D(candidateRectangle).size() == 0) {
-                rectangles.add(candidateRectangle);
-                tree.insert(candidateRectangle);
-                pointsTree.insert(candidate);
+                fullInsert(candidateRectangle);
             }
         }
 
@@ -61,18 +59,6 @@ abstract class GenerationStrategy {
 
     // TODO provide contract
     abstract Rectangle generateCandidateRectangle(Point candidate);
-
-    /**
-     * Creates Array containing elements of returnArrayList and returns it
-     *
-     * @param returnArrayList
-     * @return array containing elements of returnArrayList
-     */
-    Rectangle[] toArray(ArrayList<Rectangle> returnArrayList) {
-        Rectangle[] returnArray = new Rectangle[returnArrayList.size()];
-        returnArray = returnArrayList.toArray(returnArray);
-        return returnArray;
-    }
 
     /**
      * Adds the specified Rectangle object 'rect' to all datastructures.
