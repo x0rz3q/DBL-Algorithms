@@ -79,6 +79,6 @@ def visualize(stamp):
     visualize_overlaps(hard, x, "hard")
     visualize_overlaps(easy, x, "easy")
     axis_and_title(x_label, "#overlaps", "Overlaps")
-    saveplot(str(hard_name).partition('.')[0])
+    saveplot(str(hard_name).partition('.')[0] + "_" + stamp)
 
 visualize(time.strftime("%Y%m%d-%H%M%S"))
