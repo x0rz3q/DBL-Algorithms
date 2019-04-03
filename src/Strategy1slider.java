@@ -1,8 +1,5 @@
-import Collections.QuadTree;
 import models.Point;
 import models.Rectangle;
-
-import java.util.ArrayList;
 
 // Concrete generation strategy for 1slider
 class Strategy1slider extends GenerationStrategy {
@@ -21,7 +18,7 @@ class Strategy1slider extends GenerationStrategy {
         }
     }
 
-    void generateStartWidth() {
+    private void generateStartWidth() {
 
         // Generate starting location
         double startX = data.xGenerator.sample((int) Math.ceil(width), (int) Math.floor(10000 - 3 * width));
@@ -50,7 +47,7 @@ class Strategy1slider extends GenerationStrategy {
         fullInsert(blockRight);
     }
 
-    void generateStartHeight() {
+    private void generateStartHeight() {
 
         // Generate starting location
         double startX = data.xGenerator.sample((int) Math.ceil(width + 1), (int) Math.floor(9999 - width));

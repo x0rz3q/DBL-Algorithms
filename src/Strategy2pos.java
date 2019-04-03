@@ -1,8 +1,5 @@
-import Collections.QuadTree;
 import models.Point;
 import models.Rectangle;
-
-import java.util.ArrayList;
 
 import static java.lang.Math.ceil;
 
