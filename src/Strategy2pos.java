@@ -9,44 +9,18 @@ import static java.lang.Math.ceil;
 // Concrete generation strategy for 2pos
 class Strategy2pos extends GenerationStrategy {
     @Override
-    Point[] generate() {
-        int counter = 0;
-        double width = data.result * data.ratio;
+    Rectangle generateCandidateRectangle(Point candidate) {
+        boolean useLeft = rand.nextBoolean();
 
-        generateStart2();
-
-        while (rectangles.size() < data.n && counter < data.n * 1e5) {
-            counter++;
-
-            Point candidate = new Point(data.xGenerator.sample(0, 10000), data.yGenerator.sample(0, 10000));
-            while (pointsTree.query2D(new Rectangle(candidate.getX() - 0.5, candidate.getY() - 0.5, candidate.getX() + 0.5, candidate.getY() + 0.5)).size() > 0) {
-                candidate = new Point(data.xGenerator.sample((int) ceil(width), (int) (10000 - ceil(width))), data.yGenerator.sample((int) ceil(width), (int) (10000 - ceil(width))));
-            }
-            boolean useLeft = rand.nextBoolean();
-
-            Rectangle candidateRectangle;
-            if (useLeft) {
-                candidateRectangle = new Rectangle(candidate.getX() - width, candidate.getY(), candidate.getX(), candidate.getY() + height, candidate);
-            } else {
-                candidateRectangle = new Rectangle(candidate.getX(), candidate.getY(), candidate.getX() + width, candidate.getY() + height, candidate);
-            }
-
-            if (tree.query2D(candidateRectangle).size() == 0) {
-                rectangles.add(candidateRectangle);
-                tree.insert(candidateRectangle);
-                pointsTree.insert(candidate);
-            }
+        if (useLeft) {
+            return new Rectangle(candidate.getX() - width, candidate.getY(), candidate.getX(), candidate.getY() + height, candidate);
+        } else {
+            return new Rectangle(candidate.getX(), candidate.getY(), candidate.getX() + width, candidate.getY() + height, candidate);
         }
-
-        Point[] associatedPoints = new Point[rectangles.size()];
-        for (int i = 0; i < rectangles.size(); i++) {
-            associatedPoints[i] = (Point) rectangles.get(i).getPoI();
-        }
-
-        return associatedPoints;
     }
 
-    void generateStart2() {
+    @Override
+    void generateStart() {
         // Constructing initial point and rectangles
         Point startPoint = new Point(data.xGenerator.sample(3 * (int) ceil(width), (int) (10000 - 3 * ceil(width))), data.yGenerator.sample((int) ceil(height), (int) (10000 - ceil(height))));
         Rectangle rightRectangle = new Rectangle(startPoint.getX(), startPoint.getY(), startPoint.getX() + width, startPoint.getY() + height, startPoint);
@@ -82,10 +56,6 @@ class Strategy2pos extends GenerationStrategy {
         pointsTree.insert(blocker);
     }
 
-    @Override
-    Rectangle[] generateStart() {
-        return new Rectangle[]{};
-    }
 
     Strategy2pos(TestData data) {
         this.data = data;
