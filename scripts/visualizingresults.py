@@ -30,13 +30,13 @@ def visualize_time(r, x, diff):
     plt.plot(x, apply(statistics.median, r, x, 'Time'), label=diff + "_" + 'median')
     plt.legend(loc='upper left')
 
-
-# saves currently opened plot and closes it
-def saveplot(filename, xlabel, ylabel, title):
+def axis_and_title(xlabel, ylabel, title):
     plt.title(title)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
 
+# saves currently opened plot and closes it
+def saveplot(filename):
     plt.savefig(f"{output_dir}{filename}.png")
     plt.close()
 
@@ -62,15 +62,23 @@ def visualize_overlaps(r, x, diff):
 def visualize(stamp):
     hard, easy = get_dictionary(file_loc, hard_name, easy_name)
     x = sorted([int(labels) for labels in hard.keys()])
+    x_label = "|P|"
 
+    plt.figure(figsize=(20, 5))
+    plt.subplot(1, 3, 1)
     visualize_time(hard, x, "hard")
     visualize_time(easy, x, "easy")
-    saveplot(f"time_{stamp}", "|P|", "time(ms)", "Running time")
+    axis_and_title(x_label, "time(ms)", "Running time")
+
+    plt.subplot(1, 3, 2)
     visualize_optimality(hard, x, "hard")
     visualize_optimality(easy, x, "easy")
-    saveplot(f"optimality_{stamp}", "|P|", "h/h_opt", "Optimality")
+    axis_and_title(x_label, "h/h_opt", "Optimality")
+
+    plt.subplot(1, 3, 3)
     visualize_overlaps(hard, x, "hard")
     visualize_overlaps(easy, x, "easy")
-    saveplot(f"overlaps_{stamp}", "|P|", "#overlaps", "Overlaps")
+    axis_and_title(x_label, "#overlaps", "Overlaps")
+    saveplot(str(hard_name).partition('.')[0])
 
 visualize(time.strftime("%Y%m%d-%H%M%S"))
