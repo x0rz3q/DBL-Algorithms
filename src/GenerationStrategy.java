@@ -18,7 +18,11 @@ abstract class GenerationStrategy {
     double height;
     double width;
 
-    // TODO provide contract
+    /**
+     * Generates testcase fullfiling the requirements as set in the 'data' TestData record
+     * @pre data != null && data == valid
+     * @return array of test-points
+     */
     Point[] generate() {
         int counter = 0;
         double width = data.result * data.ratio;
@@ -54,10 +58,16 @@ abstract class GenerationStrategy {
     }
 
 
-    // TODO provide contract
+    /**
+     * Generates starting set of rectangles determining the optimal height
+     */
     abstract void generateStart();
 
-    // TODO provide contract
+    /**
+     * Generates a possible rectangle associated with the specified point
+     * @param candidate point for which a rectangle is to be generated
+     * @return generated Rectangle object
+     */
     abstract Rectangle generateCandidateRectangle(Point candidate);
 
     /**
