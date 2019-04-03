@@ -1,6 +1,5 @@
 import models.Point;
 import models.Rectangle;
-import Collections.QuadTree;
 
 import java.util.*;
 
@@ -9,57 +8,22 @@ import static java.lang.Math.ceil;
 // Concrete generation strategy for 4pos
 class Strategy4pos extends GenerationStrategy {
     @Override
-    Point[] generate() {
-        // Add starting rectangles
-        Rectangle[] startingRectangles = generateStart();
-        for (Rectangle r : startingRectangles) {
-            rectangles.add(r);
-            tree.insert(r);
-            pointsTree.insert(new Rectangle(r.getPoI(), r.getPoI(), r.getPoI()));
+    Rectangle generateCandidateRectangle(Point candidate) {
+        int randOrientation = rand.nextInt(4);
+
+        if (randOrientation == 0) { // NW
+            return new Rectangle(candidate.getX() - width, candidate.getY(), candidate.getX(), candidate.getY() + height);
+        } else if (randOrientation == 1) { // NE
+            return new Rectangle(candidate.getX(), candidate.getY(), candidate.getX() + width, candidate.getY() + height);
+        } else if (randOrientation == 2) { // SW
+            return new Rectangle(candidate.getX() - width, candidate.getY() - height, candidate.getX(), candidate.getY());
+        } else { // SE
+            return new Rectangle(candidate.getX(), candidate.getY() - height, candidate.getX() + width, candidate.getY());
         }
-        int counter = 0;
-
-        while (rectangles.size() < data.n && counter < data.n * 1e7) {
-            counter++;
-
-            Point pointGuess = new Point(data.xGenerator.sample(0, 10000), data.yGenerator.sample(0, 10000));
-
-            while (pointsTree.query2D(new Rectangle(pointGuess.getX() - 0.5, pointGuess.getY() - 0.5, pointGuess.getX() + 0.5, pointGuess.getY() + 0.5)).size() > 0) {
-                pointGuess = new Point(data.xGenerator.sample(0, 10000), data.yGenerator.sample(0, 10000));
-            }
-            int randOrientation = rand.nextInt(4);
-
-            Rectangle guess;
-            if (randOrientation == 0) { // NW
-                guess = new Rectangle(pointGuess.getX() - width, pointGuess.getY(), pointGuess.getX(), pointGuess.getY() + height);
-            } else if (randOrientation == 1) { // NE
-                guess = new Rectangle(pointGuess.getX(), pointGuess.getY(), pointGuess.getX() + width, pointGuess.getY() + height);
-            } else if (randOrientation == 2) { // SW
-                guess = new Rectangle(pointGuess.getX() - width, pointGuess.getY() - height, pointGuess.getX(), pointGuess.getY());
-            } else { // SE
-                guess = new Rectangle(pointGuess.getX(), pointGuess.getY() - height, pointGuess.getX() + width, pointGuess.getY());
-            }
-
-            if (tree.query2D(guess).size() == 0) {
-                guess.setPoI(pointGuess);
-                pointsTree.insert(new Rectangle(pointGuess, pointGuess, pointGuess));
-                rectangles.add(guess);
-                tree.insert(guess);
-            }
-        }
-
-        Point[] associatedPoints = new Point[rectangles.size()];
-        for (int i = 0; i < rectangles.size(); i++) {
-            associatedPoints[i] = (Point) rectangles.get(i).getPoI();
-        }
-
-        return associatedPoints;
     }
 
     @Override
-    Rectangle[] generateStart() {
-        // ArrayList storing rectangles to be returned
-        ArrayList<Rectangle> rectangles = new ArrayList<>();
+    void generateStart() {
 
         // initial point
         Point startPoint = new Point(data.xGenerator.sample(3 * (int) ceil(width), (int) (10000 - 3 * ceil(width))), data.yGenerator.sample(3 * (int) ceil(width), (int) (10000 - 3 * ceil(width))));
@@ -88,26 +52,16 @@ class Strategy4pos extends GenerationStrategy {
         }
 
         sel.setPoI(startPoint);
-        rectangles.add(sel);
+        fullInsert(sel);
 
         // create invalidators for other candidates startPoint
         for (int i : map.keySet()) {
             if (i != selectedDirection) {
                 Point[] internal = map.get(i).getInternal();
                 Point randInternalPoint = internal[rand.nextInt(internal.length)];
-                Rectangle invalidator;
 
-                if (i == 0) {
-                    invalidator = new Rectangle(randInternalPoint.getX(), randInternalPoint.getY(), randInternalPoint.getX() + width, randInternalPoint.getY() + height, randInternalPoint);
-                } else if (i == 1) {
-                    invalidator = new Rectangle(randInternalPoint.getX() - width, randInternalPoint.getY(), randInternalPoint.getX(), randInternalPoint.getY() + height, randInternalPoint);
-                } else if (i == 2) {
-                    invalidator = new Rectangle(randInternalPoint.getX() - width, randInternalPoint.getY() - height, randInternalPoint.getX(), randInternalPoint.getY(), randInternalPoint);
-                } else {
-                    invalidator = new Rectangle(randInternalPoint.getX(), randInternalPoint.getY() - height, randInternalPoint.getX() + width, randInternalPoint.getY(), randInternalPoint);
-                }
-
-                rectangles.add(invalidator);
+                Rectangle invalidator = getDirectionalRectangle(randInternalPoint, i);
+                fullInsert(invalidator);
             }
         }
 
@@ -126,20 +80,30 @@ class Strategy4pos extends GenerationStrategy {
         Point randBoundPoint = boundarySelected[rand.nextInt(boundarySelected.length)];
 
         // create blocker
-        Rectangle blocker;
-        if (selectedDirection == 0) {
-            blocker = new Rectangle(randBoundPoint.getX(), randBoundPoint.getY(), randBoundPoint.getX() + width, randBoundPoint.getY() + height, randBoundPoint);
-        } else if (selectedDirection == 1) {
-            blocker = new Rectangle(randBoundPoint.getX() - width, randBoundPoint.getY(), randBoundPoint.getX(), randBoundPoint.getY() + height, randBoundPoint);
-        } else if (selectedDirection == 2) {
-            blocker = new Rectangle(randBoundPoint.getX() - width, randBoundPoint.getY() - height, randBoundPoint.getX(), randBoundPoint.getY(), randBoundPoint);
-        } else {
-            blocker = new Rectangle(randBoundPoint.getX(), randBoundPoint.getY() - height, randBoundPoint.getX() + width, randBoundPoint.getY(), randBoundPoint);
+        Rectangle blocker = getDirectionalRectangle(randBoundPoint, selectedDirection);
+        fullInsert(blocker);
+    }
+
+    /**
+     * Creates rectangle based on direction according to 4pos model
+     * @pre direction \in {0, 1, 2, 3}
+     * @param point
+     * @param direction
+     * @return created rectangle
+     */
+    private Rectangle getDirectionalRectangle(Point point, int direction) throws IllegalArgumentException {
+        switch (direction) {
+            case 0:
+                return new Rectangle(point.getX(), point.getY(), point.getX() + width, point.getY() + height, point);
+            case 1:
+                return new Rectangle(point.getX() - width, point.getY(), point.getX(), point.getY() + height, point);
+            case 2:
+                return new Rectangle(point.getX() - width, point.getY() - height, point.getX(), point.getY(), point);
+            case 3:
+                return new Rectangle(point.getX(), point.getY() - height, point.getX() + width, point.getY(), point);
+            default:
+                throw new IllegalArgumentException("direction out of bounds");
         }
-
-        rectangles.add(blocker);
-
-        return toArray(rectangles);
     }
 
     Strategy4pos(TestData data) {

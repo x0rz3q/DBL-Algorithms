@@ -74,4 +74,16 @@ abstract class GenerationStrategy {
         return returnArray;
     }
 
+    /**
+     * Adds the specified Rectangle object 'rect' to all datastructures.
+     * @pre rect != null && rect.getPoI() != null
+     * @param rect
+     * @post rectangles.contains(rect) && tree.contains(rect) && pointsTree.contains(rect.getPoI())
+     */
+    void fullInsert(Rectangle rect) {
+        rectangles.add(rect);
+        tree.insert(rect);
+        pointsTree.insert(rect.getPoI());
+    }
+
 }
