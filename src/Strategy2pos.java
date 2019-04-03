@@ -10,7 +10,6 @@ import static java.lang.Math.ceil;
 class Strategy2pos extends GenerationStrategy {
     @Override
     Point[] generate() {
-
         int counter = 0;
         double width = data.result * data.ratio;
 
