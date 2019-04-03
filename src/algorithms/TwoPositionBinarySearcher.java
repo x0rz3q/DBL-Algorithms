@@ -28,7 +28,7 @@ public class TwoPositionBinarySearcher extends BinarySearcher {
     double[] getSolutionSpace(DataRecord record) {
         TwoPositionDistance distanceFunction = new TwoPositionDistance();
         distanceFunction.setAspectRatio(record.aspectRatio);
-        int k = 8; // number of nearest neighbours to search for
+        int k = 3; // number of nearest neighbours to search for
         if (record.labels.size() < 9) k = record.labels.size() - 1;
         Set<Double> conflictSizes = new HashSet<>();
         for (LabelInterface label : record.labels) {

@@ -10,36 +10,20 @@ import static java.lang.Math.ceil;
 class Strategy4pos extends GenerationStrategy {
     @Override
     Point[] generate() {
-        ArrayList<Rectangle> rectangles = new ArrayList<>();
-
         // Add starting rectangles
         Rectangle[] startingRectangles = generateStart();
         for (Rectangle r : startingRectangles) {
             rectangles.add(r);
-        }
-        int counter = 0;
-
-        QuadTree tree = new QuadTree();
-        QuadTree pointsTree = new QuadTree();
-        for (Rectangle r : rectangles) {
             tree.insert(r);
             pointsTree.insert(new Rectangle(r.getPoI(), r.getPoI(), r.getPoI()));
         }
+        int counter = 0;
 
         while (rectangles.size() < data.n && counter < data.n * 1e7) {
             counter++;
 
-
             Point pointGuess = new Point(data.xGenerator.sample(0, 10000), data.yGenerator.sample(0, 10000));
-            /*boolean noNW = pointsTree.query2D(new Rectangle(pointGuess.getX() - 0.5, pointGuess.getY() + height - 0.5, pointGuess.getX() + 0.5, pointGuess.getY() + height + 0.5)).size() > 0;
-            boolean noNE = pointsTree.query2D(new Rectangle(pointGuess.getX() + width - 0.5, pointGuess.getY() + height - 0.5, pointGuess.getX() + width + 0.5, pointGuess.getY() + height + 0.5)).size() > 0;
-            boolean noSE = pointsTree.query2D(new Rectangle(pointGuess.getX() + width - 0.5, pointGuess.getY() - 0.5, pointGuess.getX() + width + 0.5, pointGuess.getY() + 0.5)).size() > 0;
-            boolean noSW = pointsTree.query2D(new Rectangle(pointGuess.getX() - 0.5, pointGuess.getY() - 0.5, pointGuess.getX() + 0.5, pointGuess.getY() + 0.5)).size() > 0;
 
-            while (noNE && noNW && noSE && noSW) {
-                pointGuess = new Point(data.xGenerator.sample(0, 10000), data.yGenerator.sample(0, 10000));
-            }
-            */
             while (pointsTree.query2D(new Rectangle(pointGuess.getX() - 0.5, pointGuess.getY() - 0.5, pointGuess.getX() + 0.5, pointGuess.getY() + 0.5)).size() > 0) {
                 pointGuess = new Point(data.xGenerator.sample(0, 10000), data.yGenerator.sample(0, 10000));
             }
@@ -62,30 +46,6 @@ class Strategy4pos extends GenerationStrategy {
                 rectangles.add(guess);
                 tree.insert(guess);
             }
-
-
-            /*
-            Rectangle guess = new Rectangle(pointGuess.getX(), pointGuess.getY(), pointGuess.getX() + width, pointGuess.getY() + height);
-            if (tree.query2D(guess).size() == 0) {
-                int randCorner = rand.nextInt(4);
-
-                guess.setPoI(pointGuess);
-
-                if (randCorner == 0) {
-                    guess.setPoI(pointGuess);
-                } else if (randCorner == 1) {
-                    guess.setPoI(new Point(pointGuess.getX() + width, pointGuess.getY()));
-                } else if (randCorner == 2) {
-                    guess.setPoI(new Point(pointGuess.getX(), pointGuess.getY() + height));
-                } else {
-                    guess.setPoI(new Point(pointGuess.getX() + width, pointGuess.getY()+ width));
-                }
-
-                pointsTree.insert(new Rectangle(pointGuess, pointGuess, pointGuess));
-                rectangles.add(guess);
-                tree.insert(guess);
-            }
-            */
         }
 
         Point[] associatedPoints = new Point[rectangles.size()];
@@ -179,9 +139,7 @@ class Strategy4pos extends GenerationStrategy {
 
         rectangles.add(blocker);
 
-        Rectangle[] rectangleArray = new Rectangle[rectangles.size()];
-        rectangleArray = rectangles.toArray(rectangleArray);
-        return rectangleArray;
+        return toArray(rectangles);
     }
 
     Strategy4pos(TestData data) {

@@ -8,17 +8,13 @@ import java.util.ArrayList;
 class Strategy1slider extends GenerationStrategy {
     @Override
     Point[] generate() {
-        ArrayList<Rectangle> rectangles = new ArrayList<>();
-
-        // Add starting rectangles
+                // Add starting rectangles
         Rectangle[] startingRectangles = generateStart();
         for (Rectangle r : startingRectangles) {
             rectangles.add(r);
         }
         int counter = 0;
 
-        QuadTree tree = new QuadTree();
-        QuadTree pointsTree = new QuadTree();
         for (Rectangle r : rectangles) {
             tree.insert(r);
             pointsTree.insert(new Rectangle(r.getPoI(), r.getPoI(), r.getPoI()));
