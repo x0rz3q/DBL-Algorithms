@@ -6,7 +6,7 @@ class Strategy1slider extends GenerationStrategy {
     @Override
     Rectangle generateCandidateRectangle(Point candidate) {
         double shift = rand.nextDouble();
-        return new Rectangle(candidate.getX() - (shift - 1.0) * width, candidate.getY(), candidate.getX() + shift * width, candidate.getY() + height, candidate);
+        return new Rectangle(candidate.getX() + (shift - 1.0) * width, candidate.getY(), candidate.getX() + shift * width, candidate.getY() + height, candidate);
     }
 
     @Override
