@@ -6,7 +6,7 @@ class Strategy1slider extends GenerationStrategy {
     @Override
     Rectangle generateCandidateRectangle(Point candidate) {
         double shift = rand.nextDouble();
-        return new Rectangle(candidate.getX() - (shift - 1.0) * width, candidate.getY(), candidate.getX() + shift * width, candidate.getY() + height, candidate);
+        return new Rectangle(candidate.getX() + (shift - 1.0) * width, candidate.getY(), candidate.getX() + shift * width, candidate.getY() + height, candidate);
     }
 
     @Override
@@ -31,20 +31,23 @@ class Strategy1slider extends GenerationStrategy {
         Rectangle blockRight = new Rectangle(startX + 2 * width, startY, startX + 3 * width, startY + height);
 
         // Assign points
-        Point[] startLeftPoints = startLeft.getBoundaryStrict(false, false, true, false);
-        Point[] startRightPoints = startRight.getBoundaryStrict(false, false, true, false);
-        int indexLeft = rand.nextInt(startLeftPoints.length);
-        int indexRight = rand.nextInt(startRightPoints.length);
-        startLeft.setPoI(startLeftPoints[indexLeft]);
-        startRight.setPoI(startRightPoints[indexRight]);
+        startLeft.setPoI(generateRandSouthStrict(startLeft));
+        startRight.setPoI(generateRandSouthStrict(startRight));
 
         blockLeft.setPoI(blockLeft.getBottomRight());
         blockRight.setPoI(blockRight.getBottomLeft());
 
+        // Insert into data structures
         fullInsert(startLeft);
         fullInsert(startRight);
         fullInsert(blockLeft);
         fullInsert(blockRight);
+    }
+
+    private Point generateRandSouthStrict(Rectangle rect) {
+        Point[] candidatePoints = rect.getBoundaryStrict(false, false, true, false);
+        int randIndex = rand.nextInt(candidatePoints.length);
+        return candidatePoints[randIndex];
     }
 
     private void generateStartHeight() {
