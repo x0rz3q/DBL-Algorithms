@@ -5,72 +5,85 @@ import subprocess
 import argparse
 
 parser = argparse.ArgumentParser(description='')
-parser.add_argument('--project', help='Project Location', required=True)
+parser.add_argument('-o', '--outputname', help='output file name', required=True)
 args = parser.parse_args();
+filename = args.outputname
 
-filename = "TestCaseSpecification.txt"
-algorithms = ["2pos"] # algorithms to generate tests for
+algorithms = ["2pos", "4pos"] # algorithms to generate tests for
+difficulties = ["hard", "easy"]
 # model, npoints, ratio, result xgen, ygen
-point_amounts = [10, 100, 1000, 10000, 15000, 20000, 25000]
-result_range = [2, 12] # range of picking random result
-amount = 100 # amount of cases per point amount
-
-project_location = os.path.join(args.project, '')
-
-test_location = project_location +"profiling/tests"
-class_files = project_location + "out/make"
-
+point_amounts = [1000, 2500, 5000, 7500, 10000, 12500, 15000]
+amount = 100 # amount of cases per point amount in a difficulty. 
 # currently assume uniform generator
-generator = "Uniform" # when more generators are used, adjust regex at the bottom of the script
-lowerbound_range = [10,500]
-upperbound_range = [5000,10000]
+generator = "Geometric" # when more generators are used, adjust regex at the bottom of the script
+def getEasy():
+    return {
+        1000 : [random.uniform(0.01, 0.06), random.uniform(0.01, 0.06)],
+        2500 : [random.uniform(0.01, 0.04), random.uniform(0.01, 0.04)],
+        5000 : [random.uniform(0.01, 0.03), random.uniform(0.01, 0.03)],
+        7500 : [random.uniform(0.01, 0.02), random.uniform(0.01, 0.02)],
+        10000 : [random.uniform(0.001, 0.01), random.uniform(0.001, 0.01)],
+        12500 : [random.uniform(0.001, 0.009), random.uniform(0.001, 0.009)],
+        15000 : [random.uniform(0.001, 0.009), random.uniform(0.001, 0.009)]
+    }
+def getHard():
+    return {
+        1000 : [random.uniform(0.09, 0.11),random.uniform(0.09, 0.11)],
+        2500 : [random.uniform(0.055, 0.065),random.uniform(0.055, 0.065)],
+        5000 : [random.uniform(0.03, 0.04),random.uniform(0.03, 0.04)],
+        7500 : [random.uniform(0.02, 0.03),random.uniform(0.02, 0.03)],
+        10000 : [random.uniform(0.02, 0.025),random.uniform(0.02, 0.025)],
+        12500 : [random.uniform(0.015, 0.025),random.uniform(0.015, 0.025)],
+        15000 : [random.uniform(0.015, 0.020),random.uniform(0.015, 0.020)]
+    }
 
-def generatorGen():
-    lower = random.randint(lowerbound_range[0], lowerbound_range[1]) 
-    return lower, random.randint(lower + upperbound_range[0], upperbound_range[1]) 
+def getProbability(nPoints, diff):
+    if diff == "hard":
+        return getHard()[nPoints]
+    elif diff == "easy":
+        return getEasy()[nPoints]
 
-def divisorGenerator(n):
-    divisors = []
-    for i in range(1, int(math.sqrt(n) + 1)):
-        if n % i == 0:
-            if i*i != n:
-                divisors.append(i)
+def getResult(algo, ratio):
+    return random.choice([3])
 
-    return divisors
+def getRatio(n):
+    return 0.5
 
-def getRatio(result):
-    return random.randint(1, max(int(result/2), 1)) 
-
-tests = [] # contains the tests 
+tests = {}
 for algo in algorithms:
-    for nPoints in point_amounts:
-        for _ in range(amount): # generate tests
-            test = ""
-            test += algo + " "
-            test += str(nPoints) + " " 
-            result = random.randint(result_range[0], result_range[1])
-            ratio = getRatio(result)
-            test += str(ratio) + " "
-            test += str(result) + " "
-            lower, upper = generatorGen()
-            for g in range(2):
-                test += generator + " "
-                test += str(lower) + " " + str(upper) + " "
-            test.strip()
-            tests.append(test)
+    easy_tests = [] # contains the tests 
+    hard_tests = [] # contains the tests 
+    for diff in difficulties:
+        for nPoints in point_amounts:
+            for _ in range(amount): # generate tests
+                test = ""
+                test += algo + " "
+                test += str(nPoints) + " "
+                ratio = getRatio(nPoints)
+                result = getResult(algo, ratio)
+                test += str(ratio) + " "
+                test += str(result) + " "
 
-# write the tests to a file
-f = open(filename, "w+")
-f.write("complex\n")
-for t in tests:
-    f.write(t + "\n")
-f.close()
+                probs = getProbability(nPoints, diff)
+                test += generator + " " + str(probs[0]) + " "
+                test += generator + " " + str(probs[1])
+                test.strip()
 
-os.chdir(project_location)
-main_command = ["make", "testgen"]
-subprocess.check_output(main_command)
-subprocess.check_output(["mkdir", "-p", test_location])
+                if diff == "hard":
+                    hard_tests.append(test)
+                else:
+                    easy_tests.append(test)
+        res = []
+        if diff == "hard":
+            res = hard_tests
+        else:
+            res = easy_tests
+        tests[algo + diff] = res
 
-# move all files
-# if you use wildcards you need to set shell=True
-subprocess.check_output(["mv", f"{project_location}*{generator}*", test_location], shell=True)
+for algo in algorithms:
+    for diff in difficulties:
+        f = open(f"{algo}_{diff}_{filename}", "w+")
+        f.write("complex\n")
+        for t in tests[algo+diff]:
+            f.write(t + "\n")
+        f.close()
