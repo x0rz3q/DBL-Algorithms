@@ -12,13 +12,13 @@ class Strategy4pos extends GenerationStrategy {
         int randOrientation = rand.nextInt(4);
 
         if (randOrientation == 0) { // NW
-            return new Rectangle(candidate.getX() - width, candidate.getY(), candidate.getX(), candidate.getY() + height);
+            return new Rectangle(candidate.getX() - width, candidate.getY(), candidate.getX(), candidate.getY() + height, candidate);
         } else if (randOrientation == 1) { // NE
-            return new Rectangle(candidate.getX(), candidate.getY(), candidate.getX() + width, candidate.getY() + height);
+            return new Rectangle(candidate.getX(), candidate.getY(), candidate.getX() + width, candidate.getY() + height, candidate);
         } else if (randOrientation == 2) { // SW
-            return new Rectangle(candidate.getX() - width, candidate.getY() - height, candidate.getX(), candidate.getY());
+            return new Rectangle(candidate.getX() - width, candidate.getY() - height, candidate.getX(), candidate.getY(), candidate);
         } else { // SE
-            return new Rectangle(candidate.getX(), candidate.getY() - height, candidate.getX() + width, candidate.getY());
+            return new Rectangle(candidate.getX(), candidate.getY() - height, candidate.getX() + width, candidate.getY(), candidate);
         }
     }
 
