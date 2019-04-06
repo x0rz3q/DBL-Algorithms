@@ -45,7 +45,7 @@ def visualize_optimality(r, x, diff):
     optim_dict = {}
     y = []
     for label in x:
-        optim_dict[label] = [float(h) / 10.0 for h in r[str(label)]['Height']]
+        optim_dict[label] = [float(r[str(label)]['Height'][h]) / float(r[str(label)]['Max label height'][h])  for h in range(len(r[str(label)]['Height']))]
 
     plt.plot(x, [statistics.mean(optim_dict[labels]) for labels in x], label='mean of ' + diff )
     plt.plot(x, [statistics.median(optim_dict[labels]) for labels in x], label='median of ' + diff)
@@ -68,22 +68,21 @@ def visualize(stamp):
     x = sorted([int(labels) for labels in hard.keys()])
     x_label = "|P|"
 
-    plt.figure(figsize=(10, 5))
-    plt.subplot(1, 2, 1)
+    plt.figure(figsize=(15, 5))
+    plt.subplot(1, 3, 1)
     visualize_time(hard, x, "hard")
-    plt.subplot(1, 2, 2)
     visualize_time(easy, x, "easy")
     axis_and_title(x_label, "time(ms)", "Running time")
 
-    # plt.subplot(1, 3, 2)
-    # visualize_optimality(hard, x, "hard")
-    # visualize_optimality(easy, x, "easy")
-    # axis_and_title(x_label, "h/h_opt", "Optimality")
+    plt.subplot(1, 3, 2)
+    visualize_optimality(hard, x, "hard")
+    visualize_optimality(easy, x, "easy")
+    axis_and_title(x_label, "h/h_opt", "Optimality")
 
-    # plt.subplot(1, 3, 3)
-    # # visualize_overlaps(hard, x, "hard")
-    # visualize_overlaps(easy, x, "easy")
-    # axis_and_title(x_label, "#overlaps", "Overlaps")
+    plt.subplot(1, 3, 3)
+    # visualize_overlaps(hard, x, "hard")
+    visualize_overlaps(easy, x, "easy")
+    axis_and_title(x_label, "#overlaps", "Overlaps")
     saveplot(str(hard_name).partition('.')[0] + "_" + stamp)
 
 visualize(time.strftime("%Y%m%d-%H%M%S"))
