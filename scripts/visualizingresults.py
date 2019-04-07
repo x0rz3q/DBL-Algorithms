@@ -80,7 +80,7 @@ def visualize(stamp):
     axis_and_title(x_label, "h/h_opt", "Optimality")
 
     plt.subplot(1, 3, 3)
-    # visualize_overlaps(hard, x, "hard")
+    visualize_overlaps(hard, x, "hard")
     visualize_overlaps(easy, x, "easy")
     axis_and_title(x_label, "#overlaps", "Overlaps")
     saveplot(str(hard_name).partition('.')[0] + "_" + stamp)
