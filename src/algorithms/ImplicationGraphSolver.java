@@ -3,27 +3,6 @@ package algorithms;
 import java.util.*;
 
 public class ImplicationGraphSolver {
-    // variable for dfs to keep track of visited nodes
-    private boolean[] visited;
-    private boolean[] visitedInv;
-    private Stack<Integer> s;
-
-    // stores for each node the component it is in
-    private int[] scc;
-    private List<Integer> componentsInReverseTopOrder;
-
-    // keep track of current component
-    private int counter;
-
-    // edges of implication graph and its inverse
-    private List<Integer>[] adj;
-    private List<Integer>[] adjInv;
-
-    private int noPoints;
-
-    // keeps track of which rectangles have been set in getSolution()
-    private boolean[] isSet;
-
     /**
      * we assume that we have a 2pos problem with n nodes
      *
@@ -39,48 +18,16 @@ public class ImplicationGraphSolver {
      * @return \return == true iff the implication graph has a valid solution
      */
     public boolean isSolvable(List<Integer>[] adj, List<Integer>[] adjInv) {
-        noPoints = adj.length / 2;
+        int noPoints = adj.length / 2;
+        int[] scc = createComponents(adj, adjInv);
 
-        createComponents(adj, adjInv);
-
+        // if node and negation are in same scc, return false
         for (int i = 0; i < noPoints; i++) {
             if (scc[i] == scc[i + noPoints]) {
                 return false;
             }
         }
-
         return true;
-    }
-
-    private void createComponents(List<Integer>[] adj, List<Integer>[] adjInv) {
-        //get parameters
-        this.adj = adj;
-        this.adjInv = adjInv;
-
-        // initialize variables
-        noPoints = adj.length / 2;
-        visited = new boolean[noPoints * 2];
-        visitedInv = new boolean[noPoints * 2];
-        s = new Stack<>();
-        scc = new int[noPoints * 2];
-        counter = 0;
-        componentsInReverseTopOrder = new ArrayList<>();
-        // Step 1: dfs on original graph
-        for (int i = 0; i < noPoints * 2; i++) {
-            if (!visited[i]) {
-                dfsFirst(i);
-            }
-        }
-
-        // Step 2: traverse inverse graph based on s
-        while (!s.empty()) {
-            int n = s.pop();
-            if (!visitedInv[n]) {
-                componentsInReverseTopOrder.add(0, n);
-                dfsSecond(n);
-                counter++;
-            }
-        }
     }
 
     /**
@@ -100,23 +47,63 @@ public class ImplicationGraphSolver {
      * @pre isSolvable(adj, adjInv)
      */
     public boolean[] getSolution(List<Integer>[] adj, List<Integer>[] adjInv) {
-        noPoints = adj.length / 2;
+        int noPoints = adj.length / 2;
+        // final orientation for label of each point
         boolean[] solution = new boolean[noPoints];
-
-        createComponents(adj, adjInv);
+        List<Integer> componentsInReverseTopOrder = new ArrayList<>();
+        int[] scc = createComponents(adj, adjInv, componentsInReverseTopOrder);
 
         // assign labels to each point in reverse topological order
-        isSet = new boolean[noPoints];
+        boolean[] isSet = new boolean[noPoints];
         for (Integer i : componentsInReverseTopOrder) {
             if (!isSet[i % noPoints]) {
-                assignTrue(solution, i, adj);
+                assignTrue(solution, i, isSet, adj, scc);
             }
         }
-
         return solution;
     }
 
-    private boolean allVisited(int start) {
+    private int[] createComponents(List<Integer>[] adj, List<Integer>[] adjInv) {
+        return createComponents(adj, adjInv, null);
+    }
+
+    private int[] createComponents(List<Integer>[] adj, List<Integer>[] adjInv, List<Integer> componentsInReverseTopOrder) {
+        // initialize variables
+        boolean[] visited = new boolean[adj.length];
+        Stack<Integer> s = new Stack<>();
+
+        int[] scc = new int[adj.length];
+
+        // ------------- Kosarajus algorithm --------
+        // Step 1: dfs on original graph
+        for (int i = 0; i < adj.length; i++) {
+            if (!visited[i]) {
+                List<Integer> stack = dfsFirst(i, visited, adj);
+                for (int j = 0; j < stack.size(); j++) {
+                    s.add(stack.get(j));
+                }
+            }
+        }
+
+        int componentCounter = 0;
+        visited = new boolean[adj.length];
+
+        // Step 2: traverse inverse graph based on s
+        while (!s.empty()) {
+            int n = s.pop();
+            if (!visited[n]) {
+                if (componentsInReverseTopOrder != null) {
+                    componentsInReverseTopOrder.add(0, n);
+                }
+                dfsSecond(n, componentCounter, visited, adjInv, scc);
+                componentCounter++;
+            }
+        }
+        return scc;
+    }
+
+
+    private boolean allVisited(int start, boolean[] visited, List<Integer>[] adj) {
         for (Integer i : adj[start]) {
             if (!visited[i])
                 return false;
@@ -125,7 +112,7 @@ public class ImplicationGraphSolver {
         return true;
     }
 
-    private Integer next(Integer start) {
+    private Integer next(Integer start, boolean[] visited, List<Integer>[] adj) {
         for (Integer i : adj[start]) {
             if (!visited[i])
                 return i;
@@ -134,45 +121,46 @@ public class ImplicationGraphSolver {
         return null;
     }
 
-    private void dfsFirst(Integer start) {
+    private List<Integer> dfsFirst(Integer start, boolean[] visited, List<Integer>[] adj) {
         Stack<Integer> integers = new Stack<>();
+        List<Integer> returnValue = new ArrayList<>();
         integers.add(start);
 
-        do {
+        while (!integers.isEmpty()) {
             Integer next = integers.peek();
             visited[next] = true;
 
-            if (!allVisited(next)) {
-                integers.add(next(next));
+            if (!allVisited(next, visited, adj)) {
+                integers.add(next(next, visited, adj));
             } else {
                 next = integers.pop();
-                s.add(next);
+                returnValue.add(next);
             }
-        } while(!integers.isEmpty());
+        }
+        return returnValue;
     }
 
-    private void dfsSecond(int start) {
-        Deque<Integer> nodesToVisit = new ArrayDeque<>();
+    private void dfsSecond(int start, int componentCounter, boolean[] visited, List<Integer>[] adjInv, int[] scc) {
+        Stack<Integer> nodesToVisit = new Stack<>();
         nodesToVisit.push(start);
 
         while (!nodesToVisit.isEmpty()) {
             int current = nodesToVisit.pop();
-            if (visitedInv[current]) {
+            if (visited[current]) {
                 continue;
             }
-            visitedInv[current] = true;
+            visited[current] = true;
 
             for (int i : adjInv[current]) {
                 nodesToVisit.push(i);
             }
-            scc[current] = counter;
+            scc[current] = componentCounter;
         }
     }
 
-    private void assignTrue(boolean[] solution, int node, List<Integer>[] adj) {
+    private void assignTrue(boolean[] solution, int node, boolean[] isSet, List<Integer>[] adj, int[] scc) {
         int noPoints = solution.length;
-
-        Deque<Integer> nodesToVisit = new ArrayDeque<Integer>();
+        Stack<Integer> nodesToVisit = new Stack<>();
         nodesToVisit.push(node);
 
         while (!nodesToVisit.isEmpty()) {
@@ -184,7 +172,6 @@ public class ImplicationGraphSolver {
                 isSet[current - noPoints] = true;
                 solution[current % noPoints] = false;
             }
-
             for (int i : adj[current]) {
                 if (!isSet[i % noPoints] && scc[i] == scc[current]) {
                     nodesToVisit.push(i);
